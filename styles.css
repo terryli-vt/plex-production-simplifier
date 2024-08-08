@@ -1,0 +1,40 @@
+/* Basic reset */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  width: 80%;
+}
+
+.container {
+  width: 100%;
+  text-align: center;
+}
+
+#scan-input {
+  width: 100%; /* Adjust the width as needed */
+  padding: 20px;
+  font-size: 1.5rem; /* Larger text size */
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* Optional: Add some focus styles */
+#scan-input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+#message {
+  font-size: 3rem; /* Larger text size */
+}
