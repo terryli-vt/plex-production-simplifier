@@ -36,7 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Function to send POST request
   function sendToPlex(serialNo) {
-    const url = "http://localhost:3000/proxy";
+    // const url = "http://localhost:3000/proxy";
+    const url = "https://plex-load-source-tool.onrender.com/proxy";
 
     const headers = {
       "Content-Type": "application/json",
