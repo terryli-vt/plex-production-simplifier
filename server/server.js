@@ -5,6 +5,7 @@ const getZplCode = require("./modules/getZpl");
 const writeZplCodeToTxt = require("./modules/zplToTxt");
 const sendZplToPrinter = require("./modules/printZpl");
 const moveContainer = require("./modules/moveContainer");
+const checkContainerExists = require("./modules/checkContainer");
 require("dotenv").config();
 
 const app = express();
@@ -25,19 +26,26 @@ app.post("/move-container", async (req, res) => {
   const { serialNo, plexServer, moveTo } = req.body;
 
   try {
-    // Step 1: Get ZPL code
-    const url = `https://${plexServer}cloud.plex.com/api/datasources/8176/execute?`;
+    // check if container exist
+    const url_check_container = `https://${plexServer}cloud.plex.com/api/datasources/6455/execute?`;
+    const data_check_container = {
+      inputs: {
+        Serial_No: serialNo,
+      },
+    };
+    await checkContainerExists(url_check_container, data_check_container);
 
-    const post_data = {
+    // move container
+    const url_move_container = `https://${plexServer}cloud.plex.com/api/datasources/8176/execute?`;
+    const data_move_container = {
       inputs: {
         Location: moveTo,
         Serial_No: serialNo,
       },
     };
-    await moveContainer(url, post_data);
+    await moveContainer(url_move_container, data_move_container);
     res.json({ success: true, message: "Move container successfully" });
   } catch (error) {
-    console.error("An error message:", error.message);
     res.status(500).json({ success: false, message: error.message });
   }
 });

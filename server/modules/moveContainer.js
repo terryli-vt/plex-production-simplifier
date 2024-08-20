@@ -21,7 +21,7 @@ async function moveContainer(url, data) {
     const responseData = await response.json();
     return responseData;
   } catch (error) {
-    throw new Error(`Failed to move container: ${error.message}`);
+    throw new Error(error.message);
   }
 }
 

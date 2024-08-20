@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const input = document.getElementById("scan-input");
   const message = document.getElementById("message"); // Reference to the message element
+  const logBox = document.getElementById("log-box");
 
   let clear = false; // Flag to clear the input
 
@@ -60,10 +61,12 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((result) => {
         if (result.success) {
           // console.log("POST request to back-end success:", result.data);
-          message.textContent = `Move Container Success`;
+          //message.textContent = `Move Container Success`;
+          logMsg(`Successfully moved container ${serialNo} to ${moveTo}`);
         } else {
           // console.error("POST request to back-end failed:", result.error);
-          message.textContent = result.message;
+          //message.textContent = result.message;
+          logMsg(result.message);
         }
       })
       .catch((error) => {
@@ -105,5 +108,13 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((error) => {
         console.error("POST request error:", error);
       });
+  }
+
+  // Log messages
+  function logMsg(msg) {
+    const p = document.createElement("p");
+    p.textContent = msg;
+    logBox.appendChild(p);
+    logBox.scrollTop = logBox.scrollHeight;
   }
 });
