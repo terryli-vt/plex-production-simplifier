@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const input = document.getElementById("scan-input");
   const message = document.getElementById("message"); // Reference to the message element
+
   let clear = false; // Flag to clear the input
 
   // Keep the input focused
@@ -36,16 +37,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Function to send POST request
   function sendToPlex(serialNo) {
-    // const url = "http://localhost:3000/proxy";
-    const url = "https://plex-load-source-tool.onrender.com/proxy";
+    const url = "http://localhost:3300/proxy";
 
     const headers = {
       "Content-Type": "application/json",
     };
 
+    const dpi = document.getElementById("dpi").value;
+    const labelSize = document.getElementById("label-size").value;
+
     const body = JSON.stringify({
-      loadFIFO: true,
-      serialNo: serialNo,
+      Serial_No: serialNo,
+      dpi,
+      labelSize,
     });
 
     fetch(url, {
@@ -56,11 +60,11 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {
-          console.log("POST request success:", result.data);
-          message.textContent = `Successfully loaded container ${result.serial}`;
+          // console.log("POST request to back-end success:", result.data);
+          message.textContent = `Get Label Success`;
         } else {
-          console.error("POST request failed:", result.error);
-          message.textContent = `Failed to Load Source.`;
+          // console.error("POST request to back-end failed:", result.error);
+          message.textContent = result.message;
         }
       })
       .catch((error) => {

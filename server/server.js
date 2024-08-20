@@ -1,10 +1,20 @@
 const express = require("express");
 const fetch = require("node-fetch");
 var cors = require("cors");
+const getZplCode = require("./modules/getZpl");
+const writeZplCodeToTxt = require("./modules/zplToTxt");
+const { convertZplToPdf } = require("./modules/zplToPdf");
+const { printPdf } = require("./modules/printPdf");
+/*
+const { post } = require("request");
+const { convertZplToPdf } = require("./zplToPdf");
+const { printPDF } = require("./printPdf");
+const fs = require("fs");
+*/
 require("dotenv").config();
 
 const app = express();
-const port = 3000;
+const port = 3300;
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -15,49 +25,37 @@ app.get("/", (req, res) => {
 });
 
 // Proxy endpoint
-app.post("/proxy", (req, res) => {
-  const resource_id = process.env.RESOURCE_ID;
+app.post("/proxy", async (req, res) => {
+  const url = `https://test.cloud.plex.com/api/datasources/230486/execute?`;
 
-  const url = `https://test.connect.plex.com/production/v1-beta1/control/workcenters/${resource_id}/loaded-source-inventory`;
+  console.log("from front-end", req.body);
+  const { Serial_No, dpi, labelSize } = req.body;
 
-  const headers = {
-    "X-Plex-Connect-Api-Key": process.env.API_KEY,
-    "X-Plex-Connect-Api-Secret": process.env.API_SECRET,
-    "X-Plex-Connect-Tenant-Id": process.env.TENANT_ID,
-    "Content-Type": "application/json",
-  };
+  try {
+    // Step 1: Get ZPL code
+    const post_data = {
+      inputs: {
+        Serial_No,
+      },
+    };
+    const zplcode = await getZplCode(url, post_data);
 
-  const body = JSON.stringify({
-    loadFIFO: true,
-    serialNo: req.body.serialNo,
-  });
+    // Step 2: Write ZPL code to text file
+    const txtpath = "./output/zplCode.txt";
+    await writeZplCodeToTxt(zplcode, txtpath);
 
-  fetch(url, {
-    method: "POST",
-    headers: headers,
-    body: body,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if ("errors" in data) {
-        console.log("POST request error", data);
-        res.status(500).json({
-          success: false,
-          message: "Request failed",
-          // error: error.message
-        });
-      } else {
-        console.error("POST request success", data);
-        res.status(200).json({
-          success: true,
-          message: "Request was successful",
-          serial: req.body.serialNo,
-        });
-      }
-    })
-    .catch((error) => {
-      console.error("POST request error:", error);
-    });
+    // Step 3: Convert ZPL code to PDF
+    const pdfpath = "./output/label.pdf";
+    await convertZplToPdf(zplcode, pdfpath, dpi, labelSize);
+
+    // Step 4: Print the PDF file
+    await printPdf(pdfpath);
+
+    res.json({ success: true, message: "Process completed successfully" });
+  } catch (error) {
+    console.error("An error message:", error.message);
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 // Start the server
