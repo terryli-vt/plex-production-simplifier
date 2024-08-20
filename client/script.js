@@ -38,18 +38,15 @@ document.addEventListener("DOMContentLoaded", function () {
   // Function to send POST request
   function sendToPlex(serialNo) {
     const url = "http://localhost:3300/proxy";
+    const printerIP = document.getElementById("printer").value;
 
     const headers = {
       "Content-Type": "application/json",
     };
 
-    const dpi = document.getElementById("dpi").value;
-    const labelSize = document.getElementById("label-size").value;
-
     const body = JSON.stringify({
       Serial_No: serialNo,
-      dpi,
-      labelSize,
+      printerIP,
     });
 
     fetch(url, {

@@ -1,20 +1,16 @@
 const express = require("express");
-const fetch = require("node-fetch");
+const bodyParser = require("body-parser"); // Needed to parse form-urlencoded data
 var cors = require("cors");
 const getZplCode = require("./modules/getZpl");
 const writeZplCodeToTxt = require("./modules/zplToTxt");
-const { convertZplToPdf } = require("./modules/zplToPdf");
-const { printPdf } = require("./modules/printPdf");
-/*
-const { post } = require("request");
-const { convertZplToPdf } = require("./zplToPdf");
-const { printPDF } = require("./printPdf");
-const fs = require("fs");
-*/
+const sendZplToPrinter = require("./modules/printZpl");
 require("dotenv").config();
 
 const app = express();
 const port = 3300;
+
+// Middleware to parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -26,13 +22,11 @@ app.get("/", (req, res) => {
 
 // Proxy endpoint
 app.post("/proxy", async (req, res) => {
-  const url = `https://test.cloud.plex.com/api/datasources/230486/execute?`;
-
-  console.log("from front-end", req.body);
-  const { Serial_No, dpi, labelSize } = req.body;
+  const { Serial_No } = req.body;
 
   try {
     // Step 1: Get ZPL code
+    const url = `https://test.cloud.plex.com/api/datasources/230486/execute?`;
     const post_data = {
       inputs: {
         Serial_No,
@@ -44,12 +38,8 @@ app.post("/proxy", async (req, res) => {
     const txtpath = "./output/zplCode.txt";
     await writeZplCodeToTxt(zplcode, txtpath);
 
-    // Step 3: Convert ZPL code to PDF
-    const pdfpath = "./output/label.pdf";
-    await convertZplToPdf(zplcode, pdfpath, dpi, labelSize);
-
-    // Step 4: Print the PDF file
-    await printPdf(pdfpath);
+    // Step 3: Send ZPL code to the printer
+    await sendZplToPrinter(zplcode, req.body.printerIP);
 
     res.json({ success: true, message: "Process completed successfully" });
   } catch (error) {
