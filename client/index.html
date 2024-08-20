@@ -14,10 +14,24 @@
         placeholder="Scan QR Code on the Label..."
       />
       <div class="dropdown-container">
+        <label for="plex-server">Select Plex Server:</label>
+        <select id="plex-server">
+          <option value="test.">Test</option>
+          <option value="">Production</option>
+        </select>
+      </div>
+      <div class="dropdown-container">
+        <label for="move-to">Move To:</label>
+        <select id="move-to">
+          <option value="RIVIAN">RIVIAN</option>
+        </select>
+      </div>
+      <div class="dropdown-container">
         <label for="printer">Select Printer:</label>
         <select id="printer">
           <option value="10.24.1.61">Waterjet</option>
           <option value="10.24.3.112">Assembly</option>
+          <option value="10.24.3.159">Toyota Backup</option>
         </select>
       </div>
       <p id="message"></p>

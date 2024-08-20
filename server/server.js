@@ -4,6 +4,7 @@ var cors = require("cors");
 const getZplCode = require("./modules/getZpl");
 const writeZplCodeToTxt = require("./modules/zplToTxt");
 const sendZplToPrinter = require("./modules/printZpl");
+const moveContainer = require("./modules/moveContainer");
 require("dotenv").config();
 
 const app = express();
@@ -20,16 +21,38 @@ app.get("/", (req, res) => {
   res.send("Hello");
 });
 
-// Proxy endpoint
-app.post("/proxy", async (req, res) => {
-  const { Serial_No } = req.body;
+app.post("/move-container", async (req, res) => {
+  const { serialNo, plexServer, moveTo } = req.body;
 
   try {
     // Step 1: Get ZPL code
-    const url = `https://test.cloud.plex.com/api/datasources/230486/execute?`;
+    const url = `https://${plexServer}cloud.plex.com/api/datasources/8176/execute?`;
+
     const post_data = {
       inputs: {
-        Serial_No,
+        Location: moveTo,
+        Serial_No: serialNo,
+      },
+    };
+    await moveContainer(url, post_data);
+    res.json({ success: true, message: "Move container successfully" });
+  } catch (error) {
+    console.error("An error message:", error.message);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Print label given a serial number
+app.post("/print-label", async (req, res) => {
+  const { serialNo, plexServer } = req.body;
+
+  try {
+    // Step 1: Get ZPL code
+    const url = `https://${plexServer}cloud.plex.com/api/datasources/230486/execute?`;
+
+    const post_data = {
+      inputs: {
+        Serial_No: serialNo,
       },
     };
     const zplcode = await getZplCode(url, post_data);
@@ -41,7 +64,7 @@ app.post("/proxy", async (req, res) => {
     // Step 3: Send ZPL code to the printer
     await sendZplToPrinter(zplcode, req.body.printerIP);
 
-    res.json({ success: true, message: "Process completed successfully" });
+    res.json({ success: true, message: "Print label successfully" });
   } catch (error) {
     console.error("An error message:", error.message);
     res.status(500).json({ success: false, message: error.message });

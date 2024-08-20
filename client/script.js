@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (inputValue.length >= 9) {
         const output = inputValue.slice(-9);
-
-        sendToPlex(output); // Send the POST request
+        moveContainer(output);
+        // printLabel(output);
       } else {
         message.textContent = "Invalid QR Code.";
       }
@@ -35,9 +35,46 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Function to send POST request
-  function sendToPlex(serialNo) {
-    const url = "http://localhost:3300/proxy";
+  // Move container using Plex API
+  function moveContainer(serialNo) {
+    const url = "http://localhost:3300/move-container";
+    const plexServer = document.getElementById("plex-server").value;
+    const moveTo = document.getElementById("move-to").value;
+
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    const body = JSON.stringify({
+      serialNo,
+      plexServer,
+      moveTo,
+    });
+
+    fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: body,
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.success) {
+          // console.log("POST request to back-end success:", result.data);
+          message.textContent = `Move Container Success`;
+        } else {
+          // console.error("POST request to back-end failed:", result.error);
+          message.textContent = result.message;
+        }
+      })
+      .catch((error) => {
+        console.error("POST request error:", error);
+      });
+  }
+
+  // Print label using Plex API
+  function printLabel(serialNo) {
+    const url = "http://localhost:3300/print-label";
+    const plexServer = document.getElementById("plex-server").value;
     const printerIP = document.getElementById("printer").value;
 
     const headers = {
@@ -45,7 +82,8 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const body = JSON.stringify({
-      Serial_No: serialNo,
+      serialNo,
+      plexServer,
       printerIP,
     });
 
