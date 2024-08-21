@@ -23,7 +23,7 @@ async function checkContainerExists(url, data) {
     const rows = responseData.tables[0].rows;
     // Check if the response data is an empty array
     if (Array.isArray(rows) && rows.length === 0) {
-      throw new Error(`Container ${data.inputs.Serial_No} does not exist.`);
+      throw new Error(`Container ${data.inputs.Serial_No} does not exist`);
     }
 
     return responseData; // Container exists

@@ -6,6 +6,7 @@ const writeZplCodeToTxt = require("./modules/zplToTxt");
 const sendZplToPrinter = require("./modules/printZpl");
 const moveContainer = require("./modules/moveContainer");
 const checkContainerExists = require("./modules/checkContainer");
+const recordProduction = require("./modules/recordProduction");
 require("dotenv").config();
 
 const app = express();
@@ -45,6 +46,32 @@ app.post("/move-container", async (req, res) => {
     };
     await moveContainer(url_move_container, data_move_container);
     res.json({ success: true, message: "Move container successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.post("/record-production", async (req, res) => {
+  const { plexServer, workcenterKey } = req.body;
+
+  try {
+    const url = `https://${plexServer}cloud.plex.com/api/datasources/20446/execute?`;
+
+    const post_data = {
+      inputs: {
+        Container_Full_Move_Container: true,
+        Quantity: 1,
+        Workcenter_Key: workcenterKey,
+      },
+    };
+
+    const response = await recordProduction(url, post_data);
+    const newSerialNo = response.outputs.Recorded_Serial_No;
+    res.json({
+      success: true,
+      message: "Record production successfully",
+      newSerialNo,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

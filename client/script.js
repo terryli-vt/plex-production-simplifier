@@ -14,21 +14,26 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Listen for input changes
-  input.addEventListener("keydown", function (event) {
+  input.addEventListener("keydown", async function (event) {
     if (clear) {
       input.value = "";
       clear = false;
     }
 
     if (event.key === "Enter") {
+      event.preventDefault(); // Prevent the default form submission behavior
+
       const inputValue = input.value;
 
       if (inputValue.length >= 9) {
         const output = inputValue.slice(-9);
-        moveContainer(output);
-        // printLabel(output);
+        await moveContainer(output);
+        const newSerialNo = await recordProduction();
+        // console.log("newSerialNo = ", newSerialNo);
+        await printLabel(newSerialNo);
       } else {
-        message.textContent = "Invalid QR Code.";
+        // message.textContent = "Invalid QR Code.";
+        logMsg("Invalid QR Code.");
       }
 
       // Reset the input field after pressing Enter
@@ -37,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Move container using Plex API
-  function moveContainer(serialNo) {
+  async function moveContainer(serialNo) {
     const url = "http://localhost:3300/move-container";
     const plexServer = document.getElementById("plex-server").value;
     const moveTo = document.getElementById("move-to").value;
@@ -52,30 +57,72 @@ document.addEventListener("DOMContentLoaded", function () {
       moveTo,
     });
 
-    fetch(url, {
-      method: "POST",
-      headers: headers,
-      body: body,
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.success) {
-          // console.log("POST request to back-end success:", result.data);
-          //message.textContent = `Move Container Success`;
-          logMsg(`Successfully moved container ${serialNo} to ${moveTo}`);
-        } else {
-          // console.error("POST request to back-end failed:", result.error);
-          //message.textContent = result.message;
-          logMsg(result.message);
-        }
-      })
-      .catch((error) => {
-        console.error("POST request error:", error);
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: body,
       });
+
+      // Parse the JSON response
+      const result = await response.json();
+
+      // Check if the operation was successful
+      if (result.success) {
+        logMsg(`Successfully moved container ${serialNo} to ${moveTo} ✔️`);
+      } else {
+        logMsg(`${result.message} \u{274C}`);
+      }
+    } catch (error) {
+      logMsg(`${error} \u{274C}`);
+      console.error("POST request error:", error);
+    }
   }
 
-  // Print label using Plex API
-  function printLabel(serialNo) {
+  // Record production using Plex API
+  async function recordProduction() {
+    const url = "http://localhost:3300/record-production";
+    const plexServer = document.getElementById("plex-server").value;
+
+    const workcenter = document.getElementById("workcenter");
+    const workcenterName = workcenter.options[workcenter.selectedIndex].text;
+    const workcenterKey = workcenter.value;
+
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    const body = JSON.stringify({
+      plexServer,
+      workcenterKey,
+    });
+
+    try {
+      // Send POST request
+      const response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: body,
+      });
+
+      // Parse the JSON response
+      const result = await response.json();
+
+      // Check if the operation was successful
+      if (result.success) {
+        logMsg(`Production recorded at ${workcenterName} ✔️`);
+        return result.newSerialNo;
+      } else {
+        logMsg(`${result.message} \u{274C}`);
+      }
+    } catch (error) {
+      logMsg(`${error} \u{274C}`);
+      console.error("POST request error:", error);
+    }
+  }
+
+  // Print label
+  async function printLabel(serialNo) {
     const url = "http://localhost:3300/print-label";
     const plexServer = document.getElementById("plex-server").value;
     const printerIP = document.getElementById("printer").value;
@@ -90,31 +137,40 @@ document.addEventListener("DOMContentLoaded", function () {
       printerIP,
     });
 
-    fetch(url, {
-      method: "POST",
-      headers: headers,
-      body: body,
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.success) {
-          // console.log("POST request to back-end success:", result.data);
-          message.textContent = `Get Label Success`;
-        } else {
-          // console.error("POST request to back-end failed:", result.error);
-          message.textContent = result.message;
-        }
-      })
-      .catch((error) => {
-        console.error("POST request error:", error);
+    try {
+      // Send POST request
+      const response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: body,
       });
+
+      // Parse the JSON response
+      const result = await response.json();
+
+      // Check if the operation was successful
+      if (result.success) {
+        logMsg(`Label printed ✔️`);
+      } else {
+        logMsg(`${result.message} \u{274C}`);
+      }
+    } catch (error) {
+      console.error("POST request error:", error);
+      logMsg(`${error} \u{274C}`);
+    }
   }
 
   // Log messages
   function logMsg(msg) {
     const p = document.createElement("p");
+    // console.log("msg = ", msg);
     p.textContent = msg;
     logBox.appendChild(p);
     logBox.scrollTop = logBox.scrollHeight;
   }
+});
+
+window.addEventListener("beforeunload", function (event) {
+  // Display a confirmation dialog
+  event.preventDefault();
 });
