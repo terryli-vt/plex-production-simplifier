@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
   const input = document.getElementById("scan-input");
-  const message = document.getElementById("message"); // Reference to the message element
   const logBox = document.getElementById("log-box");
 
   let clear = false; // Flag to clear the input
@@ -21,19 +20,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (event.key === "Enter") {
-      event.preventDefault(); // Prevent the default form submission behavior
-
       const inputValue = input.value;
+      logBox.style.backgroundColor = "#f9f9f9"; // Neutral background during the process
+      logBox.innerHTML = ""; // Clears all content inside the log box
 
       if (inputValue.length >= 9) {
         const output = inputValue.slice(-9);
-        await moveContainer(output);
-        const newSerialNo = await recordProduction();
-        // console.log("newSerialNo = ", newSerialNo);
-        await printLabel(newSerialNo);
+        // Full Process: move container, record production, and print label
+        try {
+          await moveContainer(output);
+          logMsg("Recording production, please wait... ⏳");
+          const newSerialNo = await recordProduction();
+          await printLabel(newSerialNo);
+          logBox.style.backgroundColor = "#00cc66"; // Success background
+        } catch (error) {
+          // console.error("Error caught:", error);
+          logMsg(`${error.message} ❌`);
+          logBox.style.backgroundColor = "#ff6666"; // Failure background
+        }
       } else {
-        // message.textContent = "Invalid QR Code.";
-        logMsg("Invalid QR Code.");
+        logMsg("Invalid QR Code ❌");
+        logBox.style.backgroundColor = "#ff6666"; // Failure background
       }
 
       // Reset the input field after pressing Enter
@@ -71,11 +78,10 @@ document.addEventListener("DOMContentLoaded", function () {
       if (result.success) {
         logMsg(`Successfully moved container ${serialNo} to ${moveTo} ✔️`);
       } else {
-        logMsg(`${result.message} \u{274C}`);
+        throw new Error(result.message || "Failed to move container");
       }
     } catch (error) {
-      logMsg(`${error} \u{274C}`);
-      console.error("POST request error:", error);
+      throw error;
     }
   }
 
@@ -113,11 +119,10 @@ document.addEventListener("DOMContentLoaded", function () {
         logMsg(`Production recorded at ${workcenterName} ✔️`);
         return result.newSerialNo;
       } else {
-        logMsg(`${result.message} \u{274C}`);
+        throw new Error(result.message || "Failed to record production");
       }
     } catch (error) {
-      logMsg(`${error} \u{274C}`);
-      console.error("POST request error:", error);
+      throw error;
     }
   }
 
@@ -152,25 +157,23 @@ document.addEventListener("DOMContentLoaded", function () {
       if (result.success) {
         logMsg(`Label printed ✔️`);
       } else {
-        logMsg(`${result.message} \u{274C}`);
+        throw new Error(result.message || "Failed to print label");
       }
     } catch (error) {
-      console.error("POST request error:", error);
-      logMsg(`${error} \u{274C}`);
+      throw error;
     }
   }
 
   // Log messages
   function logMsg(msg) {
     const p = document.createElement("p");
-    // console.log("msg = ", msg);
     p.textContent = msg;
     logBox.appendChild(p);
     logBox.scrollTop = logBox.scrollHeight;
   }
 });
 
+// To prevent refreshing the page
 window.addEventListener("beforeunload", function (event) {
-  // Display a confirmation dialog
   event.preventDefault();
 });

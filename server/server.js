@@ -2,7 +2,6 @@ const express = require("express");
 const bodyParser = require("body-parser"); // Needed to parse form-urlencoded data
 var cors = require("cors");
 const getZplCode = require("./modules/getZpl");
-const writeZplCodeToTxt = require("./modules/zplToTxt");
 const sendZplToPrinter = require("./modules/printZpl");
 const moveContainer = require("./modules/moveContainer");
 const checkContainerExists = require("./modules/checkContainer");
@@ -92,11 +91,7 @@ app.post("/print-label", async (req, res) => {
     };
     const zplcode = await getZplCode(url, post_data);
 
-    // Step 2: Write ZPL code to text file
-    const txtpath = "./output/zplCode.txt";
-    await writeZplCodeToTxt(zplcode, txtpath);
-
-    // Step 3: Send ZPL code to the printer
+    // Step 2: Send ZPL code to the printer
     await sendZplToPrinter(zplcode, req.body.printerIP);
 
     res.json({ success: true, message: "Print label successfully" });
