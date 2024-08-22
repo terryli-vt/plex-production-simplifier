@@ -66,6 +66,9 @@ app.post("/record-production", async (req, res) => {
 
     const response = await recordProduction(url, post_data);
     const newSerialNo = response.outputs.Recorded_Serial_No;
+    if (!newSerialNo) {
+      throw new Error("Workcenter lacking other materials");
+    }
     res.json({
       success: true,
       message: "Record production successfully",
