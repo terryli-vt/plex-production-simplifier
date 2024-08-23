@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const logBox = document.getElementById("log-box");
   const toggleButton = document.getElementById("toggle-settings");
   const settingsPanel = document.getElementById("settings-panel");
-  // const serverURL = "http://localhost:3300";
-  const serverURL = "https://plex-load-source-tool.onrender.com";
+  const serverURL = "http://localhost:3300";
+  // const serverURL = "https://plex-load-source-tool.onrender.com";
   toggleButton.addEventListener("click", () => {
     // Toggle the hidden class on the settings panel
     settingsPanel.classList.toggle("hidden");
