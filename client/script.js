@@ -1,6 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
   const input = document.getElementById("scan-input");
   const logBox = document.getElementById("log-box");
+  const toggleButton = document.getElementById("toggle-settings");
+  const settingsPanel = document.getElementById("settings-panel");
+
+  toggleButton.addEventListener("click", () => {
+    // Toggle the hidden class on the settings panel
+    settingsPanel.classList.toggle("hidden");
+
+    // Optionally change the button text based on the visibility state
+    if (settingsPanel.classList.contains("hidden")) {
+      toggleButton.textContent = "Settings ⚙️";
+    } else {
+      toggleButton.textContent = "Hide Settings";
+    }
+  });
 
   let clear = false; // Flag to clear the input
 
@@ -52,7 +66,8 @@ document.addEventListener("DOMContentLoaded", function () {
   async function moveContainer(serialNo) {
     const url = "http://localhost:3300/move-container";
     const plexServer = document.getElementById("plex-server").value;
-    const moveTo = document.getElementById("move-to").value;
+    const workcenter = document.getElementById("workcenter");
+    const workcenterName = workcenter.options[workcenter.selectedIndex].text;
 
     const headers = {
       "Content-Type": "application/json",
@@ -61,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const body = JSON.stringify({
       serialNo,
       plexServer,
-      moveTo,
+      workcenterName,
     });
 
     try {
@@ -76,7 +91,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Check if the operation was successful
       if (result.success) {
-        logMsg(`Successfully moved container ${serialNo} to ${moveTo} ✔️`);
+        logMsg(
+          `Successfully moved container ${serialNo} to ${workcenterName} ✔️`
+        );
       } else {
         throw new Error(result.message || "Failed to move container");
       }

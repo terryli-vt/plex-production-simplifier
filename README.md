@@ -5,5 +5,11 @@ This application helps to simplify the process of recording production on the Pl
 ## Features
 
 - Move Inventory
-- Record production (WIP)
+- Record production
 - Print label for a specific container based on its serial number.
+
+## TODO
+
+- User login (operator & admin)
+- Check if container is in edgefold location before moving to assembly
+- Pack

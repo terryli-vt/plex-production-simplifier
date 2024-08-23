@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/move-container", async (req, res) => {
-  const { serialNo, plexServer, moveTo } = req.body;
+  const { serialNo, plexServer, workcenterName } = req.body;
 
   try {
     // check if container exist
@@ -39,7 +39,7 @@ app.post("/move-container", async (req, res) => {
     const url_move_container = `https://${plexServer}cloud.plex.com/api/datasources/8176/execute?`;
     const data_move_container = {
       inputs: {
-        Location: moveTo,
+        Location: workcenterName,
         Serial_No: serialNo,
       },
     };
