@@ -2,10 +2,10 @@ const express = require("express");
 const bodyParser = require("body-parser"); // Needed to parse form-urlencoded data
 var cors = require("cors");
 const getZplCode = require("./modules/getZpl");
-const sendZplToPrinter = require("./modules/printZpl");
 const moveContainer = require("./modules/moveContainer");
 const checkContainerExists = require("./modules/checkContainer");
 const recordProduction = require("./modules/recordProduction");
+const sendZplToPrinter = require("./modules/printZpl");
 require("dotenv").config();
 
 const app = express();

@@ -3,7 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const logBox = document.getElementById("log-box");
   const toggleButton = document.getElementById("toggle-settings");
   const settingsPanel = document.getElementById("settings-panel");
-
+  // const serverURL = "http://localhost:3300";
+  const serverURL = "https://plex-load-source-tool.onrender.com";
   toggleButton.addEventListener("click", () => {
     // Toggle the hidden class on the settings panel
     settingsPanel.classList.toggle("hidden");
@@ -64,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Move container using Plex API
   async function moveContainer(serialNo) {
-    const url = "http://localhost:3300/move-container";
+    const url = `${serverURL}/move-container`;
     const plexServer = document.getElementById("plex-server").value;
     const workcenter = document.getElementById("workcenter");
     const workcenterName = workcenter.options[workcenter.selectedIndex].text;
@@ -104,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Record production using Plex API
   async function recordProduction() {
-    const url = "http://localhost:3300/record-production";
+    const url = `${serverURL}/record-production`;
     const plexServer = document.getElementById("plex-server").value;
 
     const workcenter = document.getElementById("workcenter");
@@ -145,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Print label
   async function printLabel(serialNo) {
-    const url = "http://localhost:3300/print-label";
+    const url = `${serverURL}/print-label`;
     const plexServer = document.getElementById("plex-server").value;
     const printerIP = document.getElementById("printer").value;
 
