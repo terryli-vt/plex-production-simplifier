@@ -19,7 +19,11 @@ app.use(express.json());
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.send("Hello");
+  res.send("Welcome to the Plex Simplifier's Server!");
+});
+
+app.get("/about", (req, res) => {
+  res.send("Author: Tianyu Li");
 });
 
 app.post("/move-container", async (req, res) => {
