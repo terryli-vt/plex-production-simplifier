@@ -1,9 +1,9 @@
 // src/App.tsx
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Navbar from "./components/common/Navbar";
-import Assembly from "./components/Assembly";
-import Settings from "./components/Settings";
+import Navbar from "./components/Navbar";
+import Assembly from "./pages/Assembly";
+import Settings from "./pages/Settings";
 
 const Home: React.FC = () => <div>Home Page</div>;
 const Waterjet: React.FC = () => <div>Waterjet Page</div>;

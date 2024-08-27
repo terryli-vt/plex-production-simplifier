@@ -1,26 +1,32 @@
 // src/pages/Assembly.tsx
 import React, { useState } from "react";
-import ScanInput from "./common/ScanInput";
-import LogBox from "./common/LogBox";
+import ScanInput from "../components/ScanInput";
+import LogBox from "../components/LogBox";
+import { moveContainer } from "../services/apiClient";
 
 const Assembly: React.FC = () => {
+  // for managing the message & background color of the log box
   const [messages, setMessages] = useState<string[]>([]); // State to manage log messages
   const [backgroundColor, setBackgroundColor] = useState<string>("#ffffff");
-
-  // Handle the scanned result
-  const handleScan = (parsedResult: string) => {
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      `Scanned Result: ${parsedResult}`,
-    ]);
-    // You can also handle other processes with the parsedResult here
-  };
 
   // Function to log messages and change background color
   const logMessage = (message: string, color?: string) => {
     setMessages((prevMessages) => [...prevMessages, message]);
     if (color) {
       setBackgroundColor(color);
+    }
+  };
+
+  // Handle the scanned result
+  const handleScan = async (parsedResult: string) => {
+    // reset background color
+    setBackgroundColor("#ffffff");
+
+    try {
+      const response = await moveContainer(parsedResult, "RIVIAN");
+      logMessage(`Container moved: ${response.message} ✔️`);
+    } catch (error: any) {
+      logMessage(`Error: ${error.message} ❌`, "#FF6666");
     }
   };
 

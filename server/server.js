@@ -21,15 +21,15 @@ app.use(cors());
 
 // Serve static files from the 'client' directory
 // app.use(express.static(path.join(__dirname, "../client")));
-app.use(express.static(path.join(__dirname, "../client")));
+/* app.use(express.static(path.join(__dirname, "../client"))); */
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Plex Simplifier's Server!");
 });
 
-app.get("/page", (req, res) => {
+/* app.get("/page", (req, res) => {
   res.sendFile(path.join(__dirname, "../client", "index.html"));
-});
+}); */
 
 app.get("/about", (req, res) => {
   res.send("Author: Tianyu Li");
@@ -59,7 +59,7 @@ app.post("/move-container", async (req, res) => {
     await moveContainer(url_move_container, data_move_container);
     res.json({ success: true, message: "Move container successfully" });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.json({ success: false, message: error.message });
   }
 });
 
