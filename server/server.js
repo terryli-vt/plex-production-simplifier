@@ -7,6 +7,7 @@ const checkContainerExists = require("./modules/checkContainer");
 const recordProduction = require("./modules/recordProduction");
 const sendZplToPrinter = require("./modules/printZpl");
 require("dotenv").config();
+const path = require("path");
 
 const app = express();
 const port = 3300;
@@ -18,8 +19,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
+// Serve static files from the 'client' directory
+// app.use(express.static(path.join(__dirname, "../client")));
+app.use(express.static(path.join(__dirname, "../client")));
+
 app.get("/", (req, res) => {
   res.send("Welcome to the Plex Simplifier's Server!");
+});
+
+app.get("/page", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client", "index.html"));
 });
 
 app.get("/about", (req, res) => {
@@ -109,6 +118,6 @@ app.post("/print-label", async (req, res) => {
 });
 
 // Start the server
-app.listen(port, "0.0.0.0", () => {
+app.listen(port, () => {
   console.log(`Proxy server running at http://localhost:${port}`);
 });
