@@ -22,10 +22,10 @@ const LogBox: React.FC<LogBoxProps> = ({
     <div
       ref={logBoxRef}
       style={{ backgroundColor }}
-      className="h-64 overflow-y-auto p-4 border border-gray-300 rounded-md"
+      className="h-80 overflow-y-auto p-4 border border-gray-300 rounded-md"
     >
       {messages.map((message, index) => (
-        <div key={index} className="text-sm text-gray-800">
+        <div key={index} className="text-3xl text-gray-800 mb-5">
           {message}
         </div>
       ))}
