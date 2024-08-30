@@ -23,6 +23,85 @@ app.get("/about", (req, res) => {
   res.send("Author: Tianyu Li");
 });
 
+app.post("/get-workcenter-status", async (req, res) => {
+  const { plexServer, workcenterKey } = req.body;
+
+  try {
+    const url = `https://${plexServer}cloud.plex.com/api/datasources/10638/execute?`;
+
+    const data = {
+      inputs: {
+        Workcenter_Key: workcenterKey,
+      },
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: process.env.AUTH_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Plex API failed to get workcenter status`);
+    }
+
+    const result = await response.json();
+
+    // Extract the desired values from the response
+    const table = result.tables[0];
+    const columns = table.columns;
+    const rows = table.rows[0]; // Assuming we're interested in the first row
+
+    if (Array.isArray(rows) && rows.length === 0) {
+      throw new Error(`Workcenter does not exist`);
+    }
+
+    // Desired properties
+    const properties = [
+      "Workcenter_Code",
+      "Part_No_Op",
+      "Job_No",
+      "Job_Quantity",
+      "Job_Produced",
+    ];
+
+    // Mapping of original property names to new names
+    const propertyMap = {
+      Workcenter_Code: "Workcenter Name",
+      Part_No_Op: "Part Number",
+      Job_No: "Job",
+      Job_Quantity: "Job Quantity",
+      Job_Produced: "Produced",
+    };
+
+    // Create an object to hold the extracted values
+    let workcenterStatus = {};
+
+    // Loop through the properties and find their corresponding values
+    properties.forEach((prop) => {
+      const index = columns.indexOf(prop);
+      if (index !== -1) {
+        const newPropName = propertyMap[prop];
+        workcenterStatus[newPropName] = rows[index];
+      }
+    });
+
+    workcenterStatus["Remaining"] =
+      workcenterStatus["Job Quantity"] - workcenterStatus["Produced"];
+
+    res.json({
+      success: true,
+      message: `Get workcenter status successful✔️`,
+      workcenterStatus,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 app.post("/check-container-exists", async (req, res) => {
   const { serialNo, plexServer } = req.body;
 
@@ -42,7 +121,6 @@ app.post("/check-container-exists", async (req, res) => {
       },
       body: JSON.stringify(data),
     });
-
     if (!response.ok) {
       throw new Error(`Plex API failed to check container`);
     }
@@ -57,6 +135,7 @@ app.post("/check-container-exists", async (req, res) => {
     // await checkContainerExists(url, data);
     res.json({ success: true, message: `Container ${serialNo} exists ✔️` });
   } catch (error) {
+    console.log("error = ", error);
     res.status(500).json({ success: false, message: error.message });
   }
 });

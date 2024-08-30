@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 
+// Define the shape of the props this component expects to receive.
 interface ScanInputProps {
   onScan: (parsedResult: string) => void;
 }
@@ -8,13 +9,6 @@ const ScanInput: React.FC<ScanInputProps> = ({ onScan }) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [clearInput, setClearInput] = useState<boolean>(false); // a flag to clear the input field
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Keep the input field focused
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, []);
 
   // Handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,6 +43,8 @@ const ScanInput: React.FC<ScanInputProps> = ({ onScan }) => {
       onKeyPress={handleKeyPress}
       className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
       placeholder="Scan Code on the Label..."
+      autoFocus
+      onBlur={() => inputRef.current?.focus()}
     />
   );
 };

@@ -1,9 +1,37 @@
 const serverURL = "http://localhost:3300";
-// Retrieve from local storage
-const plexServer = localStorage.getItem("plexServer");
-const printerIP = localStorage.getItem("assemblyPrinter");
+// const serverURL = "http://10.24.3.182:3300";
 
+// Retrieve from local storage (or use default values)
+const plexServer = localStorage.getItem("plexServer") || "test.";
+const printerIP = localStorage.getItem("assemblyPrinter") || "10.24.3.239";
 const workcenterKey = "72323"; // Workcenter Key for RIVIAN
+
+// Get the latest workcenter status
+export const getWorkcenterStatus = async (): Promise<any> => {
+  const url = `${serverURL}/get-workcenter-status`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const body = JSON.stringify({ plexServer, workcenterKey });
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: body,
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.message || "Failed to get workcenter status");
+    }
+    return result.workcenterStatus;
+  } catch (error) {
+    throw error;
+  }
+};
 
 // Check if a container exists in Plex
 export const checkContainerExists = async (serialNo: string): Promise<any> => {

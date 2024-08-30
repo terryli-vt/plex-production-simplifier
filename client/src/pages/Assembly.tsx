@@ -8,6 +8,7 @@ import {
   printLabel,
   recordProduction,
 } from "../services/apiClient";
+import WorkcenterInfo from "../components/WorkcenterInfo";
 
 const Assembly: React.FC = () => {
   // for managing the message & background color of the log box
@@ -50,10 +51,17 @@ const Assembly: React.FC = () => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">RIVIAN Assembly Station</h1>
-      <div className="mb-4">
-        <ScanInput onScan={handleScan} />
+      <div className="flex">
+        <div className="w-1/3 pr-4">
+          <WorkcenterInfo />
+        </div>
+        <div className="w-2/3">
+          <div className="mb-4">
+            <ScanInput onScan={handleScan} />
+          </div>
+          <LogBox messages={messages} backgroundColor={backgroundColor} />
+        </div>
       </div>
-      <LogBox messages={messages} backgroundColor={backgroundColor} />
     </div>
   );
 };
