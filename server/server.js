@@ -188,14 +188,22 @@ app.post("/check-container-exists", async (req, res) => {
     }
 
     const result = await response.json();
+    const columns = result.tables[0].columns;
     const rows = result.tables[0].rows;
     // Check if the response data is an empty array
     if (Array.isArray(rows) && rows.length === 0) {
       throw new Error(`Container ${serialNo} does not exist`);
     }
 
+    const partNoIndex = columns.indexOf("Part_No_Revision");
+    const partNo = rows.map((row) => row[partNoIndex]);
+
     // await checkContainerExists(url, data);
-    res.json({ success: true, message: `Container ${serialNo} exists ✔️` });
+    res.json({
+      success: true,
+      message: `Container ${serialNo} exists ✔️`,
+      partNo,
+    });
   } catch (error) {
     console.log("error = ", error);
     res.status(500).json({ success: false, message: error.message });
