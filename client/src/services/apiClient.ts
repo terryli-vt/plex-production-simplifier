@@ -2,18 +2,24 @@ const serverURL = "http://localhost:3300";
 // const serverURL = "http://10.24.3.182:3300";
 
 // Retrieve from local storage (or use default values)
-const plexServer = localStorage.getItem("plexServer") || "test.";
-const printerIP = localStorage.getItem("assemblyPrinter") || "10.24.3.239";
 const workcenterKey = "72323"; // Workcenter Key for RIVIAN
+
+export const getPlexServer = (): string => {
+  return localStorage.getItem("plexServer") || "Test";
+};
+
+const getPrinterIP = (): string => {
+  return localStorage.getItem("assemblyPrinter") || "10.24.3.239";
+};
 
 // Get the latest workcenter status
 export const getWorkcenterStatus = async (): Promise<any> => {
   const url = `${serverURL}/get-workcenter-status`;
-
   const headers = {
     "Content-Type": "application/json",
   };
 
+  const plexServer = getPlexServer();
   const body = JSON.stringify({ plexServer, workcenterKey });
 
   try {
@@ -33,6 +39,36 @@ export const getWorkcenterStatus = async (): Promise<any> => {
   }
 };
 
+// Get the substrate part number based on the finished good part number
+export const getSubstratePartNumber = async (
+  fgPartNo: string
+): Promise<any> => {
+  const url = `${serverURL}/get-substrate-part-no`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const plexServer = getPlexServer();
+  const body = JSON.stringify({ fgPartNo, plexServer });
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: body,
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.message || "Failed to get substrate part number");
+    }
+    return result.substratePartNo;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Check if a container exists in Plex
 export const checkContainerExists = async (serialNo: string): Promise<any> => {
   const url = `${serverURL}/check-container-exists`;
@@ -41,6 +77,7 @@ export const checkContainerExists = async (serialNo: string): Promise<any> => {
     "Content-Type": "application/json",
   };
 
+  const plexServer = getPlexServer();
   const body = JSON.stringify({ serialNo, plexServer });
 
   try {
@@ -71,6 +108,7 @@ export const moveContainer = async (
     "Content-Type": "application/json",
   };
 
+  const plexServer = getPlexServer();
   const body = JSON.stringify({
     serialNo,
     plexServer,
@@ -102,6 +140,7 @@ export const recordProduction = async (): Promise<any> => {
     "Content-Type": "application/json",
   };
 
+  const plexServer = getPlexServer();
   const body = JSON.stringify({
     plexServer,
     workcenterKey,
@@ -135,6 +174,8 @@ export const printLabel = async (serialNo: string): Promise<any> => {
     "Content-Type": "application/json",
   };
 
+  const plexServer = getPlexServer();
+  const printerIP = getPrinterIP();
   const body = JSON.stringify({
     serialNo,
     plexServer,

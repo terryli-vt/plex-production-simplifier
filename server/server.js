@@ -26,8 +26,10 @@ app.get("/about", (req, res) => {
 app.post("/get-workcenter-status", async (req, res) => {
   const { plexServer, workcenterKey } = req.body;
 
+  const prefix = plexServer === "Test" ? "test." : "";
+
   try {
-    const url = `https://${plexServer}cloud.plex.com/api/datasources/10638/execute?`;
+    const url = `https://${prefix}cloud.plex.com/api/datasources/10638/execute?`;
 
     const data = {
       inputs: {
@@ -53,11 +55,13 @@ app.post("/get-workcenter-status", async (req, res) => {
     // Extract the desired values from the response
     const table = result.tables[0];
     const columns = table.columns;
-    const rows = table.rows[0]; // Assuming we're interested in the first row
 
+    const rows = table.rows; // Assuming we're interested in the first row
     if (Array.isArray(rows) && rows.length === 0) {
       throw new Error(`Workcenter does not exist`);
     }
+
+    const row = table.rows[0];
 
     // Desired properties
     const properties = [
@@ -85,7 +89,7 @@ app.post("/get-workcenter-status", async (req, res) => {
       const index = columns.indexOf(prop);
       if (index !== -1) {
         const newPropName = propertyMap[prop];
-        workcenterStatus[newPropName] = rows[index];
+        workcenterStatus[newPropName] = row[index];
       }
     });
 
@@ -102,11 +106,69 @@ app.post("/get-workcenter-status", async (req, res) => {
   }
 });
 
+app.post("/get-substrate-part-no", async (req, res) => {
+  const { plexServer, fgPartNo } = req.body;
+
+  const prefix = plexServer === "Test" ? "test." : "";
+
+  try {
+    const url = `https://${prefix}cloud.plex.com/api/datasources/561/execute?`;
+
+    const data = {
+      inputs: {
+        Part_No: fgPartNo,
+      },
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: process.env.AUTH_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Plex API failed to get substrate part number`);
+    }
+
+    const result = await response.json();
+
+    // Extract the desired values from the response
+    const table = result.tables[0];
+    const columns = table.columns;
+    const rows = table.rows;
+
+    if (Array.isArray(rows) && rows.length === 0) {
+      throw new Error(`FG part number does not exist`);
+    }
+
+    const subComponentsIndex = columns.indexOf("Sub_Components");
+    const substratePartNoIndex = columns.indexOf("Component_Part_No");
+
+    // Extract the Component_Part_No where Sub_Components > 0
+    const substratePartNo = rows
+      .filter((row) => row[subComponentsIndex] > 0)
+      .map((row) => row[substratePartNoIndex]);
+
+    res.json({
+      success: true,
+      message: `Get substrate part number successful✔️`,
+      substratePartNo,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 app.post("/check-container-exists", async (req, res) => {
   const { serialNo, plexServer } = req.body;
 
+  const prefix = plexServer === "Test" ? "test." : "";
+
   try {
-    const url = `https://${plexServer}cloud.plex.com/api/datasources/6455/execute?`;
+    const url = `https://${prefix}cloud.plex.com/api/datasources/6455/execute?`;
     const data = {
       inputs: {
         Serial_No: serialNo,
@@ -143,8 +205,10 @@ app.post("/check-container-exists", async (req, res) => {
 app.post("/move-container", async (req, res) => {
   const { serialNo, plexServer, workcenterName } = req.body;
 
+  const prefix = plexServer === "Test" ? "test." : "";
+
   try {
-    const url = `https://${plexServer}cloud.plex.com/api/datasources/8176/execute?`;
+    const url = `https://${prefix}cloud.plex.com/api/datasources/8176/execute?`;
     const data = {
       inputs: {
         Location: workcenterName,
@@ -176,9 +240,10 @@ app.post("/move-container", async (req, res) => {
 
 app.post("/record-production", async (req, res) => {
   const { plexServer, workcenterKey } = req.body;
+  const prefix = plexServer === "Test" ? "test." : "";
 
   try {
-    const url = `https://${plexServer}cloud.plex.com/api/datasources/20446/execute?`;
+    const url = `https://${prefix}cloud.plex.com/api/datasources/20446/execute?`;
 
     const data = {
       inputs: {
@@ -216,13 +281,12 @@ app.post("/record-production", async (req, res) => {
   }
 });
 
-// Print label given a serial number
 app.post("/print-label", async (req, res) => {
   const { serialNo, plexServer } = req.body;
-
+  const prefix = plexServer === "Test" ? "test." : "";
   try {
     // Step 1: Get ZPL code
-    const url = `https://${plexServer}cloud.plex.com/api/datasources/230486/execute?`;
+    const url = `https://${prefix}cloud.plex.com/api/datasources/230486/execute?`;
 
     const post_data = {
       inputs: {

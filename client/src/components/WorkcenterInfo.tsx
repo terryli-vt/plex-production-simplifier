@@ -1,22 +1,46 @@
-import React, { useState } from "react";
-import { getWorkcenterStatus } from "../services/apiClient";
+import React, { useEffect, useState } from "react";
+import {
+  getSubstratePartNumber,
+  getWorkcenterStatus,
+  getPlexServer,
+} from "../services/apiClient";
 
 const WorkcenterInfo: React.FC = () => {
   const [info, setInfo] = useState(null);
   const [status, setStatus] = useState<"Idle" | "Loading" | "Loaded" | "Error">(
     "Idle"
   );
+  const [substratePartNo, setSubstratePartNo] = useState<string | null>(null);
+  const [plexServer, setPlexServer] = useState<string | null>(null);
 
   const handleInfoUpdate = async () => {
     setStatus("Loading");
     try {
       setInfo(await getWorkcenterStatus());
+      setPlexServer(getPlexServer());
       setStatus("Loaded");
     } catch (error) {
       console.error("Failed to fetch data:", error);
       setStatus("Error");
     }
   };
+
+  useEffect(() => {
+    const fetchSubstratePartNumber = async () => {
+      if (info && info["Part Number"]) {
+        try {
+          const substratePartNo = await getSubstratePartNumber(
+            info["Part Number"]
+          );
+          setSubstratePartNo(substratePartNo);
+        } catch (error) {
+          console.error("Failed to fetch substrate part number:", error);
+        }
+      }
+    };
+
+    fetchSubstratePartNumber();
+  }, [info]);
 
   return (
     <div className="bg-gray-100 p-4 rounded shadow mb-4 w-full">
@@ -45,6 +69,26 @@ const WorkcenterInfo: React.FC = () => {
                   </td>
                 </tr>
               ))}
+              {substratePartNo && (
+                <tr>
+                  <td className="border px-4 py-2 whitespace-nowrap">
+                    Substrate
+                  </td>
+                  <td className="border px-4 py-2 whitespace-nowrap">
+                    {substratePartNo}
+                  </td>
+                </tr>
+              )}
+              {plexServer && (
+                <tr>
+                  <td className="border px-4 py-2 whitespace-nowrap">
+                    Plex Server
+                  </td>
+                  <td className="border px-4 py-2 whitespace-nowrap">
+                    {plexServer}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

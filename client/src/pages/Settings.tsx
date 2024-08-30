@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 
 const Settings: React.FC = () => {
   const plexServerOptions = [
-    { key: "Production", value: "" },
-    { key: "Test", value: "test." },
+    { key: "Production", value: "Production" },
+    { key: "Test", value: "Test" },
   ];
 
   const assemblyPrinterOptions = [
