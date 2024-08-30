@@ -4,13 +4,13 @@ import {
   getWorkcenterStatus,
   getPlexServer,
 } from "../services/apiClient";
+import { useWorkcenterStore } from "../store/useWorkcenterStore";
 
 const WorkcenterInfo: React.FC = () => {
+  const { status, setStatus, substratePartNo, setSubstratePartNo } =
+    useWorkcenterStore();
   const [info, setInfo] = useState(null);
-  const [status, setStatus] = useState<"Idle" | "Loading" | "Loaded" | "Error">(
-    "Idle"
-  );
-  const [substratePartNo, setSubstratePartNo] = useState<string | null>(null);
+  // const [substratePartNo, setSubstratePartNo] = useState<string | null>(null);
   const [plexServer, setPlexServer] = useState<string | null>(null);
 
   const handleInfoUpdate = async () => {
@@ -42,6 +42,13 @@ const WorkcenterInfo: React.FC = () => {
     fetchSubstratePartNumber();
   }, [info]);
 
+  // set status to Idle when component unmounts
+  useEffect(() => {
+    return () => {
+      setStatus("Idle");
+    };
+  }, [setStatus]);
+
   return (
     <div className="bg-gray-100 p-4 rounded shadow mb-4 w-full">
       <h2 className="text-xl font-semibold mb-2 text-center">
@@ -50,7 +57,7 @@ const WorkcenterInfo: React.FC = () => {
 
       {status === "Idle" && (
         <p className="text-center">
-          Click the button below to get workcenter information.
+          Click the button below to be ready for scanning.
         </p>
       )}
       {status === "Loading" && <p className="text-center">Loading...</p>}

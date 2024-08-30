@@ -9,8 +9,11 @@ import {
   recordProduction,
 } from "../services/apiClient";
 import WorkcenterInfo from "../components/WorkcenterInfo";
+import { useWorkcenterStore } from "../store/useWorkcenterStore";
 
 const Assembly: React.FC = () => {
+  const { status, substratePartNo } = useWorkcenterStore();
+
   // for managing the message & background color of the log box
   const [messages, setMessages] = useState<string[]>([]); // State to manage log messages
   const [backgroundColor, setBackgroundColor] = useState<string>("#ffffff");
@@ -33,6 +36,13 @@ const Assembly: React.FC = () => {
       response = await checkContainerExists(serialNo);
       logMessage(response.message);
 
+      if (String(response.partNo) != substratePartNo) {
+        throw new Error(
+          `Substrate part number does not match, please check workcenter configuration on Plex.Expected: ${substratePartNo}, Scanned: ${response.partNo}`
+        );
+      }
+      logMessage("Substrate part number matched ✔️");
+
       response = await moveContainer(serialNo, "RIVIAN");
       logMessage(response.message);
 
@@ -48,6 +58,7 @@ const Assembly: React.FC = () => {
     }
   };
 
+  const scanClassName = `w-2/3 ${status === "Loaded" ? "" : "hidden"}`;
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">RIVIAN Assembly Station</h1>
@@ -55,7 +66,7 @@ const Assembly: React.FC = () => {
         <div className="w-1/3 pr-4">
           <WorkcenterInfo />
         </div>
-        <div className="w-2/3">
+        <div className={scanClassName}>
           <div className="mb-4">
             <ScanInput onScan={handleScan} />
           </div>
