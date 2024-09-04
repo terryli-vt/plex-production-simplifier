@@ -23,7 +23,7 @@ app.get("/about", (req, res) => {
   res.send("Author: Tianyu Li");
 });
 
-app.post("/get-workcenter-status", async (req, res) => {
+app.post("/get-workcenter-info", async (req, res) => {
   const { plexServer, workcenterKey } = req.body;
 
   const prefix = plexServer === "Test" ? "test." : "";
@@ -47,7 +47,7 @@ app.post("/get-workcenter-status", async (req, res) => {
     });
 
     if (!response.ok) {
-      throw new Error(`Plex API failed to get workcenter status`);
+      throw new Error(`Plex API failed to get workcenter information`);
     }
 
     const result = await response.json();
@@ -82,24 +82,24 @@ app.post("/get-workcenter-status", async (req, res) => {
     };
 
     // Create an object to hold the extracted values
-    let workcenterStatus = {};
+    let workcenterInfo = {};
 
     // Loop through the properties and find their corresponding values
     properties.forEach((prop) => {
       const index = columns.indexOf(prop);
       if (index !== -1) {
         const newPropName = propertyMap[prop];
-        workcenterStatus[newPropName] = row[index];
+        workcenterInfo[newPropName] = row[index];
       }
     });
 
-    workcenterStatus["Remaining"] =
-      workcenterStatus["Job Quantity"] - workcenterStatus["Produced"];
+    workcenterInfo["Remaining"] =
+      workcenterInfo["Job Quantity"] - workcenterInfo["Produced"];
 
     res.json({
       success: true,
       message: `Get workcenter status successful✔️`,
-      workcenterStatus,
+      workcenterInfo,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

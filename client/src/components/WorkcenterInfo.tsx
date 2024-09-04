@@ -1,58 +1,26 @@
-import React, { useEffect, useState } from "react";
-import {
-  getSubstratePartNumber,
-  getWorkcenterStatus,
-  getPlexServer,
-} from "../services/apiClient";
-import { useWorkcenterStore } from "../store/useWorkcenterStore";
+import React from "react";
 
-const WorkcenterInfo: React.FC = () => {
-  const { status, setStatus, substratePartNo, setSubstratePartNo } =
-    useWorkcenterStore();
-  const [info, setInfo] = useState(null);
-  // const [substratePartNo, setSubstratePartNo] = useState<string | null>(null);
-  const [plexServer, setPlexServer] = useState<string | null>(null);
+interface WorkcenterInfoProps {
+  workcenterName: string;
+  status: string;
+  plexServer: string | null;
+  workcenterInfo: { [key: string]: string | number } | null;
+  onUpdate: () => void;
+  substratePartNo?: string | null;
+}
 
-  const handleInfoUpdate = async () => {
-    setStatus("Loading");
-    try {
-      setInfo(await getWorkcenterStatus());
-      setPlexServer(getPlexServer());
-      setStatus("Loaded");
-    } catch (error) {
-      console.error("Failed to fetch data:", error);
-      setStatus("Error");
-    }
-  };
-
-  useEffect(() => {
-    const fetchSubstratePartNumber = async () => {
-      if (info && info["Part Number"]) {
-        try {
-          const substratePartNo = await getSubstratePartNumber(
-            info["Part Number"]
-          );
-          setSubstratePartNo(substratePartNo);
-        } catch (error) {
-          console.error("Failed to fetch substrate part number:", error);
-        }
-      }
-    };
-
-    fetchSubstratePartNumber();
-  }, [info]);
-
-  // set status to Idle when component unmounts
-  useEffect(() => {
-    return () => {
-      setStatus("Idle");
-    };
-  }, [setStatus]);
-
+const WorkcenterInfo: React.FC<WorkcenterInfoProps> = ({
+  workcenterName,
+  status,
+  plexServer,
+  workcenterInfo,
+  onUpdate,
+  substratePartNo,
+}) => {
   return (
     <div className="bg-gray-100 p-4 rounded shadow mb-4 w-full">
       <h2 className="text-xl font-semibold mb-2 text-center">
-        Assembly Workcenter Information
+        {workcenterName} Workcenter Information
       </h2>
 
       {status === "Idle" && (
@@ -64,11 +32,11 @@ const WorkcenterInfo: React.FC = () => {
       {status === "Error" && (
         <p className="text-center">Failed to load data.</p>
       )}
-      {status === "Loaded" && info && (
+      {status === "Loaded" && workcenterInfo && (
         <div className="overflow-auto">
           <table className="table-auto w-full">
             <tbody>
-              {Object.entries(info).map(([key, value]) => (
+              {Object.entries(workcenterInfo).map(([key, value]) => (
                 <tr key={key}>
                   <td className="border px-4 py-2 whitespace-nowrap">{key}</td>
                   <td className="border px-4 py-2 whitespace-nowrap">
@@ -102,7 +70,7 @@ const WorkcenterInfo: React.FC = () => {
       )}
       <div className="flex justify-center">
         <button
-          onClick={handleInfoUpdate}
+          onClick={onUpdate}
           className="mt-4 bg-blue-500 text-white py-1 px-4 rounded hover:bg-blue-600"
         >
           Get Workcenter Information

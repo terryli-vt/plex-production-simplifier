@@ -2,8 +2,6 @@ const serverURL = "http://localhost:3300";
 // const serverURL = "http://10.24.3.182:3300";
 
 // Retrieve from local storage (or use default values)
-const workcenterKey = "72323"; // Workcenter Key for RIVIAN
-
 export const getPlexServer = (): string => {
   return localStorage.getItem("plexServer") || "Test";
 };
@@ -12,9 +10,11 @@ const getPrinterIP = (): string => {
   return localStorage.getItem("assemblyPrinter") || "10.24.3.239";
 };
 
-// Get the latest workcenter status
-export const getWorkcenterStatus = async (): Promise<any> => {
-  const url = `${serverURL}/get-workcenter-status`;
+// Get the latest workcenter information
+export const getWorkcenterInfo = async (
+  workcenterKey: string
+): Promise<any> => {
+  const url = `${serverURL}/get-workcenter-info`;
   const headers = {
     "Content-Type": "application/json",
   };
@@ -31,9 +31,9 @@ export const getWorkcenterStatus = async (): Promise<any> => {
 
     const result = await response.json();
     if (!result.success) {
-      throw new Error(result.message || "Failed to get workcenter status");
+      throw new Error(result.message || "Failed to get workcenter information");
     }
-    return result.workcenterStatus;
+    return result.workcenterInfo;
   } catch (error) {
     throw error;
   }
@@ -133,7 +133,7 @@ export const moveContainer = async (
 };
 
 // Record production
-export const recordProduction = async (): Promise<any> => {
+export const recordProduction = async (workcenterKey: string): Promise<any> => {
   const url = `${serverURL}/record-production`;
 
   const headers = {
