@@ -197,12 +197,50 @@ app.post("/check-container-exists", async (req, res) => {
 
     const partNoIndex = columns.indexOf("Part_No_Revision");
     const partNo = rows.map((row) => row[partNoIndex]);
-
+    const operationIndex = columns.indexOf("Operation_Code");
+    const operation = rows.map((row) => row[operationIndex]);
     // await checkContainerExists(url, data);
     res.json({
       success: true,
       message: `Container ${serialNo} exists ✔️`,
       partNo,
+      operation,
+    });
+  } catch (error) {
+    console.log("error = ", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.post("/change-container-status", async (req, res) => {
+  const { serialNo, plexServer, newStatus } = req.body;
+
+  const prefix = plexServer === "Test" ? "test." : "";
+
+  try {
+    const url = `https://${prefix}cloud.plex.com/api/datasources/4964/execute?`;
+    const data = {
+      inputs: {
+        Serial_No: serialNo,
+        Status: newStatus,
+        Update_By_PUN: 13236883,
+      },
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: process.env.AUTH_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error(`Plex API failed to change container status`);
+    }
+    res.json({
+      success: true,
+      message: `Container ${serialNo} changed to ${newStatus} status ✔️`,
     });
   } catch (error) {
     console.log("error = ", error);
@@ -289,6 +327,48 @@ app.post("/record-production", async (req, res) => {
   }
 });
 
+app.post("/record-production-bfb", async (req, res) => {
+  const { plexServer, workcenterKey, serialNo } = req.body;
+  const prefix = plexServer === "Test" ? "test." : "";
+
+  try {
+    const url = `https://${prefix}cloud.plex.com/api/datasources/20446/execute?`;
+
+    const data = {
+      inputs: {
+        Record_Bin_For_Bin: true,
+        Workcenter_Key: workcenterKey,
+        Serial_No: serialNo,
+      },
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: process.env.AUTH_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Plex API failed to record bin-for-bin production`);
+    }
+
+    const result = await response.json();
+    const success = !result.outputs.Result_Error;
+    if (!success) {
+      throw new Error(result.outputs.Result_Message);
+    }
+    res.json({
+      success: true,
+      message: `Serial ${serialNo} has been edgefolded ✔️`,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 app.post("/print-label", async (req, res) => {
   const { serialNo, plexServer } = req.body;
   const prefix = plexServer === "Test" ? "test." : "";
@@ -303,7 +383,6 @@ app.post("/print-label", async (req, res) => {
     };
 
     const zplcode = await getZplCode(url, post_data);
-
     // Step 2: Send ZPL code to the printer
     await sendZplToPrinter(zplcode, req.body.printerIP);
 

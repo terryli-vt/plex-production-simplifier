@@ -4,15 +4,14 @@ import LogBox from "../components/LogBox";
 import * as api from "../services/apiClient";
 import WorkcenterInfo from "./../components/WorkcenterInfo";
 
-const Assembly: React.FC = () => {
-  const workcenterKey = "72323"; // RIVIAN workcenter key
+const Waterjet: React.FC = () => {
+  const workcenterKey = "74886"; // Waterjet3 workcenter key
 
   // For workcenterInfo component
   const [infoStatus, setInfoStatus] = useState<string>("Idle");
   const [workcenterInfo, setWorkcenterInfo] = useState<{
     [key: string]: string | number;
   } | null>(null);
-  const [substratePartNo, setSubstratePartNo] = useState<string | null>(null);
   const [plexServer, setPlexServer] = useState<string | null>(null);
 
   // For handling update event from WorkcenterInfo component
@@ -21,12 +20,6 @@ const Assembly: React.FC = () => {
     try {
       const info = await api.getWorkcenterInfo(workcenterKey); // fetched info
       setWorkcenterInfo(info);
-
-      if (info && info["Part Number"]) {
-        setSubstratePartNo(
-          await api.getSubstratePartNumber(info["Part Number"])
-        );
-      }
       setPlexServer(api.getPlexServer());
       setInfoStatus("Loaded");
     } catch (error) {
@@ -59,16 +52,39 @@ const Assembly: React.FC = () => {
       response = await api.checkContainerExists(serialNo);
       logMessage(response.message);
 
-      if (String(response.partNo) != substratePartNo) {
-        throw new Error(
-          `Substrate part number does not match, please check workcenter configuration on Plex.Expected: ${substratePartNo}, Scanned: ${response.partNo}`
-        );
-      }
-      logMessage("Substrate part number matched ✔️");
-
-      response = await api.moveContainer(serialNo, "RIVIAN");
+      response = await api.moveContainer(serialNo, "Waterjet-3");
       logMessage(response.message);
+    } catch (error: any) {
+      logMessage(`Error: ${error.message} ❌`, "#FF6666");
+    }
+  };
 
+  /* buttons */
+  const [isOkLoading, setIsOkLoading] = useState(false);
+  const [isHoldLoading, setIsHoldLoading] = useState(false);
+
+  // Reusable function for handling button clicks
+  const handleButtonClick = async (
+    setLoadingState: (value: boolean) => void,
+    asyncOperation: () => Promise<void>
+  ) => {
+    setLoadingState(true);
+    try {
+      await asyncOperation();
+    } catch (error) {
+      console.error("Failed to perform async operation:", error);
+    } finally {
+      setLoadingState(false);
+    }
+  };
+
+  // Example async operations
+  const okOperation = async () => {
+    setBackgroundColor("#ffffff"); // reset background color
+    setMessages(() => []); // clear messages
+
+    try {
+      let response;
       logMessage("Recording production, please wait... ⏳");
       response = await api.recordProduction(workcenterKey);
       const newSerialNo = response.newSerialNo;
@@ -81,27 +97,74 @@ const Assembly: React.FC = () => {
     }
   };
 
+  const holdOperation = async () => {
+    setBackgroundColor("#ffffff"); // reset background color
+    setMessages(() => []); // clear messages
+
+    try {
+      let response;
+      logMessage("Recording production, please wait... ⏳");
+      response = await api.recordProduction(workcenterKey);
+      const newSerialNo = response.newSerialNo;
+      logMessage(response.message);
+
+      response = await api.changeContainerStatus(newSerialNo, "Hold");
+      logMessage(response.message);
+
+      response = await api.printLabel(newSerialNo);
+      logMessage(response.message, "#00CC66");
+    } catch (error: any) {
+      logMessage(`Error: ${error.message} ❌`, "#FF6666");
+    }
+  };
+
   const scanClassName = `w-2/3 ${infoStatus === "Loaded" ? "" : "hidden"}`;
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">RIVIAN Assembly Station</h1>
+      <h1 className="text-2xl font-bold mb-4">RIVIAN Waterjet Station</h1>
       <div className="flex">
         <div className="w-1/3 pr-4">
           <WorkcenterInfo
-            workcenterName="Assembly"
+            workcenterName="Waterjet3"
             status={infoStatus}
             plexServer={plexServer}
             workcenterInfo={workcenterInfo}
             onUpdate={handleInfoUpdate}
-            substratePartNo={substratePartNo}
           />
         </div>
         <div className={scanClassName}>
           <div className="mb-4">
             <ScanInput
               onScan={handleScan}
-              placeholder="Scan barcode on substrate label..."
+              placeholder="Scan or type carpet serial number..."
             />
+          </div>
+          {/* button group */}
+          <div className="flex space-x-4">
+            <button
+              className={`btn btn-lg btn-wide btn-success mr-5${
+                isOkLoading || isHoldLoading ? "hidden" : ""
+              }`}
+              onClick={() => handleButtonClick(setIsOkLoading, okOperation)}
+            >
+              Produce OK
+            </button>
+            <button
+              className={`btn btn-lg btn-wide btn-warning ${
+                isOkLoading || isHoldLoading ? "hidden" : ""
+              }`}
+              onClick={() => handleButtonClick(setIsHoldLoading, holdOperation)}
+            >
+              Produce Hold
+            </button>
+            <button
+              className={`btn btn-lg btn-wide ${
+                isOkLoading || isHoldLoading ? "" : "hidden"
+              }`}
+            >
+              <span className="loading loading-spinner"></span>
+              loading
+            </button>
           </div>
           <LogBox messages={messages} backgroundColor={backgroundColor} />
         </div>
@@ -110,4 +173,4 @@ const Assembly: React.FC = () => {
   );
 };
 
-export default Assembly;
+export default Waterjet;

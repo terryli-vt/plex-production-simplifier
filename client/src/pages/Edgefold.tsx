@@ -4,15 +4,14 @@ import LogBox from "../components/LogBox";
 import * as api from "../services/apiClient";
 import WorkcenterInfo from "./../components/WorkcenterInfo";
 
-const Assembly: React.FC = () => {
-  const workcenterKey = "72323"; // RIVIAN workcenter key
+const Edgefold: React.FC = () => {
+  const workcenterKey = "74883"; // Edgefold1 workcenter key
 
   // For workcenterInfo component
   const [infoStatus, setInfoStatus] = useState<string>("Idle");
   const [workcenterInfo, setWorkcenterInfo] = useState<{
     [key: string]: string | number;
   } | null>(null);
-  const [substratePartNo, setSubstratePartNo] = useState<string | null>(null);
   const [plexServer, setPlexServer] = useState<string | null>(null);
 
   // For handling update event from WorkcenterInfo component
@@ -21,12 +20,6 @@ const Assembly: React.FC = () => {
     try {
       const info = await api.getWorkcenterInfo(workcenterKey); // fetched info
       setWorkcenterInfo(info);
-
-      if (info && info["Part Number"]) {
-        setSubstratePartNo(
-          await api.getSubstratePartNumber(info["Part Number"])
-        );
-      }
       setPlexServer(api.getPlexServer());
       setInfoStatus("Loaded");
     } catch (error) {
@@ -57,24 +50,25 @@ const Assembly: React.FC = () => {
     try {
       let response;
       response = await api.checkContainerExists(serialNo);
-      logMessage(response.message);
 
-      if (String(response.partNo) != substratePartNo) {
+      // Check if the scanned part number matches the workcenter setup
+      const workcenterPartNo = workcenterInfo!["Part Number"];
+      if (String(response.partNo) != workcenterPartNo) {
         throw new Error(
-          `Substrate part number does not match, please check workcenter configuration on Plex.Expected: ${substratePartNo}, Scanned: ${response.partNo}`
+          `Scanned part number does not match, please check workcenter configuration on Plex. Expected: ${workcenterPartNo}, Scanned: ${response.partNo}`
         );
       }
-      logMessage("Substrate part number matched ✔️");
 
-      response = await api.moveContainer(serialNo, "RIVIAN");
+      // Check if the container is ready for edgefolding
+      if (String(response.operation) != "Waterjet") {
+        if (String(response.operation) == "Edgefold") {
+          throw new Error(`Serial No ${serialNo} was already edgefolded.`);
+        }
+        throw new Error(`Serial No ${serialNo} is not ready for edgefolding.`);
+      }
       logMessage(response.message);
-
       logMessage("Recording production, please wait... ⏳");
-      response = await api.recordProduction(workcenterKey);
-      const newSerialNo = response.newSerialNo;
-      logMessage(response.message);
-
-      response = await api.printLabel(newSerialNo);
+      response = await api.recordProductionBFB(workcenterKey, serialNo);
       logMessage(response.message, "#00CC66");
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
@@ -84,16 +78,15 @@ const Assembly: React.FC = () => {
   const scanClassName = `w-2/3 ${infoStatus === "Loaded" ? "" : "hidden"}`;
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">RIVIAN Assembly Station</h1>
+      <h1 className="text-2xl font-bold mb-4">RIVIAN Edgefold Station</h1>
       <div className="flex">
         <div className="w-1/3 pr-4">
           <WorkcenterInfo
-            workcenterName="Assembly"
+            workcenterName="Edgefold"
             status={infoStatus}
             plexServer={plexServer}
             workcenterInfo={workcenterInfo}
             onUpdate={handleInfoUpdate}
-            substratePartNo={substratePartNo}
           />
         </div>
         <div className={scanClassName}>
@@ -110,4 +103,4 @@ const Assembly: React.FC = () => {
   );
 };
 
-export default Assembly;
+export default Edgefold;

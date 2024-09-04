@@ -15,6 +15,12 @@ const Navbar: React.FC = () => {
             Waterjet
           </Link>
           <Link
+            to="/edgefold"
+            className="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium ml-4"
+          >
+            Edgefold
+          </Link>
+          <Link
             to="/assembly"
             className="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium ml-4"
           >

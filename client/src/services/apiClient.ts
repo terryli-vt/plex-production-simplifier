@@ -97,6 +97,37 @@ export const checkContainerExists = async (serialNo: string): Promise<any> => {
   }
 };
 
+// Change a container's status (for hold)
+export const changeContainerStatus = async (
+  serialNo: string,
+  newStatus: string
+): Promise<any> => {
+  const url = `${serverURL}/change-container-status`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const plexServer = getPlexServer();
+  const body = JSON.stringify({ serialNo, newStatus, plexServer });
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: body,
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.message || "Failed to change container status");
+    }
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Move container using Plex API
 export const moveContainer = async (
   serialNo: string,
@@ -159,6 +190,46 @@ export const recordProduction = async (workcenterKey: string): Promise<any> => {
     // Check if the operation was successful
     if (!result.success) {
       throw new Error(result.message || "Failed to record production");
+    }
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Record production Bin-for-Bin
+export const recordProductionBFB = async (
+  workcenterKey: string,
+  serialNo: string
+): Promise<any> => {
+  const url = `${serverURL}/record-production-bfb`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const plexServer = getPlexServer();
+  const body = JSON.stringify({
+    plexServer,
+    workcenterKey,
+    serialNo,
+  });
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: body,
+    });
+
+    // Parse the JSON response
+    const result = await response.json();
+
+    // Check if the operation was successful
+    if (!result.success) {
+      throw new Error(
+        result.message || "Failed to record bin-for-bin production"
+      );
     }
     return result;
   } catch (error) {
