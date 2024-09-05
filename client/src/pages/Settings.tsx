@@ -6,6 +6,15 @@ const Settings: React.FC = () => {
     { key: "Test", value: "Test" },
   ];
 
+  const waterjetPrinterOptions = [
+    { key: "Waterjet", value: "10.24.1.61" },
+    { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
+    { key: "Test", value: "10.24.3.239" },
+    { key: "Assembly", value: "10.24.2.141" },
+    { key: "Line 3 Packing", value: "10.24.3.112" },
+    { key: "Toyota Backup", value: "10.24.3.159" },
+  ];
+
   const assemblyPrinterOptions = [
     { key: "Assembly", value: "10.24.2.141" },
     { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
@@ -31,6 +40,9 @@ const Settings: React.FC = () => {
   const [plexServer, setPlexServer] = useState<string>(
     () => getDefaultValue(plexServerOptions, "plexServer") // option, storageKey
   );
+  const [waterjetPrinter, setWaterjetPrinter] = useState<string>(() =>
+    getDefaultValue(waterjetPrinterOptions, "waterjetPrinter")
+  );
   const [assemblyPrinter, setAssemblyPrinter] = useState<string>(() =>
     getDefaultValue(assemblyPrinterOptions, "assemblyPrinter")
   );
@@ -39,6 +51,10 @@ const Settings: React.FC = () => {
   useEffect(() => {
     localStorage.setItem("plexServer", plexServer);
   }, [plexServer]);
+
+  useEffect(() => {
+    localStorage.setItem("waterjetPrinter", waterjetPrinter);
+  }, [waterjetPrinter]);
 
   useEffect(() => {
     localStorage.setItem("assemblyPrinter", assemblyPrinter);
@@ -61,6 +77,26 @@ const Settings: React.FC = () => {
           className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         >
           {plexServerOptions.map((option) => (
+            <option key={option.key} value={option.value}>
+              {option.key}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="mb-4">
+        <label
+          htmlFor="printer"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Select Printer for RIVIAN Waterjet Line:
+        </label>
+        <select
+          id="waterjetPrinter"
+          value={waterjetPrinter}
+          onChange={(e) => setWaterjetPrinter(e.target.value)}
+          className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        >
+          {waterjetPrinterOptions.map((option) => (
             <option key={option.key} value={option.value}>
               {option.key}
             </option>

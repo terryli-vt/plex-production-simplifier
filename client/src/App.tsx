@@ -6,6 +6,7 @@ import Waterjet from "./pages/Waterjet";
 import Edgefold from "./pages/Edgefold";
 import Assembly from "./pages/Assembly";
 import Settings from "./pages/Settings";
+import RepairCenter from "./pages/RepairCenter";
 
 const Home: React.FC = () => {
   return (
@@ -25,6 +26,9 @@ const Home: React.FC = () => {
           <Link to="/assembly">Assembly</Link>
         </li>
         <li>
+          <Link to="/repair">Repair Center</Link>
+        </li>
+        <li>
           <Link to="/settings">Settings</Link>
         </li>
       </ul>
@@ -42,6 +46,7 @@ const App: React.FC = () => {
           <Route path="/waterjet" element={<Waterjet />} />
           <Route path="/edgefold" element={<Edgefold />} />
           <Route path="/assembly" element={<Assembly />} />
+          <Route path="/repair" element={<RepairCenter />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </div>

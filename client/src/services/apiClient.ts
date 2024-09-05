@@ -3,11 +3,15 @@ const serverURL = "http://localhost:3300";
 
 // Retrieve from local storage (or use default values)
 export const getPlexServer = (): string => {
-  return localStorage.getItem("plexServer") || "Test";
+  return localStorage.getItem("plexServer") || "Production";
 };
 
-const getPrinterIP = (): string => {
-  return localStorage.getItem("assemblyPrinter") || "10.24.3.239";
+const getWaterjetPrinterIP = (): string => {
+  return localStorage.getItem("waterjetPrinter") || "10.24.1.61";
+};
+
+const getAssemblyPrinterIP = (): string => {
+  return localStorage.getItem("assemblyPrinter") || "10.24.2.141";
 };
 
 // Get the latest workcenter information
@@ -70,8 +74,8 @@ export const getSubstratePartNumber = async (
 };
 
 // Check if a container exists in Plex
-export const checkContainerExists = async (serialNo: string): Promise<any> => {
-  const url = `${serverURL}/check-container-exists`;
+export const checkContainer = async (serialNo: string): Promise<any> => {
+  const url = `${serverURL}/check-container`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -238,7 +242,10 @@ export const recordProductionBFB = async (
 };
 
 // Print label
-export const printLabel = async (serialNo: string): Promise<any> => {
+export const printLabel = async (
+  serialNo: string,
+  workcenterName: string
+): Promise<any> => {
   const url = `${serverURL}/print-label`;
 
   const headers = {
@@ -246,7 +253,14 @@ export const printLabel = async (serialNo: string): Promise<any> => {
   };
 
   const plexServer = getPlexServer();
-  const printerIP = getPrinterIP();
+  let printerIP;
+
+  if (workcenterName === "Waterjet-3") {
+    printerIP = getWaterjetPrinterIP();
+  } else if (workcenterName === "RIVIAN") {
+    printerIP = getAssemblyPrinterIP();
+  }
+
   const body = JSON.stringify({
     serialNo,
     plexServer,

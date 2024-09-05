@@ -56,12 +56,12 @@ const Assembly: React.FC = () => {
 
     try {
       let response;
-      response = await api.checkContainerExists(serialNo);
+      response = await api.checkContainer(serialNo);
       logMessage(response.message);
 
-      if (String(response.partNo) != substratePartNo) {
+      if (String(response.containerInfo["Part Number"]) != substratePartNo) {
         throw new Error(
-          `Substrate part number does not match, please check workcenter configuration on Plex.Expected: ${substratePartNo}, Scanned: ${response.partNo}`
+          `Substrate part number does not match, please check workcenter configuration on Plex.Expected: ${substratePartNo}, Scanned: ${response.containerInfo["Part Number"]}`
         );
       }
       logMessage("Substrate part number matched ✔️");
@@ -74,7 +74,7 @@ const Assembly: React.FC = () => {
       const newSerialNo = response.newSerialNo;
       logMessage(response.message);
 
-      response = await api.printLabel(newSerialNo);
+      response = await api.printLabel(newSerialNo, "RIVIAN");
       logMessage(response.message, "#00CC66");
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");

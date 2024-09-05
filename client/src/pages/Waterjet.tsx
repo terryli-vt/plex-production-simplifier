@@ -49,7 +49,7 @@ const Waterjet: React.FC = () => {
 
     try {
       let response;
-      response = await api.checkContainerExists(serialNo);
+      response = await api.checkContainer(serialNo);
       logMessage(response.message);
 
       response = await api.moveContainer(serialNo, "Waterjet-3");
@@ -84,13 +84,16 @@ const Waterjet: React.FC = () => {
     setMessages(() => []); // clear messages
 
     try {
+      /* // Simulate an async operation (fetching from an endpoint)
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Example: 2 seconds delay */
+
       let response;
       logMessage("Recording production, please wait... ⏳");
       response = await api.recordProduction(workcenterKey);
       const newSerialNo = response.newSerialNo;
       logMessage(response.message);
 
-      response = await api.printLabel(newSerialNo);
+      response = await api.printLabel(newSerialNo, "Waterjet-3");
       logMessage(response.message, "#00CC66");
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
@@ -102,6 +105,9 @@ const Waterjet: React.FC = () => {
     setMessages(() => []); // clear messages
 
     try {
+      /* // Simulate an async operation (fetching from an endpoint)
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Example: 2 seconds delay */
+
       let response;
       logMessage("Recording production, please wait... ⏳");
       response = await api.recordProduction(workcenterKey);
@@ -111,7 +117,7 @@ const Waterjet: React.FC = () => {
       response = await api.changeContainerStatus(newSerialNo, "Hold");
       logMessage(response.message);
 
-      response = await api.printLabel(newSerialNo);
+      response = await api.printLabel(newSerialNo, "Waterjet-3");
       logMessage(response.message, "#00CC66");
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
@@ -142,7 +148,7 @@ const Waterjet: React.FC = () => {
           {/* button group */}
           <div className="flex space-x-4">
             <button
-              className={`btn btn-lg btn-wide btn-success mr-5${
+              className={`btn btn-lg btn-wide btn-success mr-5 ${
                 isOkLoading || isHoldLoading ? "hidden" : ""
               }`}
               onClick={() => handleButtonClick(setIsOkLoading, okOperation)}

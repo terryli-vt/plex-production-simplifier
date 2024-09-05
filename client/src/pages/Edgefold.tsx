@@ -49,19 +49,19 @@ const Edgefold: React.FC = () => {
 
     try {
       let response;
-      response = await api.checkContainerExists(serialNo);
+      response = await api.checkContainer(serialNo);
 
       // Check if the scanned part number matches the workcenter setup
       const workcenterPartNo = workcenterInfo!["Part Number"];
-      if (String(response.partNo) != workcenterPartNo) {
+      if (String(response.containerInfo["Part Number"]) != workcenterPartNo) {
         throw new Error(
-          `Scanned part number does not match, please check workcenter configuration on Plex. Expected: ${workcenterPartNo}, Scanned: ${response.partNo}`
+          `Scanned part number does not match, please check workcenter configuration on Plex. Expected: ${workcenterPartNo}, Scanned: ${response.containerInfo["Part Number"]}`
         );
       }
 
       // Check if the container is ready for edgefolding
-      if (String(response.operation) != "Waterjet") {
-        if (String(response.operation) == "Edgefold") {
+      if (String(response.containerInfo["Operation"]) != "Waterjet") {
+        if (String(response.containerInfo["Operation"]) == "Edgefold") {
           throw new Error(`Serial No ${serialNo} was already edgefolded.`);
         }
         throw new Error(`Serial No ${serialNo} is not ready for edgefolding.`);

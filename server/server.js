@@ -162,7 +162,7 @@ app.post("/get-substrate-part-no", async (req, res) => {
   }
 });
 
-app.post("/check-container-exists", async (req, res) => {
+app.post("/check-container", async (req, res) => {
   const { serialNo, plexServer } = req.body;
 
   const prefix = plexServer === "Test" ? "test." : "";
@@ -195,16 +195,44 @@ app.post("/check-container-exists", async (req, res) => {
       throw new Error(`Container ${serialNo} does not exist`);
     }
 
-    const partNoIndex = columns.indexOf("Part_No_Revision");
-    const partNo = rows.map((row) => row[partNoIndex]);
-    const operationIndex = columns.indexOf("Operation_Code");
-    const operation = rows.map((row) => row[operationIndex]);
-    // await checkContainerExists(url, data);
+    const row = rows[0];
+
+    // Desired properties
+    const properties = [
+      "Part_No_Revision",
+      "Name",
+      "Operation_Code",
+      "Quantity",
+      "Container_Status",
+      "Location",
+    ];
+
+    // Mapping of original property names to new names
+    const propertyMap = {
+      Part_No_Revision: "Part Number",
+      Name: "Part Name",
+      Operation_Code: "Operation",
+      Quantity: "Quantity",
+      Container_Status: "Status",
+      Location: "Location",
+    };
+
+    // Create an object to hold the extracted values
+    let containerInfo = {};
+
+    // Loop through the properties and find their corresponding values
+    properties.forEach((prop) => {
+      const index = columns.indexOf(prop);
+      if (index !== -1) {
+        const newPropName = propertyMap[prop];
+        containerInfo[newPropName] = row[index];
+      }
+    });
+
     res.json({
       success: true,
       message: `Container ${serialNo} exists ✔️`,
-      partNo,
-      operation,
+      containerInfo,
     });
   } catch (error) {
     console.log("error = ", error);
@@ -315,7 +343,7 @@ app.post("/record-production", async (req, res) => {
     const result = await response.json();
     const newSerialNo = result.outputs.Recorded_Serial_No;
     if (!newSerialNo) {
-      throw new Error("Workcenter lacking other materials");
+      throw new Error("Workcenter has insufficient source");
     }
     res.json({
       success: true,
