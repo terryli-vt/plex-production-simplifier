@@ -9,6 +9,7 @@ const RepairCenter: React.FC = () => {
   const [containerInfo, setContainerInfo] = useState<{
     [key: string]: string | number;
   } | null>(null);
+  const [serial, setSerial] = useState<string | null>(null);
   const [infoStatus, setInfoStatus] = useState<string>("Idle");
 
   // LogBox Component
@@ -25,21 +26,54 @@ const RepairCenter: React.FC = () => {
   };
 
   // ScanInput Component
-  // handle the scanned result
-  const handleScan = async (serialNo: string) => {
+  const loadContainerInfo = async (serialNo: string) => {
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
     setInfoStatus("Loading");
-
     try {
-      let response;
-      response = await api.checkContainer(serialNo);
+      const response = await api.checkContainer(serialNo);
       setContainerInfo(response.containerInfo);
+      setSerial(response.serialNo);
       setInfoStatus("Loaded");
       logMessage(response.message);
+      logMessage(`Container Status: ${response.containerInfo["Status"]}`);
     } catch (error: any) {
       setInfoStatus("Error");
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
+    }
+  };
+
+  const changeContainerStatus = async (serialNo: string, newStatus: string) => {
+    try {
+      const response = await api.changeContainerStatus(serialNo, newStatus);
+      logMessage(response.message);
+    } catch (error: any) {
+      logMessage(`Error: ${error.message} ❌`, "#FF6666");
+    }
+  };
+
+  /* Handle Scrap */
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isScrapping, setIsScrapping] = useState(false);
+
+  // Function to handle scrap confirmation
+  const handleScrap = async () => {
+    setIsScrapping(true);
+    setIsModalOpen(false);
+
+    try {
+      /* // Simulate async scrapping operation
+      await new Promise((resolve) => setTimeout(resolve, 2000)); */
+      const response = await api.scrapContainer(serial!);
+      logMessage(response.message);
+
+      setMessages(() => []); // clear messages
+      setInfoStatus("Idle");
+    } catch (error: any) {
+      logMessage(`Error: ${error.message} ❌`, "#FF6666");
+      console.error("Failed to scrap the container:", error);
+    } finally {
+      setIsScrapping(false);
     }
   };
 
@@ -57,19 +91,64 @@ const RepairCenter: React.FC = () => {
         <div className="w-2/3">
           <div className="mb-4">
             <ScanInput
-              onScan={handleScan}
+              onScan={loadContainerInfo}
               placeholder="Scan barcode on the label..."
             />
           </div>
           {/* button group */}
-          <div className="flex">
-            <button className={`btn btn-lg btn-wide btn-success mr-5`}>
+          <div className={`flex ${infoStatus === "Loaded" ? "" : "hidden"}`}>
+            <button
+              className={`btn btn-lg btn-wide btn-success mr-5`}
+              onClick={async () => {
+                await changeContainerStatus(serial!, "OK");
+                loadContainerInfo(serial!);
+              }}
+            >
               OK
             </button>
-            <button className={`btn btn-lg btn-wide btn-warning mr-5`}>
+            <button
+              className={`btn btn-lg btn-wide btn-warning mr-5`}
+              onClick={async () => {
+                await changeContainerStatus(serial!, "Hold");
+                loadContainerInfo(serial!);
+              }}
+            >
               Hold
             </button>
-            <button className={`btn btn-lg btn-wide btn-error`}>Scrap</button>
+            <button
+              className={`btn btn-lg btn-wide btn-error`}
+              onClick={() => setIsModalOpen(true)}
+              disabled={isScrapping}
+            >
+              Scrap
+            </button>
+
+            {/* Modal dialog for confirmation */}
+            {isModalOpen && (
+              <div className="modal modal-open">
+                <div className="modal-box">
+                  <h3 className="font-bold text-lg">Are you sure?</h3>
+                  <p className="py-4">
+                    Do you really want to scrap this container? This action
+                    cannot be undone.
+                  </p>
+                  <div className="modal-action">
+                    {/* Confirm Button */}
+                    <button className="btn btn-error" onClick={handleScrap}>
+                      Yes, Scrap it
+                    </button>
+
+                    {/* Cancel Button */}
+                    <button
+                      className="btn"
+                      onClick={() => setIsModalOpen(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           <LogBox messages={messages} backgroundColor={backgroundColor} />
         </div>

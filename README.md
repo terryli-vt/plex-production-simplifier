@@ -4,12 +4,22 @@ This application helps to simplify the process of recording production on the Pl
 
 ## Features
 
-- Move Inventory
-- Record production
-- Print label for a specific container based on its serial number.
+- Waterjet workcenter
+  - Record production (good and hold parts)
+  - Load carpet source
+- Edgefold workcenter
+  - Record bin-for-bin production
+- Assembly workcenter
+  - Record production
+- Repair center
+  - Change container's status
+  - Scrap containers
+- Setting
+  - Toggle between Test and Production Plex Server
+  - Change printer settings
 
 ## TODO
 
 - User login (operator & admin)
-- Check if container is in edgefold location before moving to assembly
-- Pack
+- Real-time Update of the workcenter information
+- Packing Station

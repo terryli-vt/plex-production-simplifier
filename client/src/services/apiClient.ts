@@ -132,6 +132,34 @@ export const changeContainerStatus = async (
   }
 };
 
+// Scrap container
+export const scrapContainer = async (serialNo: string): Promise<any> => {
+  const url = `${serverURL}/scrap-container`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const plexServer = getPlexServer();
+  const body = JSON.stringify({ serialNo, plexServer });
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: body,
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.message || "Failed to scrap container");
+    }
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Move container using Plex API
 export const moveContainer = async (
   serialNo: string,

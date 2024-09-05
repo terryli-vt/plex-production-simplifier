@@ -8,6 +8,8 @@ const Settings: React.FC = () => {
 
   const waterjetPrinterOptions = [
     { key: "Waterjet", value: "10.24.1.61" },
+    { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
+    { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
     { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
     { key: "Test", value: "10.24.3.239" },
     { key: "Assembly", value: "10.24.2.141" },
@@ -17,6 +19,8 @@ const Settings: React.FC = () => {
 
   const assemblyPrinterOptions = [
     { key: "Assembly", value: "10.24.2.141" },
+    { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
+    { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
     { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
     { key: "Test", value: "10.24.3.239" },
     { key: "Waterjet", value: "10.24.1.61" },

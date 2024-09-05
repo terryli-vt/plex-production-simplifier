@@ -233,6 +233,7 @@ app.post("/check-container", async (req, res) => {
       success: true,
       message: `Container ${serialNo} exists ✔️`,
       containerInfo,
+      serialNo,
     });
   } catch (error) {
     console.log("error = ", error);
@@ -269,6 +270,48 @@ app.post("/change-container-status", async (req, res) => {
     res.json({
       success: true,
       message: `Container ${serialNo} changed to ${newStatus} status ✔️`,
+    });
+  } catch (error) {
+    console.log("error = ", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.post("/scrap-container", async (req, res) => {
+  const { serialNo, plexServer } = req.body;
+
+  const prefix = plexServer === "Test" ? "test." : "";
+
+  try {
+    const url = `https://${prefix}cloud.plex.com/api/datasources/21052/execute?`;
+    const data = {
+      inputs: {
+        Serial_No: serialNo,
+        Scrap_Reason: "Bad Substrate",
+        Scrap_Quantity: 1,
+      },
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: process.env.AUTH_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error(`Plex API failed to scrap container`);
+    }
+
+    const result = await response.json();
+    if (result.outputs.Result_Error) {
+      throw new Error(result.outputs.Result_Message);
+    }
+
+    res.json({
+      success: true,
+      message: `Container ${serialNo} has been scrapped ✔️`,
     });
   } catch (error) {
     console.log("error = ", error);

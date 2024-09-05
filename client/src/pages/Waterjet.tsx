@@ -142,7 +142,7 @@ const Waterjet: React.FC = () => {
           <div className="mb-4">
             <ScanInput
               onScan={handleScan}
-              placeholder="Scan or type carpet serial number..."
+              placeholder="To load carpet, scan or type serial number..."
             />
           </div>
           {/* button group */}
