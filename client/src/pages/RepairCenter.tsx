@@ -26,7 +26,11 @@ const RepairCenter: React.FC = () => {
   };
 
   // ScanInput Component
+  // Loading state for ScanInput
+  const [isScanLoading, setIsScanLoading] = useState(false);
+
   const loadContainerInfo = async (serialNo: string) => {
+    setIsScanLoading(true); // set loading state
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
     setInfoStatus("Loading");
@@ -40,6 +44,8 @@ const RepairCenter: React.FC = () => {
     } catch (error: any) {
       setInfoStatus("Error");
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
+    } finally {
+      setIsScanLoading(false); // Stop loading when done
     }
   };
 
@@ -93,6 +99,7 @@ const RepairCenter: React.FC = () => {
             <ScanInput
               onScan={loadContainerInfo}
               placeholder="Scan barcode on the label..."
+              loading={isScanLoading}
             />
           </div>
           {/* button group */}

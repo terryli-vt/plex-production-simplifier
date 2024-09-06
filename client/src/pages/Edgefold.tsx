@@ -42,14 +42,21 @@ const Edgefold: React.FC = () => {
   };
 
   // ScanInput Component
+  // Loading state for ScanInput
+  const [isScanLoading, setIsScanLoading] = useState(false);
+
   // handle the scanned result
   const handleScan = async (serialNo: string) => {
+    setIsScanLoading(true); // set loading state
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
 
     try {
-      let response;
-      response = await api.checkContainer(serialNo);
+      /* // Simulate an async operation (fetching from an endpoint)
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Example: 2 seconds delay */
+
+      let response = await api.checkContainer(serialNo);
+      logMessage(response.message);
 
       // Check if the scanned part number matches the workcenter setup
       const workcenterPartNo = workcenterInfo!["Part Number"];
@@ -58,6 +65,7 @@ const Edgefold: React.FC = () => {
           `Scanned part number does not match, please check workcenter configuration on Plex. Expected: ${workcenterPartNo}, Scanned: ${response.containerInfo["Part Number"]}`
         );
       }
+      logMessage("Substrate part number matched ✔️");
 
       // Check if the container is ready for edgefolding
       if (String(response.containerInfo["Operation"]) != "Waterjet") {
@@ -66,12 +74,14 @@ const Edgefold: React.FC = () => {
         }
         throw new Error(`Serial No ${serialNo} is not ready for edgefolding.`);
       }
-      logMessage(response.message);
+
       logMessage("Recording production, please wait... ⏳");
       response = await api.recordProductionBFB(workcenterKey, serialNo);
       logMessage(response.message, "#00CC66");
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
+    } finally {
+      setIsScanLoading(false); // Stop loading when done
     }
   };
 
@@ -94,6 +104,7 @@ const Edgefold: React.FC = () => {
             <ScanInput
               onScan={handleScan}
               placeholder="Scan barcode on substrate label..."
+              loading={isScanLoading}
             />
           </div>
           <LogBox messages={messages} backgroundColor={backgroundColor} />

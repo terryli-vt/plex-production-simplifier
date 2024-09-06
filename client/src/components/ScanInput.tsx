@@ -1,12 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 // Define the shape of the props this component expects to receive.
 interface ScanInputProps {
   onScan: (parsedResult: string) => void;
   placeholder: string;
+  loading: boolean;
 }
 
-const ScanInput: React.FC<ScanInputProps> = ({ onScan, placeholder }) => {
+const ScanInput: React.FC<ScanInputProps> = ({
+  onScan,
+  placeholder,
+  loading,
+}) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [clearInput, setClearInput] = useState<boolean>(false); // a flag to clear the input field
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,6 +40,13 @@ const ScanInput: React.FC<ScanInputProps> = ({ onScan, placeholder }) => {
     }
   };
 
+  // Use useEffect to focus the input when loading finishes
+  useEffect(() => {
+    if (!loading && inputRef.current) {
+      inputRef.current.focus(); // Set focus back to the input element
+    }
+  }, [loading]); // Trigger this effect when the loading state changes
+
   return (
     <input
       ref={inputRef}
@@ -46,6 +58,7 @@ const ScanInput: React.FC<ScanInputProps> = ({ onScan, placeholder }) => {
       placeholder={placeholder}
       autoFocus
       onBlur={() => inputRef.current?.focus()}
+      disabled={loading}
     />
   );
 };

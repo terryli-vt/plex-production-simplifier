@@ -23,3 +23,4 @@ This application helps to simplify the process of recording production on the Pl
 - User login (operator & admin)
 - Real-time Update of the workcenter information
 - Packing Station
+- Spanish version

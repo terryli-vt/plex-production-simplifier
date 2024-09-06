@@ -42,20 +42,25 @@ const Waterjet: React.FC = () => {
   };
 
   // ScanInput Component
+  // Loading state for ScanInput
+  const [isScanLoading, setIsScanLoading] = useState(false);
+
   // handle the scanned result
   const handleScan = async (serialNo: string) => {
+    setIsScanLoading(true); // set loading state
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
 
     try {
-      let response;
-      response = await api.checkContainer(serialNo);
+      let response = await api.checkContainer(serialNo);
       logMessage(response.message);
 
       response = await api.moveContainer(serialNo, "Waterjet-3");
       logMessage(response.message);
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
+    } finally {
+      setIsScanLoading(false); // Stop loading when done
     }
   };
 
@@ -143,6 +148,7 @@ const Waterjet: React.FC = () => {
             <ScanInput
               onScan={handleScan}
               placeholder="To load carpet, scan or type serial number..."
+              loading={isScanLoading}
             />
           </div>
           {/* button group */}

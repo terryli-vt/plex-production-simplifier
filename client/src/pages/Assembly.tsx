@@ -49,19 +49,23 @@ const Assembly: React.FC = () => {
   };
 
   // ScanInput Component
+  // Loading state for ScanInput
+  const [isScanLoading, setIsScanLoading] = useState(false);
+
   // handle the scanned result
   const handleScan = async (serialNo: string) => {
+    setIsScanLoading(true); // set loading state
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
 
     try {
-      let response;
-      response = await api.checkContainer(serialNo);
+      let response = await api.checkContainer(serialNo);
       logMessage(response.message);
 
+      // Check if the scanned substrate number matches the workcenter setup
       if (String(response.containerInfo["Part Number"]) != substratePartNo) {
         throw new Error(
-          `Substrate part number does not match, please check workcenter configuration on Plex.Expected: ${substratePartNo}, Scanned: ${response.containerInfo["Part Number"]}`
+          `Substrate part number does not match, please check workcenter configuration on Plex. Expected: ${substratePartNo}, Scanned: ${response.containerInfo["Part Number"]}`
         );
       }
       logMessage("Substrate part number matched ✔️");
@@ -78,6 +82,8 @@ const Assembly: React.FC = () => {
       logMessage(response.message, "#00CC66");
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
+    } finally {
+      setIsScanLoading(false); // Stop loading when done
     }
   };
 
@@ -101,6 +107,7 @@ const Assembly: React.FC = () => {
             <ScanInput
               onScan={handleScan}
               placeholder="Scan barcode on substrate label..."
+              loading={isScanLoading}
             />
           </div>
           <LogBox messages={messages} backgroundColor={backgroundColor} />
