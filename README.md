@@ -2,6 +2,8 @@
 
 This application helps to simplify the process of recording production on the Plex ERP
 
+An alternative of Mach 2 application
+
 ## Features
 
 - Waterjet workcenter
@@ -22,5 +24,8 @@ This application helps to simplify the process of recording production on the Pl
 
 - User login (operator & admin)
 - Real-time Update of the workcenter information
+- Assembly Station prevent part being recorded if it's not in Edgefold operation
 - Packing Station
 - Spanish version
+- Responsive Design for smaller screens (phone and tablet)
+- About Page & Copyright

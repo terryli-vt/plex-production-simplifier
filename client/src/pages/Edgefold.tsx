@@ -56,6 +56,11 @@ const Edgefold: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 2000)); // Example: 2 seconds delay */
 
       let response = await api.checkContainer(serialNo);
+
+      if (response.containerInfo["Quantity"] === 0) {
+        throw new Error("Container is inactive.");
+      }
+
       logMessage(response.message);
 
       // Check if the scanned part number matches the workcenter setup

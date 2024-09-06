@@ -60,7 +60,12 @@ const Assembly: React.FC = () => {
 
     try {
       let response = await api.checkContainer(serialNo);
-      logMessage(response.message);
+
+      if (response.containerInfo["Quantity"] === 0) {
+        throw new Error("Container is inactive.");
+      }
+
+      logMessage(response.message); // container exists
 
       // Check if the scanned substrate number matches the workcenter setup
       if (String(response.containerInfo["Part Number"]) != substratePartNo) {
