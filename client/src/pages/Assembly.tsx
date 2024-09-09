@@ -61,6 +61,7 @@ const Assembly: React.FC = () => {
     try {
       let response = await api.checkContainer(serialNo);
 
+      // Check if the container is active
       if (response.containerInfo["Quantity"] === 0) {
         throw new Error("Container is inactive.");
       }
@@ -75,6 +76,13 @@ const Assembly: React.FC = () => {
       }
       logMessage("Substrate part number matched ✔️");
 
+      // Check if the container is edgefolded
+      if (String(response.containerInfo["Operation"]) !== "Edgefold") {
+        throw new Error(
+          `This container is not in edgefold operation. Current operation: ${response.containerInfo["Operation"]}`
+        );
+      }
+
       response = await api.moveContainer(serialNo, "RIVIAN");
       logMessage(response.message);
 
@@ -82,6 +90,8 @@ const Assembly: React.FC = () => {
       response = await api.recordProduction(workcenterKey);
       const newSerialNo = response.newSerialNo;
       logMessage(response.message);
+
+      await handleInfoUpdate(); // Refresh workcenter info
 
       response = await api.printLabel(newSerialNo, "RIVIAN");
       logMessage(response.message, "#00CC66");

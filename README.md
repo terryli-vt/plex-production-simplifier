@@ -13,18 +13,22 @@ An alternative of Mach 2 application
   - Record bin-for-bin production
 - Assembly workcenter
   - Record production
+  - Prevent part being recorded if it's not in Edgefold operation
 - Repair center
   - Change container's status
   - Scrap containers
 - Setting
   - Toggle between Test and Production Plex Server
   - Change printer settings
+- Other features
+  - Real-time Update of the workcenter information
 
 ## TODO
 
 - User login (operator & admin)
-- Real-time Update of the workcenter information
-- Assembly Station prevent part being recorded if it's not in Edgefold operation
+- Autofocus on the input field
+- Assembly
+  - Check workcenter has no substrate loaded before production
 - Packing Station
 - Spanish version
 - Responsive Design for smaller screens (phone and tablet)

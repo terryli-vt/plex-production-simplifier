@@ -27,6 +27,12 @@ const Navbar: React.FC = () => {
             Assembly
           </Link>
           <Link
+            to="/pack"
+            className="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium ml-4"
+          >
+            Pack
+          </Link>
+          <Link
             to="/repair"
             className="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium ml-4"
           >

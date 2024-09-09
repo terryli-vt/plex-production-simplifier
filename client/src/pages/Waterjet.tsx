@@ -100,6 +100,8 @@ const Waterjet: React.FC = () => {
 
       response = await api.printLabel(newSerialNo, "Waterjet-3");
       logMessage(response.message, "#00CC66");
+
+      await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     }
@@ -124,6 +126,8 @@ const Waterjet: React.FC = () => {
 
       response = await api.printLabel(newSerialNo, "Waterjet-3");
       logMessage(response.message, "#00CC66");
+
+      await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     }

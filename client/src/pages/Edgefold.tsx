@@ -83,6 +83,8 @@ const Edgefold: React.FC = () => {
       logMessage("Recording production, please wait... ⏳");
       response = await api.recordProductionBFB(workcenterKey, serialNo);
       logMessage(response.message, "#00CC66");
+
+      await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {

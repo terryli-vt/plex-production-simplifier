@@ -4,6 +4,11 @@ var cors = require("cors");
 require("dotenv").config();
 const getZplCode = require("./modules/getZpl");
 const sendZplToPrinter = require("./modules/printZpl");
+const {
+  getPartKey,
+  getOperationKey,
+  getStdQty,
+} = require("./modules/partInfo");
 
 const app = express();
 const port = 3300;
@@ -356,7 +361,7 @@ app.post("/move-container", async (req, res) => {
 });
 
 app.post("/record-production", async (req, res) => {
-  const { plexServer, workcenterKey } = req.body;
+  const { plexServer, workcenterKey, quantity } = req.body;
   const prefix = plexServer === "Test" ? "test." : "";
 
   try {
@@ -365,7 +370,7 @@ app.post("/record-production", async (req, res) => {
     const data = {
       inputs: {
         Container_Full_Move_Container: true,
-        Quantity: 1,
+        Quantity: quantity,
         Workcenter_Key: workcenterKey,
       },
     };
@@ -460,6 +465,46 @@ app.post("/print-label", async (req, res) => {
     res.json({ success: true, message: "Print label successfully ✔️" });
   } catch (error) {
     console.error("An error message:", error.message);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.post("/get-std-pack-qty", async (req, res) => {
+  const { plexServer, partNo } = req.body;
+  const prefix = plexServer === "Test" ? "test." : "";
+  try {
+    let url = `https://${prefix}cloud.plex.com/api/datasources/1786/execute?`;
+    let post_data = {
+      inputs: {
+        Part_No: partNo,
+      },
+    };
+    const partKey = await getPartKey(url, post_data);
+
+    url = `https://${prefix}cloud.plex.com/api/datasources/29200/execute?`;
+    post_data = {
+      inputs: {
+        Operation_Code: "Pack",
+        Part_Key: partKey,
+      },
+    };
+    const partOperationKey = await getOperationKey(url, post_data);
+
+    url = `https://${prefix}cloud.plex.com/api/datasources/4658/execute?`;
+    post_data = {
+      inputs: {
+        Part_Key: partKey,
+        Part_Operation_Key: partOperationKey,
+      },
+    };
+    const stdPackQty = await getStdQty(url, post_data);
+
+    res.json({
+      success: true,
+      message: `Get std pack qty successful ✔️`,
+      stdPackQty,
+    });
+  } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });

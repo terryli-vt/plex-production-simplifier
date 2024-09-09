@@ -14,6 +14,10 @@ const getAssemblyPrinterIP = (): string => {
   return localStorage.getItem("assemblyPrinter") || "10.24.2.141";
 };
 
+const getPackPrinterIP = (): string => {
+  return localStorage.getItem("packPrinter") || "10.24.2.141";
+};
+
 // Get the latest workcenter information
 export const getWorkcenterInfo = async (
   workcenterKey: string
@@ -196,7 +200,10 @@ export const moveContainer = async (
 };
 
 // Record production
-export const recordProduction = async (workcenterKey: string): Promise<any> => {
+export const recordProduction = async (
+  workcenterKey: string,
+  quantity: number = 1
+): Promise<any> => {
   const url = `${serverURL}/record-production`;
 
   const headers = {
@@ -207,6 +214,7 @@ export const recordProduction = async (workcenterKey: string): Promise<any> => {
   const body = JSON.stringify({
     plexServer,
     workcenterKey,
+    quantity,
   });
 
   try {
@@ -287,6 +295,8 @@ export const printLabel = async (
     printerIP = getWaterjetPrinterIP();
   } else if (workcenterName === "RIVIAN") {
     printerIP = getAssemblyPrinterIP();
+  } else if (workcenterName === "Pack-Rivian") {
+    printerIP = getPackPrinterIP();
   }
 
   const body = JSON.stringify({
@@ -308,6 +318,34 @@ export const printLabel = async (
       throw new Error(result.message || "Failed to print label");
     }
     return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Get standard pack quantity
+export const getStdPackQty = async (partNo: string): Promise<any> => {
+  const url = `${serverURL}/get-std-pack-qty`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const plexServer = getPlexServer();
+  const body = JSON.stringify({ partNo, plexServer });
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: body,
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.message || "Failed to get standard pack quantity");
+    }
+    return result.stdPackQty;
   } catch (error) {
     throw error;
   }

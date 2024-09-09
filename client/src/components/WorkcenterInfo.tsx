@@ -7,6 +7,7 @@ interface WorkcenterInfoProps {
   workcenterInfo: { [key: string]: string | number } | null;
   onUpdate: () => void;
   substratePartNo?: string | null;
+  stdPackQty?: number | null;
 }
 
 const WorkcenterInfo: React.FC<WorkcenterInfoProps> = ({
@@ -16,6 +17,7 @@ const WorkcenterInfo: React.FC<WorkcenterInfoProps> = ({
   workcenterInfo,
   onUpdate,
   substratePartNo,
+  stdPackQty,
 }) => {
   return (
     <div className="bg-gray-100 p-4 rounded shadow mb-4 w-full">
@@ -51,6 +53,16 @@ const WorkcenterInfo: React.FC<WorkcenterInfoProps> = ({
                   </td>
                   <td className="border px-4 py-2 whitespace-nowrap">
                     {substratePartNo}
+                  </td>
+                </tr>
+              )}
+              {stdPackQty && (
+                <tr>
+                  <td className="border px-4 py-2 whitespace-nowrap">
+                    Standard Pack Qty
+                  </td>
+                  <td className="border px-4 py-2 whitespace-nowrap">
+                    {stdPackQty}
                   </td>
                 </tr>
               )}

@@ -28,6 +28,18 @@ const Settings: React.FC = () => {
     { key: "Toyota Backup", value: "10.24.3.159" },
   ];
 
+  const packPrinterOptions = [
+    { key: "Pack", value: "10.24.2.1" },
+    { key: "Assembly", value: "10.24.2.141" },
+    { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
+    { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
+    { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
+    { key: "Test", value: "10.24.3.239" },
+    { key: "Waterjet", value: "10.24.1.61" },
+    { key: "Line 3 Packing", value: "10.24.3.112" },
+    { key: "Toyota Backup", value: "10.24.3.159" },
+  ];
+
   // Function to get the default value for a dropdown
   const getDefaultValue = (
     options: { key: string; value: string }[],
@@ -50,6 +62,9 @@ const Settings: React.FC = () => {
   const [assemblyPrinter, setAssemblyPrinter] = useState<string>(() =>
     getDefaultValue(assemblyPrinterOptions, "assemblyPrinter")
   );
+  const [packPrinter, setPackPrinter] = useState<string>(() =>
+    getDefaultValue(packPrinterOptions, "packPrinter")
+  );
 
   // Save values to localStorage whenever they change
   useEffect(() => {
@@ -64,10 +79,14 @@ const Settings: React.FC = () => {
     localStorage.setItem("assemblyPrinter", assemblyPrinter);
   }, [assemblyPrinter]);
 
+  useEffect(() => {
+    localStorage.setItem("packPrinter", packPrinter);
+  }, [packPrinter]);
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Settings</h1>
-      <div className="mb-4">
+      <div className="mb-6">
         <label
           htmlFor="server"
           className="block text-sm font-medium text-gray-700"
@@ -87,7 +106,7 @@ const Settings: React.FC = () => {
           ))}
         </select>
       </div>
-      <div className="mb-4">
+      <div className="mb-6">
         <label
           htmlFor="printer"
           className="block text-sm font-medium text-gray-700"
@@ -107,7 +126,7 @@ const Settings: React.FC = () => {
           ))}
         </select>
       </div>
-      <div>
+      <div className="mb-6">
         <label
           htmlFor="printer"
           className="block text-sm font-medium text-gray-700"
@@ -121,6 +140,26 @@ const Settings: React.FC = () => {
           className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         >
           {assemblyPrinterOptions.map((option) => (
+            <option key={option.key} value={option.value}>
+              {option.key}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label
+          htmlFor="printer"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Select Printer for RIVIAN Pack Line:
+        </label>
+        <select
+          id="packPrinter"
+          value={packPrinter}
+          onChange={(e) => setPackPrinter(e.target.value)}
+          className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        >
+          {packPrinterOptions.map((option) => (
             <option key={option.key} value={option.value}>
               {option.key}
             </option>
