@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ScanInput from "../components/ScanInput";
 import LogBox from "../components/LogBox";
 import * as api from "../services/apiClient";
@@ -69,6 +69,8 @@ const Pack: React.FC = () => {
       // Print label
       response = await api.printLabel(newSerialNo, "Pack-Rivian");
       logMessage(response.message, "#00CC66");
+
+      await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     }
@@ -150,6 +152,21 @@ const Pack: React.FC = () => {
       setIsScanLoading(false); // Stop loading when done
     }
   };
+
+  // prevent accidental page refresh
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+    };
+
+    // Attach the event listener
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <div className="p-4">
