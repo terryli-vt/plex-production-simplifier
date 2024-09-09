@@ -25,7 +25,9 @@ const PackList: React.FC<PackListProps> = ({
 
     // Auto trigger pack when we reach full quantity
     if (list.length === stdPackQty) {
-      onPack(); // Automatically call onPack when we reach the standard pack quantity
+      if (!isPacking) {
+        onPack(); // Automatically call onPack when we reach the standard pack quantity
+      }
     }
   }, [list, stdPackQty, onPack]);
 
