@@ -57,6 +57,7 @@ const Waterjet: React.FC = () => {
 
       response = await api.moveContainer(serialNo, "Waterjet-3");
       logMessage(response.message);
+      logMessage("Source loaded ✔️", "#00CC66");
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {
