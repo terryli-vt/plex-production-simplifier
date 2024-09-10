@@ -14,6 +14,8 @@ An alternative of Mach 2 application
 - Assembly workcenter
   - Record production
   - Prevent part being recorded if it's not in Edgefold operation
+- Packing Station
+  - Print shipping label once standard pack quantity is reached
 - Repair center
   - Change container's status
   - Scrap containers
@@ -22,14 +24,13 @@ An alternative of Mach 2 application
   - Change printer settings
 - Other features
   - Real-time Update of the workcenter information
+  - Autofocus on the input field
 
 ## TODO
 
 - User login (operator & admin)
-- Autofocus on the input field
 - Assembly
   - Check workcenter has no substrate loaded before production
-- Packing Station
 - Spanish version
 - Responsive Design for smaller screens (phone and tablet)
 - About Page & Copyright

@@ -12,6 +12,7 @@ const {
 
 const app = express();
 const port = 3300;
+// const port = 8000;
 
 // Middleware to parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,7 +26,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/about", (req, res) => {
-  res.send("Author: Tianyu Li");
+  res.send("Author: Tianyu (Terry) Li");
 });
 
 app.post("/get-workcenter-info", async (req, res) => {

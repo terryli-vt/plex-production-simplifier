@@ -19,6 +19,7 @@ const Pack: React.FC = () => {
   // For handling update event from WorkcenterInfo component
   const handleInfoUpdate = async () => {
     setInfoStatus("Loading");
+    setScanStatus("Idle"); // scan input is idle
     try {
       const info = await api.getWorkcenterInfo(workcenterKey); // fetched info
       setWorkcenterInfo(info);
@@ -28,6 +29,7 @@ const Pack: React.FC = () => {
       }
       setPlexServer(api.getPlexServer());
       setInfoStatus("Loaded");
+      setScanStatus("Ready"); // scan input is ready
     } catch (error) {
       console.error("Failed to fetch data:", error);
       setInfoStatus("Error");
@@ -58,7 +60,6 @@ const Pack: React.FC = () => {
   // Handle packing action (called when progress is 100% or user confirms)
   const handlePack = async () => {
     setIsPacking(true);
-    // await new Promise((resolve) => setTimeout(resolve, 2000)); // Example: 2 seconds delay */
     try {
       // Record production
       logMessage("Recording production, please wait... ⏳");
@@ -71,11 +72,12 @@ const Pack: React.FC = () => {
       logMessage(response.message, "#00CC66");
 
       await handleInfoUpdate(); // Refresh workcenter info
+      setList([]); // Reset the list after packing
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
+    } finally {
+      setIsPacking(false); // packing finished
     }
-    setIsPacking(false); // packing finished
-    setList([]); // Reset the list after packing
   };
 
   // Add to pack list
@@ -105,12 +107,12 @@ const Pack: React.FC = () => {
   };
 
   // ScanInput Component
-  // Loading state for ScanInput
-  const [isScanLoading, setIsScanLoading] = useState(false);
+  // Loading state for ScanInput (Idle, Loading, Ready)
+  const [scanStatus, setScanStatus] = useState<string>("Idle");
 
   // handle the scanned result
   const handleScan = async (serialNo: string) => {
-    setIsScanLoading(true); // set loading state
+    setScanStatus("Loading"); // disable scan
     if (list.length === 0) {
       setBackgroundColor("#ffffff"); // reset background color
       setMessages(() => []); // clear messages
@@ -124,8 +126,6 @@ const Pack: React.FC = () => {
         throw new Error("Container is inactive.");
       }
 
-      // logMessage(response.message); // container exists
-
       // Check if the scanned part number matches the workcenter setup
       const workcenterPartNo = workcenterInfo!["Part Number"];
       if (String(response.containerInfo["Part Number"]) != workcenterPartNo) {
@@ -133,7 +133,6 @@ const Pack: React.FC = () => {
           `Scanned part number does not match, please check workcenter configuration on Plex. Expected: ${workcenterPartNo}, Scanned: ${response.containerInfo["Part Number"]}`
         );
       }
-      // logMessage("Part number matched ✔️");
 
       // Check if the container is in Assembly operation
       if (String(response.containerInfo["Operation"]) !== "Assembly") {
@@ -149,7 +148,7 @@ const Pack: React.FC = () => {
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {
-      setIsScanLoading(false); // Stop loading when done
+      setScanStatus("Ready"); // enable scan
     }
   };
 
@@ -198,7 +197,7 @@ const Pack: React.FC = () => {
             <ScanInput
               onScan={handleScan}
               placeholder="Scan barcode on FG label..."
-              loading={isScanLoading}
+              status={scanStatus}
             />
           </div>
           <LogBox messages={messages} backgroundColor={backgroundColor} />

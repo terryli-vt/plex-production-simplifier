@@ -16,12 +16,14 @@ const Edgefold: React.FC = () => {
 
   // For handling update event from WorkcenterInfo component
   const handleInfoUpdate = async () => {
-    setInfoStatus("Loading");
+    setInfoStatus("Loading"); // workcenter info is loading
+    setScanStatus("Idle"); // scan input is idle
     try {
       const info = await api.getWorkcenterInfo(workcenterKey); // fetched info
       setWorkcenterInfo(info);
       setPlexServer(api.getPlexServer());
-      setInfoStatus("Loaded");
+      setInfoStatus("Loaded"); // workcenter info is loaded
+      setScanStatus("Ready"); // scan input is ready
     } catch (error) {
       console.error("Failed to fetch data:", error);
       setInfoStatus("Error");
@@ -42,25 +44,21 @@ const Edgefold: React.FC = () => {
   };
 
   // ScanInput Component
-  // Loading state for ScanInput
-  const [isScanLoading, setIsScanLoading] = useState(false);
+  // Loading state for ScanInput (Idle, Loading, Ready)
+  const [scanStatus, setScanStatus] = useState<string>("Idle");
 
   // handle the scanned result
   const handleScan = async (serialNo: string) => {
-    setIsScanLoading(true); // set loading state
+    setScanStatus("Loading"); // disable scan by setting loading state for scan input
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
 
     try {
-      /* // Simulate an async operation (fetching from an endpoint)
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Example: 2 seconds delay */
-
       let response = await api.checkContainer(serialNo);
 
       if (response.containerInfo["Quantity"] === 0) {
         throw new Error("Container is inactive.");
       }
-
       logMessage(response.message);
 
       // Check if the scanned part number matches the workcenter setup
@@ -88,7 +86,7 @@ const Edgefold: React.FC = () => {
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {
-      setIsScanLoading(false); // Stop loading when done
+      setScanStatus("Ready"); // enable scan
     }
   };
 
@@ -111,7 +109,7 @@ const Edgefold: React.FC = () => {
             <ScanInput
               onScan={handleScan}
               placeholder="Scan barcode on substrate label..."
-              loading={isScanLoading}
+              status={scanStatus}
             />
           </div>
           <LogBox messages={messages} backgroundColor={backgroundColor} />

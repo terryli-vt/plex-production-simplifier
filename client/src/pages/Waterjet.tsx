@@ -17,11 +17,13 @@ const Waterjet: React.FC = () => {
   // For handling update event from WorkcenterInfo component
   const handleInfoUpdate = async () => {
     setInfoStatus("Loading");
+    setScanStatus("Idle"); // scan input is idle
     try {
       const info = await api.getWorkcenterInfo(workcenterKey); // fetched info
       setWorkcenterInfo(info);
       setPlexServer(api.getPlexServer());
       setInfoStatus("Loaded");
+      setScanStatus("Ready"); // scan input is ready
     } catch (error) {
       console.error("Failed to fetch data:", error);
       setInfoStatus("Error");
@@ -42,12 +44,12 @@ const Waterjet: React.FC = () => {
   };
 
   // ScanInput Component
-  // Loading state for ScanInput
-  const [isScanLoading, setIsScanLoading] = useState(false);
+  // Loading state for ScanInput (Idle, Loading, Ready)
+  const [scanStatus, setScanStatus] = useState<string>("Idle");
 
   // handle the scanned result
   const handleScan = async (serialNo: string) => {
-    setIsScanLoading(true); // set loading state
+    setScanStatus("Loading"); // disable scan by setting loading state for scan input
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
 
@@ -61,7 +63,7 @@ const Waterjet: React.FC = () => {
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {
-      setIsScanLoading(false); // Stop loading when done
+      setScanStatus("Ready"); // enable scan
     }
   };
 
@@ -75,12 +77,14 @@ const Waterjet: React.FC = () => {
     asyncOperation: () => Promise<void>
   ) => {
     setLoadingState(true);
+    setScanStatus("Loading"); // disable scan
     try {
       await asyncOperation();
     } catch (error) {
       console.error("Failed to perform async operation:", error);
     } finally {
       setLoadingState(false);
+      setScanStatus("Ready"); // enable scan
     }
   };
 
@@ -90,12 +94,8 @@ const Waterjet: React.FC = () => {
     setMessages(() => []); // clear messages
 
     try {
-      /* // Simulate an async operation (fetching from an endpoint)
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Example: 2 seconds delay */
-
-      let response;
       logMessage("Recording production, please wait... ⏳");
-      response = await api.recordProduction(workcenterKey);
+      let response = await api.recordProduction(workcenterKey);
       const newSerialNo = response.newSerialNo;
       logMessage(response.message);
 
@@ -113,12 +113,8 @@ const Waterjet: React.FC = () => {
     setMessages(() => []); // clear messages
 
     try {
-      /* // Simulate an async operation (fetching from an endpoint)
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Example: 2 seconds delay */
-
-      let response;
       logMessage("Recording production, please wait... ⏳");
-      response = await api.recordProduction(workcenterKey);
+      let response = await api.recordProduction(workcenterKey);
       const newSerialNo = response.newSerialNo;
       logMessage(response.message);
 
@@ -153,7 +149,7 @@ const Waterjet: React.FC = () => {
             <ScanInput
               onScan={handleScan}
               placeholder="To load carpet, scan or type serial number..."
-              loading={isScanLoading}
+              status={scanStatus}
             />
           </div>
           {/* button group */}

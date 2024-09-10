@@ -18,6 +18,7 @@ const Assembly: React.FC = () => {
   // For handling update event from WorkcenterInfo component
   const handleInfoUpdate = async () => {
     setInfoStatus("Loading");
+    setScanStatus("Idle"); // scan input is idle
     try {
       const info = await api.getWorkcenterInfo(workcenterKey); // fetched info
       setWorkcenterInfo(info);
@@ -29,6 +30,7 @@ const Assembly: React.FC = () => {
       }
       setPlexServer(api.getPlexServer());
       setInfoStatus("Loaded");
+      setScanStatus("Ready"); // scan input is ready
     } catch (error) {
       console.error("Failed to fetch data:", error);
       setInfoStatus("Error");
@@ -49,12 +51,12 @@ const Assembly: React.FC = () => {
   };
 
   // ScanInput Component
-  // Loading state for ScanInput
-  const [isScanLoading, setIsScanLoading] = useState(false);
+  // Loading state for ScanInput (Idle, Loading, Ready)
+  const [scanStatus, setScanStatus] = useState<string>("Idle");
 
   // handle the scanned result
   const handleScan = async (serialNo: string) => {
-    setIsScanLoading(true); // set loading state
+    setScanStatus("Loading"); // disable scan
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
 
@@ -98,7 +100,7 @@ const Assembly: React.FC = () => {
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {
-      setIsScanLoading(false); // Stop loading when done
+      setScanStatus("Ready"); // enable scan
     }
   };
 
@@ -122,7 +124,7 @@ const Assembly: React.FC = () => {
             <ScanInput
               onScan={handleScan}
               placeholder="Scan barcode on substrate label..."
-              loading={isScanLoading}
+              status={scanStatus}
             />
           </div>
           <LogBox messages={messages} backgroundColor={backgroundColor} />

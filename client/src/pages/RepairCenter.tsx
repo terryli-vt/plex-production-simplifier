@@ -26,11 +26,11 @@ const RepairCenter: React.FC = () => {
   };
 
   // ScanInput Component
-  // Loading state for ScanInput
-  const [isScanLoading, setIsScanLoading] = useState(false);
+  // Loading state for ScanInput (Idle, Loading, Ready)
+  const [scanStatus, setScanStatus] = useState<string>("Ready");
 
   const loadContainerInfo = async (serialNo: string) => {
-    setIsScanLoading(true); // set loading state
+    setScanStatus("Loading"); // set loading state
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
     setInfoStatus("Loading");
@@ -45,7 +45,7 @@ const RepairCenter: React.FC = () => {
       setInfoStatus("Error");
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {
-      setIsScanLoading(false); // Stop loading when done
+      setScanStatus("Ready"); // enable scan
     }
   };
 
@@ -66,13 +66,10 @@ const RepairCenter: React.FC = () => {
   const handleScrap = async () => {
     setIsScrapping(true);
     setIsModalOpen(false);
+    setScanStatus("Loading"); // disable scan
 
     try {
-      /* // Simulate async scrapping operation
-      await new Promise((resolve) => setTimeout(resolve, 2000)); */
-      const response = await api.scrapContainer(serial!);
-      logMessage(response.message);
-
+      await api.scrapContainer(serial!);
       setMessages(() => []); // clear messages
       setInfoStatus("Idle");
     } catch (error: any) {
@@ -80,6 +77,7 @@ const RepairCenter: React.FC = () => {
       console.error("Failed to scrap the container:", error);
     } finally {
       setIsScrapping(false);
+      setScanStatus("Ready"); // enable scan
     }
   };
 
@@ -99,11 +97,15 @@ const RepairCenter: React.FC = () => {
             <ScanInput
               onScan={loadContainerInfo}
               placeholder="Scan barcode on the label..."
-              loading={isScanLoading}
+              status={scanStatus}
             />
           </div>
           {/* button group */}
-          <div className={`flex ${infoStatus === "Loaded" ? "" : "hidden"}`}>
+          <div
+            className={`flex ${
+              infoStatus === "Loaded" && !isScrapping ? "" : "hidden"
+            }`}
+          >
             <button
               className={`btn btn-lg btn-wide btn-success mr-5`}
               onClick={async () => {
@@ -157,6 +159,12 @@ const RepairCenter: React.FC = () => {
               </div>
             )}
           </div>
+          <button
+            className={`btn btn-lg btn-wide ${isScrapping ? "" : "hidden"}`}
+          >
+            <span className="loading loading-spinner"></span>
+            loading
+          </button>
           <LogBox messages={messages} backgroundColor={backgroundColor} />
         </div>
       </div>

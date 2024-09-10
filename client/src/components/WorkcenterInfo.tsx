@@ -83,7 +83,8 @@ const WorkcenterInfo: React.FC<WorkcenterInfoProps> = ({
       <div className="flex justify-center">
         <button
           onClick={onUpdate}
-          className="mt-4 bg-blue-500 text-white py-1 px-4 rounded hover:bg-blue-600"
+          className="btn btn-lg mt-4 bg-blue-500 text-white hover:bg-blue-600"
+          disabled={status === "Loading"}
         >
           Get Workcenter Information
         </button>
