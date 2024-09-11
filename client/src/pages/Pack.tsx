@@ -170,8 +170,8 @@ const Pack: React.FC = () => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">RIVIAN Pack Station</h1>
-      <div className="flex">
-        <div className="w-1/3 pr-4">
+      <div className="flex flex-col lg:flex-row">
+        <div className="w-full lg:w-1/3 lg:pr-4 lg:mb-0">
           <WorkcenterInfo
             workcenterName="Pack"
             status={infoStatus}
@@ -182,7 +182,9 @@ const Pack: React.FC = () => {
           />
         </div>
         <div
-          className={`w-1/3 pr-4 ${infoStatus === "Loaded" ? "" : "hidden"}`}
+          className={`w-full lg:w-1/3 lg:pr-4 mt-4 lg:mt-0 ${
+            infoStatus === "Loaded" ? "" : "hidden"
+          }`}
         >
           <PackList
             stdPackQty={stdPackQty!}
@@ -192,7 +194,11 @@ const Pack: React.FC = () => {
             isPacking={isPacking}
           />
         </div>
-        <div className={`w-1/3 ${infoStatus === "Loaded" ? "" : "hidden"}`}>
+        <div
+          className={`w-full lg:w-1/3 mt-7 lg:mt-0 ${
+            infoStatus === "Loaded" ? "" : "hidden"
+          }`}
+        >
           <div className="mb-4">
             <ScanInput
               onScan={handleScan}

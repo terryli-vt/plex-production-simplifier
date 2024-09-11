@@ -130,12 +130,14 @@ const Waterjet: React.FC = () => {
     }
   };
 
-  const scanClassName = `w-2/3 ${infoStatus === "Loaded" ? "" : "hidden"}`;
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">RIVIAN Waterjet Station</h1>
-      <div className="flex">
-        <div className="w-1/3 pr-4">
+
+      {/* Flex container for WorkcenterInfo and ScanInput */}
+      <div className="flex flex-col lg:flex-row">
+        {/* WorkcenterInfo */}
+        <div className="w-full lg:w-1/3 lg:pr-4 mb-4 lg:mb-0">
           <WorkcenterInfo
             workcenterName="Waterjet3"
             status={infoStatus}
@@ -144,7 +146,13 @@ const Waterjet: React.FC = () => {
             onUpdate={handleInfoUpdate}
           />
         </div>
-        <div className={scanClassName}>
+
+        {/* ScanInput and button group */}
+        <div
+          className={`w-full lg:w-2/3 ${
+            infoStatus === "Loaded" ? "" : "hidden"
+          }`}
+        >
           <div className="mb-4">
             <ScanInput
               onScan={handleScan}
@@ -152,33 +160,35 @@ const Waterjet: React.FC = () => {
               status={scanStatus}
             />
           </div>
-          {/* button group */}
-          <div className="flex space-x-4">
+
+          {/* Button group - flex-grow makes them responsive */}
+          <div className="flex flex-col my-5 md:flex-row space-y-4 md:space-y-0 md:space-x-4">
             <button
-              className={`btn btn-lg btn-wide btn-success mr-5 ${
+              className={`btn btn-lg btn-success flex-grow ${
                 isOkLoading || isHoldLoading ? "hidden" : ""
-              }`}
+              } w-full md:w-auto`}
               onClick={() => handleButtonClick(setIsOkLoading, okOperation)}
             >
               Produce OK
             </button>
             <button
-              className={`btn btn-lg btn-wide btn-warning ${
+              className={`btn btn-lg btn-warning flex-grow ${
                 isOkLoading || isHoldLoading ? "hidden" : ""
-              }`}
+              } w-full md:w-auto`}
               onClick={() => handleButtonClick(setIsHoldLoading, holdOperation)}
             >
               Produce Hold
             </button>
             <button
-              className={`btn btn-lg btn-wide ${
+              className={`btn btn-lg flex-grow ${
                 isOkLoading || isHoldLoading ? "" : "hidden"
-              }`}
+              } w-full md:w-auto`}
             >
               <span className="loading loading-spinner"></span>
               loading
             </button>
           </div>
+
           <LogBox messages={messages} backgroundColor={backgroundColor} />
         </div>
       </div>

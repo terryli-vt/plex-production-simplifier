@@ -84,15 +84,15 @@ const RepairCenter: React.FC = () => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Repair Center</h1>
-      <div className="flex">
-        <div className="w-1/3 pr-4">
+      <div className="flex flex-col lg:flex-row">
+        <div className="w-full lg:w-1/3 lg:pr-4 mb-4 lg:mb-0">
           <ContainerInfo
             status={infoStatus}
             plexServer={plexServer}
             containerInfo={containerInfo}
           />
         </div>
-        <div className="w-2/3">
+        <div className="w-full lg:w-2/3">
           <div className="mb-4">
             <ScanInput
               onScan={loadContainerInfo}
@@ -102,12 +102,12 @@ const RepairCenter: React.FC = () => {
           </div>
           {/* button group */}
           <div
-            className={`flex ${
+            className={`flex flex-col my-5 md:flex-row space-y-4 md:space-y-0 md:space-x-4 ${
               infoStatus === "Loaded" && !isScrapping ? "" : "hidden"
             }`}
           >
             <button
-              className={`btn btn-lg btn-wide btn-success mr-5`}
+              className={`btn btn-lg btn-success flex-grow w-full md:w-auto`}
               onClick={async () => {
                 await changeContainerStatus(serial!, "OK");
                 loadContainerInfo(serial!);
@@ -116,7 +116,7 @@ const RepairCenter: React.FC = () => {
               OK
             </button>
             <button
-              className={`btn btn-lg btn-wide btn-warning mr-5`}
+              className={`btn btn-lg btn-warning flex-grow w-full md:w-auto`}
               onClick={async () => {
                 await changeContainerStatus(serial!, "Hold");
                 loadContainerInfo(serial!);
@@ -125,7 +125,7 @@ const RepairCenter: React.FC = () => {
               Hold
             </button>
             <button
-              className={`btn btn-lg btn-wide btn-error`}
+              className={`btn btn-lg btn-error flex-grow w-full md:w-auto`}
               onClick={() => setIsModalOpen(true)}
               disabled={isScrapping}
             >
@@ -160,7 +160,9 @@ const RepairCenter: React.FC = () => {
             )}
           </div>
           <button
-            className={`btn btn-lg btn-wide ${isScrapping ? "" : "hidden"}`}
+            className={`btn btn-lg flex-grow ${
+              isScrapping ? "" : "hidden"
+            } w-full md:w-auto`}
           >
             <span className="loading loading-spinner"></span>
             loading

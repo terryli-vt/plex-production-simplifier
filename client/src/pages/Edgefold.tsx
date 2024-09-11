@@ -90,12 +90,11 @@ const Edgefold: React.FC = () => {
     }
   };
 
-  const scanClassName = `w-2/3 ${infoStatus === "Loaded" ? "" : "hidden"}`;
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">RIVIAN Edgefold Station</h1>
-      <div className="flex">
-        <div className="w-1/3 pr-4">
+      <div className="flex flex-col lg:flex-row">
+        <div className="w-full lg:w-1/3 lg:pr-4 mb-4 lg:mb-0">
           <WorkcenterInfo
             workcenterName="Edgefold"
             status={infoStatus}
@@ -104,7 +103,11 @@ const Edgefold: React.FC = () => {
             onUpdate={handleInfoUpdate}
           />
         </div>
-        <div className={scanClassName}>
+        <div
+          className={`w-full lg:w-2/3 ${
+            infoStatus === "Loaded" ? "" : "hidden"
+          }`}
+        >
           <div className="mb-4">
             <ScanInput
               onScan={handleScan}
