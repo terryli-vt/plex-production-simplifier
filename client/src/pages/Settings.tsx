@@ -85,7 +85,7 @@ const Settings: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Settings</h1>
+      <h1 className="text-3xl font-bold mb-4">Settings</h1>
       <div className="mb-6">
         <label
           htmlFor="server"
@@ -106,6 +106,7 @@ const Settings: React.FC = () => {
           ))}
         </select>
       </div>
+      <h1 className="text-lg font-bold mb-2">Printers:</h1>
       <div className="mb-6">
         <label
           htmlFor="printer"
