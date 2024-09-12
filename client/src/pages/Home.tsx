@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Home: React.FC = () => {
   return (
-    <div>
+    <div className="p-3">
       <h1 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
         Welcome to Plex Simplifier. Please select a workcenter, or go to
         settings.

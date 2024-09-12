@@ -25,6 +25,7 @@ An alternative of Mach 2 application
 - Other features
   - Real-time Update of the workcenter information
   - Autofocus on the input field
+  - Responsive Design for smaller screens (phone and tablet)
 
 ## TODO
 
@@ -32,5 +33,4 @@ An alternative of Mach 2 application
 - Assembly
   - Check workcenter has no substrate loaded before production
 - Spanish version
-- Responsive Design for smaller screens (phone and tablet)
 - About Page & Copyright

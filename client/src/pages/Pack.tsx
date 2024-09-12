@@ -168,7 +168,7 @@ const Pack: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-4">
+    <div>
       <h1 className="text-2xl font-bold mb-4">RIVIAN Pack Station</h1>
       <div className="flex flex-col lg:flex-row">
         <div className="w-full lg:w-1/3 lg:pr-4 lg:mb-0">

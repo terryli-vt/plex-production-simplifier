@@ -131,7 +131,7 @@ const Waterjet: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
+    <div>
       <h1 className="text-2xl font-bold mb-4">RIVIAN Waterjet Station</h1>
 
       {/* Flex container for WorkcenterInfo and ScanInput */}

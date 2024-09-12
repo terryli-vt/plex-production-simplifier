@@ -14,7 +14,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <Navbar />
-      <div className="container mx-auto p-4">
+      <div className="w-full mx-auto p-5">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/waterjet" element={<Waterjet />} />
