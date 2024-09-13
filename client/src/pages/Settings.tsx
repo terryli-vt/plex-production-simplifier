@@ -29,7 +29,7 @@ const Settings: React.FC = () => {
   ];
 
   const packPrinterOptions = [
-    { key: "Pack", value: "10.24.2.1" },
+    { key: "Pack", value: "10.24.0.211" },
     { key: "Assembly", value: "10.24.2.141" },
     { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
     { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },

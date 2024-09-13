@@ -51,6 +51,12 @@ const WorkcenterInfo: React.FC<WorkcenterInfoProps> = ({
         </p>
       )}
 
+      {status === "Error" && (
+        <p className="text-center">
+          Error fetching workcenter information. Please try again.
+        </p>
+      )}
+
       <div className="overflow-auto">
         <table className="table-auto w-full">
           <tbody>

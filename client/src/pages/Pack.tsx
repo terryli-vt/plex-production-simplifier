@@ -28,10 +28,13 @@ const Pack: React.FC = () => {
         setstdPackQty(await api.getStdPackQty(info["Part Number"]));
       }
       setPlexServer(api.getPlexServer());
+
+      await updateList(info["Part Number"]); // update the pack list
+
       setInfoStatus("Loaded");
       setScanStatus("Ready"); // scan input is ready
     } catch (error) {
-      console.error("Failed to fetch data:", error);
+      console.error("Failed to fetch workcenter info:", error);
       setInfoStatus("Error");
     }
   };
@@ -39,6 +42,20 @@ const Pack: React.FC = () => {
   // PackList Component
   const [list, setList] = useState<string[]>([]);
   const [isPacking, setIsPacking] = useState(false);
+
+  const updateList = async (partNo: string) => {
+    console.log("partNo:", partNo);
+    try {
+      const loadedSerial = await api.getLoadedSerial(
+        partNo,
+        parseInt(workcenterKey)
+      );
+      console.log("Loaded serials:", loadedSerial);
+      setList(loadedSerial);
+    } catch (error) {
+      console.error("Failed to fetch loaded serials:", error);
+    }
+  };
 
   // Handle unloading a serial number
   const handleUnload = async (serialNo: string) => {
@@ -51,10 +68,10 @@ const Pack: React.FC = () => {
       // Change serial's location back to assembly station
       await api.moveContainer(serialNo, "RIVIAN");
       logMessage(`Container ${serialNo} is unloaded ✔️`, "#00CC66");
+      await updateList(workcenterInfo!["Part Number"] as string); // Refresh the list
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     }
-    setList(list.filter((s) => s !== serialNo));
   };
 
   // Handle packing action (called when progress is 100% or user confirms)
@@ -72,24 +89,10 @@ const Pack: React.FC = () => {
       logMessage(response.message, "#00CC66");
 
       await handleInfoUpdate(); // Refresh workcenter info
-      setList([]); // Reset the list after packing
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {
       setIsPacking(false); // packing finished
-    }
-  };
-
-  // Add to pack list
-  const addToList = (serialNo: string) => {
-    // prevent duplicates
-    if (list.includes(serialNo)) {
-      logMessage("This serial number is already in the pack list.", "#FF6666");
-      return;
-    }
-
-    if (list.length < stdPackQty!) {
-      setList([...list, serialNo]);
     }
   };
 
@@ -114,11 +117,19 @@ const Pack: React.FC = () => {
   const handleScan = async (serialNo: string) => {
     setScanStatus("Loading"); // disable scan
     if (list.length === 0) {
+      // clear log messages and background color
       setBackgroundColor("#ffffff"); // reset background color
       setMessages(() => []); // clear messages
     }
 
     try {
+      // prevent duplicates
+      if (list.includes(serialNo)) {
+        throw new Error(
+          `The serial number ${serialNo} is already in the pack list.`
+        );
+      }
+
       let response = await api.checkContainer(serialNo);
 
       // Check if the container is active
@@ -142,9 +153,8 @@ const Pack: React.FC = () => {
       }
 
       response = await api.moveContainer(serialNo, "Pack-Rivian");
-      // logMessage(response.message); // container moved
+      await updateList(workcenterPartNo as string); // Refresh the list
       logMessage(`${serialNo} is packed ✔️`, "#00CC66");
-      addToList(serialNo); // Add to pack list
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {

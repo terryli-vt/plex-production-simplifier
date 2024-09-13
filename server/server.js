@@ -156,7 +156,7 @@ app.post("/get-substrate-part-no", async (req, res) => {
     // Extract the Component_Part_No where Sub_Components > 0
     const substratePartNo = rows
       .filter((row) => row[subComponentsIndex] > 0)
-      .map((row) => row[substratePartNoIndex]);
+      .map((row) => row[substratePartNoIndex])[0];
 
     res.json({
       success: true,
@@ -504,6 +504,94 @@ app.post("/get-std-pack-qty", async (req, res) => {
       success: true,
       message: `Get std pack qty successful ✔️`,
       stdPackQty,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.post("/get-loaded-serial", async (req, res) => {
+  const { plexServer, partNo, workcenterKey } = req.body;
+  const prefix = plexServer === "Test" ? "test." : "";
+  try {
+    let url = `https://${prefix}cloud.plex.com/api/datasources/1786/execute?`;
+    let post_data = {
+      inputs: {
+        Part_No: partNo,
+      },
+    };
+    const partKey = await getPartKey(url, post_data);
+
+    url = `https://${prefix}cloud.plex.com/api/datasources/18144/execute?`;
+    post_data = {
+      inputs: {
+        Part_Key: partKey,
+        Workcenter_Key: workcenterKey,
+      },
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: process.env.AUTH_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(post_data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Plex API failed to get loaded serial`);
+    }
+
+    const result = await response.json();
+    const serialNumbers = result.tables[0].rows.map((row) => row[0]);
+
+    res.json({
+      success: true,
+      message: `Get loaded serials successful ✔️`,
+      serialNumbers,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.post("/get-bom", async (req, res) => {
+  const { plexServer, partNo } = req.body;
+
+  const prefix = plexServer === "Test" ? "test." : "";
+
+  try {
+    const url = `https://${prefix}cloud.plex.com/api/datasources/561/execute?`;
+
+    const data = {
+      inputs: {
+        Part_No: partNo,
+      },
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: process.env.AUTH_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Plex API failed to get BOM`);
+    }
+
+    const result = await response.json();
+    let columns = result.tables[0].columns;
+    let partNoIndex = columns.indexOf("Component_Part_No");
+    let BOM = result.tables[0].rows.map((row) => row[partNoIndex]);
+
+    res.json({
+      success: true,
+      message: `Get BOM successful✔️`,
+      BOM,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

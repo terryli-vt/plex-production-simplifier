@@ -351,3 +351,62 @@ export const getStdPackQty = async (partNo: string): Promise<any> => {
     throw error;
   }
 };
+
+// Check containers that are loaded for a specific part number on a workcenter
+export const getLoadedSerial = async (
+  partNo: string,
+  workcenterKey: number
+): Promise<any> => {
+  const url = `${serverURL}/get-loaded-serial`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const plexServer = getPlexServer();
+  const body = JSON.stringify({ partNo, plexServer, workcenterKey });
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: body,
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.message || "Failed to get loaded serials");
+    }
+    return result.serialNumbers;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Check the BOM of a part number
+export const getBOM = async (partNo: string): Promise<any> => {
+  const url = `${serverURL}/get-bom`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const plexServer = getPlexServer();
+  const body = JSON.stringify({ partNo, plexServer });
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: body,
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.message || "Failed to get BOM");
+    }
+    return result.BOM;
+  } catch (error) {
+    throw error;
+  }
+};

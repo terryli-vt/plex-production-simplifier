@@ -59,9 +59,16 @@ const Assembly: React.FC = () => {
     setScanStatus("Loading"); // disable scan
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
-
     try {
-      let response = await api.checkContainer(serialNo);
+      let response = await api.getLoadedSerial(
+        substratePartNo!,
+        parseInt(workcenterKey)
+      );
+      if (response.length !== 0) {
+        throw new Error("Please unload the current substrate on Plex first.");
+      }
+
+      response = await api.checkContainer(serialNo);
 
       // Check if the container is active
       if (response.containerInfo["Quantity"] === 0) {
