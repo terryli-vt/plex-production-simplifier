@@ -46,12 +46,13 @@ const Edgefold: React.FC = () => {
   // ScanInput Component
   // Loading state for ScanInput (Idle, Loading, Ready)
   const [scanStatus, setScanStatus] = useState<string>("Idle");
-
+  const [lastSerial, setLastSerial] = useState<string | null>(null);
   // handle the scanned result
   const handleScan = async (serialNo: string) => {
     setScanStatus("Loading"); // disable scan by setting loading state for scan input
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
+    setLastSerial(serialNo); // save the last scanned serial number
 
     try {
       let response = await api.checkContainer(serialNo);
@@ -82,11 +83,24 @@ const Edgefold: React.FC = () => {
       response = await api.recordProductionBFB(workcenterKey, serialNo);
       logMessage(response.message, "#00CC66");
 
+      setLastSerial(serialNo); // save the last scanned serial number
       await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
+      setLastSerial(null); // clear the last scanned serial number
     } finally {
       setScanStatus("Ready"); // enable scan
+    }
+  };
+
+  const handleHold = async () => {
+    if (!lastSerial) return;
+
+    try {
+      const response = await api.changeContainerStatus(lastSerial, "Hold");
+      logMessage(response.message, "#00CC66");
+    } catch (error: any) {
+      logMessage(`Error: ${error.message} ❌`, "#FF6666");
     }
   };
 
@@ -115,6 +129,17 @@ const Edgefold: React.FC = () => {
               status={scanStatus}
             />
           </div>
+          {lastSerial && (
+            <div className="flex flex-col my-5 md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+              <button
+                className={`btn btn-lg btn-warning flex-grow w-full md:w-auto`}
+                onClick={() => handleHold()}
+                disabled={scanStatus !== "Ready"}
+              >
+                Hold Container {lastSerial}
+              </button>
+            </div>
+          )}
           <LogBox messages={messages} backgroundColor={backgroundColor} />
         </div>
       </div>

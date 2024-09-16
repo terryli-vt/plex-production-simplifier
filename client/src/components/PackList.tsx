@@ -4,16 +4,20 @@ type PackListProps = {
   stdPackQty: number;
   list: string[];
   onPack: () => void;
+  onHold: (serial: string) => void;
   onUnload: (serial: string) => void;
   isPacking: boolean;
+  isChangingList: boolean;
 };
 
 const PackList: React.FC<PackListProps> = ({
   stdPackQty,
   list,
   onPack,
+  onHold,
   onUnload,
   isPacking,
+  isChangingList,
 }) => {
   const [progress, setProgress] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false); // confirmation dialog
@@ -68,12 +72,22 @@ const PackList: React.FC<PackListProps> = ({
             className="flex justify-between items-center p-2 bg-base-100 rounded-md shadow-sm"
           >
             <span>{serial}</span>
-            <button
-              onClick={() => onUnload(serial)}
-              className="btn btn-error btn-sm"
-            >
-              Unload
-            </button>
+            <div>
+              <button
+                onClick={() => onHold(serial)}
+                className="btn btn-warning btn-sm mr-3"
+                disabled={isChangingList}
+              >
+                Hold
+              </button>
+              <button
+                onClick={() => onUnload(serial)}
+                className="btn btn-error btn-sm"
+                disabled={isChangingList}
+              >
+                Unload
+              </button>
+            </div>
           </li>
         ))}
       </ul>
@@ -82,7 +96,7 @@ const PackList: React.FC<PackListProps> = ({
       <button
         onClick={handlePackClick}
         className="btn btn-primary w-full"
-        disabled={list.length === 0 || isPacking}
+        disabled={list.length === 0 || isPacking || isChangingList}
       >
         {isPacking ? "Packing..." : "Pack and Print Shipping Label"}
       </button>

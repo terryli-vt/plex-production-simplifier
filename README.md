@@ -22,12 +22,14 @@ This application helps to simplify the process of recording production on the Pl
   - Change printer settings
 - Other features
   - Real-time Update of the workcenter information
+  - Hold status on edgefold and pack
   - Autofocus on the input field
   - Responsive Design for smaller screens (phone and tablet)
 - Bug Fixes
   - Waterjet preventing load incorrect carpet source
   - Assembly: check no substrate loaded before production
   - Pack station pack list stay updated with workcenter
+  - Pack station: prevent hold parts being packed
 
 ## TODO
 

@@ -42,9 +42,9 @@ const Pack: React.FC = () => {
   // PackList Component
   const [list, setList] = useState<string[]>([]);
   const [isPacking, setIsPacking] = useState(false);
+  const [isChangingList, setIsChangingList] = useState(false); // for handling list changes (like hold or unload)
 
   const updateList = async (partNo: string) => {
-    console.log("partNo:", partNo);
     try {
       const loadedSerial = await api.getLoadedSerial(
         partNo,
@@ -59,6 +59,7 @@ const Pack: React.FC = () => {
 
   // Handle unloading a serial number
   const handleUnload = async (serialNo: string) => {
+    setIsChangingList(true); // disable list changes
     if (list.length === 0) {
       setBackgroundColor("#ffffff"); // reset background color
       setMessages(() => []); // clear messages
@@ -71,12 +72,36 @@ const Pack: React.FC = () => {
       await updateList(workcenterInfo!["Part Number"] as string); // Refresh the list
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
+    } finally {
+      setIsChangingList(false); // enable list changes
+    }
+  };
+
+  // Handle holding a serial number
+  const handleHold = async (serialNo: string) => {
+    setIsChangingList(true); // disable
+    if (list.length === 0) {
+      setBackgroundColor("#ffffff"); // reset background color
+      setMessages(() => []); // clear messages
+    }
+
+    try {
+      // Change serial's location back to assembly station
+      await api.moveContainer(serialNo, "RIVIAN");
+      await api.changeContainerStatus(serialNo, "Hold");
+      logMessage(`Container ${serialNo} is on hold ✔️`, "#00CC66");
+      await updateList(workcenterInfo!["Part Number"] as string); // Refresh the list
+    } catch (error: any) {
+      logMessage(`Error: ${error.message} ❌`, "#FF6666");
+    } finally {
+      setIsChangingList(false); // enable list changes
     }
   };
 
   // Handle packing action (called when progress is 100% or user confirms)
   const handlePack = async () => {
     setIsPacking(true);
+    setIsChangingList(true); // disable list changes
     try {
       // Record production
       logMessage("Recording production, please wait... ⏳");
@@ -93,6 +118,7 @@ const Pack: React.FC = () => {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {
       setIsPacking(false); // packing finished
+      setIsChangingList(false); // enable list changes
     }
   };
 
@@ -116,6 +142,7 @@ const Pack: React.FC = () => {
   // handle the scanned result
   const handleScan = async (serialNo: string) => {
     setScanStatus("Loading"); // disable scan
+    setIsChangingList(true); // disable list changes
     if (list.length === 0) {
       // clear log messages and background color
       setBackgroundColor("#ffffff"); // reset background color
@@ -131,6 +158,9 @@ const Pack: React.FC = () => {
       }
 
       let response = await api.checkContainer(serialNo);
+      if (response.containerInfo["Status"] === "Hold") {
+        throw new Error("Container is on hold.");
+      }
 
       // Check if the container is active
       if (response.containerInfo["Quantity"] === 0) {
@@ -159,6 +189,7 @@ const Pack: React.FC = () => {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {
       setScanStatus("Ready"); // enable scan
+      setIsChangingList(false); // enable list changes
     }
   };
 
@@ -200,8 +231,10 @@ const Pack: React.FC = () => {
             stdPackQty={stdPackQty!}
             list={list}
             onPack={handlePack}
+            onHold={handleHold}
             onUnload={handleUnload}
             isPacking={isPacking}
+            isChangingList={isChangingList}
           />
         </div>
         <div
