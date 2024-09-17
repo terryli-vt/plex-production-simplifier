@@ -13,13 +13,15 @@ This application helps to simplify the process of recording production on the Pl
   - Record production through scanning
   - Prevent part being recorded if it's not in Edgefold operation
 - Packing Station
-  - Print shipping label once standard pack quantity is reached
+  - Box vs. Rack packing mode
+  - Print shipping label once standard pack quantity is reached (if auto print is enabled)
 - Repair center
   - Change container's status
   - Scrap containers
 - Setting
   - Toggle between Test and Production Plex Server
   - Change printer settings
+  - Autoprint Setting for pack
 - Other features
   - Real-time Update of the workcenter information
   - Hold status on edgefold and pack
