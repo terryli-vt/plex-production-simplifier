@@ -8,6 +8,7 @@ interface WorkcenterInfoProps {
   onUpdate: () => void;
   substratePartNo?: string | null;
   stdPackQty?: number | null;
+  packMode?: string | null;
 }
 
 const WorkcenterInfo: React.FC<WorkcenterInfoProps> = ({
@@ -18,6 +19,7 @@ const WorkcenterInfo: React.FC<WorkcenterInfoProps> = ({
   onUpdate,
   substratePartNo,
   stdPackQty,
+  packMode,
 }) => {
   const [cachedWorkcenterInfo, setCachedWorkcenterInfo] = useState<{
     [key: string]: string | number;
@@ -28,6 +30,7 @@ const WorkcenterInfo: React.FC<WorkcenterInfoProps> = ({
   >(null);
   const [cachedStdPackQty, setCachedStdPackQty] = useState<number | null>(null);
   const [cachedPlexServer, setCachedPlexServer] = useState<string | null>(null);
+  const [cachedPackMode, setCachedPackMode] = useState<string | null>(null);
 
   // Update cache when new workcenterInfo arrives
   useEffect(() => {
@@ -36,8 +39,16 @@ const WorkcenterInfo: React.FC<WorkcenterInfoProps> = ({
       setCachedSubstratePartNo(substratePartNo || null);
       setCachedStdPackQty(stdPackQty || null);
       setCachedPlexServer(plexServer || null);
+      setCachedPackMode(packMode || null);
     }
-  }, [status, workcenterInfo, substratePartNo, stdPackQty, plexServer]);
+  }, [
+    status,
+    workcenterInfo,
+    substratePartNo,
+    stdPackQty,
+    plexServer,
+    packMode,
+  ]);
 
   return (
     <div className="bg-gray-100 p-4 rounded shadow mb-4 w-full">
@@ -100,6 +111,21 @@ const WorkcenterInfo: React.FC<WorkcenterInfoProps> = ({
                     <span className="text-gray-500">Loading...</span>
                   ) : (
                     cachedStdPackQty
+                  )}
+                </td>
+              </tr>
+            )}
+
+            {cachedPackMode && (
+              <tr>
+                <td className="border px-4 py-2 whitespace-nowrap">
+                  Pack Mode
+                </td>
+                <td className="border px-4 py-2 whitespace-nowrap">
+                  {status === "Loading" ? (
+                    <span className="text-gray-500">Loading...</span>
+                  ) : (
+                    cachedPackMode
                   )}
                 </td>
               </tr>

@@ -102,6 +102,10 @@ app.post("/get-workcenter-info", async (req, res) => {
     workcenterInfo["Remaining"] =
       workcenterInfo["Job Quantity"] - workcenterInfo["Produced"];
 
+    if (!workcenterInfo["Produced"]) {
+      workcenterInfo["Produced"] = 0;
+    }
+
     res.json({
       success: true,
       message: `Get workcenter status successful✔️`,

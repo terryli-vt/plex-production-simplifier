@@ -70,6 +70,11 @@ const Assembly: React.FC = () => {
 
       response = await api.checkContainer(serialNo);
 
+      // Check if the container is on hold
+      if (response.containerInfo["Status"] === "Hold") {
+        throw new Error("Container is on hold.");
+      }
+
       // Check if the container is active
       if (response.containerInfo["Quantity"] === 0) {
         throw new Error("Container is inactive.");

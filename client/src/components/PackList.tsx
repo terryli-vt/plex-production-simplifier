@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import * as api from "../services/apiClient";
 
 type PackListProps = {
   stdPackQty: number;
@@ -21,6 +22,20 @@ const PackList: React.FC<PackListProps> = ({
 }) => {
   const [progress, setProgress] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false); // confirmation dialog
+  const [autoPrint, setAutoPrint] = useState(true); // Auto print setting
+
+  // Fetch autoPrint setting from API
+  useEffect(() => {
+    const fetchAutoPrintSetting = async () => {
+      try {
+        setAutoPrint(await api.getAutoPrint()); // Assume api.getAutoPrint() returns a boolean
+      } catch (error) {
+        console.error("Error fetching auto print setting:", error);
+      }
+    };
+
+    fetchAutoPrintSetting();
+  }, []); // Empty dependency array means this runs only on component mount
 
   // Update progress when serialNumbers change
   useEffect(() => {
@@ -28,12 +43,10 @@ const PackList: React.FC<PackListProps> = ({
     setProgress(progressPercentage);
 
     // Auto trigger pack when we reach full quantity
-    if (list.length === stdPackQty) {
-      if (!isPacking) {
-        onPack(); // Automatically call onPack when we reach the standard pack quantity
-      }
+    if (list.length === stdPackQty && autoPrint && !isPacking) {
+      onPack(); // Automatically call onPack when we reach the standard pack quantity
     }
-  }, [list, stdPackQty, onPack]);
+  }, [list, stdPackQty, onPack, autoPrint, isPacking]);
 
   // Handle the confirmation dialog for the Pack action
   const handlePackClick = () => {

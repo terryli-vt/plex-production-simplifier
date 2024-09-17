@@ -15,6 +15,7 @@ const Pack: React.FC = () => {
   } | null>(null);
   const [stdPackQty, setstdPackQty] = useState<number | null>(null);
   const [plexServer, setPlexServer] = useState<string | null>(null);
+  const [packMode, setPackMode] = useState<string | null>(null);
 
   // For handling update event from WorkcenterInfo component
   const handleInfoUpdate = async () => {
@@ -24,9 +25,15 @@ const Pack: React.FC = () => {
       const info = await api.getWorkcenterInfo(workcenterKey); // fetched info
       setWorkcenterInfo(info);
 
-      if (info && info["Part Number"]) {
+      const packMode = api.getPackMode();
+      setPackMode(packMode);
+
+      if (packMode === "Rack" && info && info["Part Number"]) {
         setstdPackQty(await api.getStdPackQty(info["Part Number"]));
+      } else {
+        setstdPackQty(1);
       }
+
       setPlexServer(api.getPlexServer());
 
       await updateList(info["Part Number"]); // update the pack list
@@ -102,6 +109,7 @@ const Pack: React.FC = () => {
   const handlePack = async () => {
     setIsPacking(true);
     setIsChangingList(true); // disable list changes
+    setScanStatus("Loading"); // disable scan
     try {
       // Record production
       logMessage("Recording production, please wait... ⏳");
@@ -119,6 +127,7 @@ const Pack: React.FC = () => {
     } finally {
       setIsPacking(false); // packing finished
       setIsChangingList(false); // enable list changes
+      setScanStatus("Ready");
     }
   };
 
@@ -220,6 +229,7 @@ const Pack: React.FC = () => {
             workcenterInfo={workcenterInfo}
             onUpdate={handleInfoUpdate}
             stdPackQty={stdPackQty}
+            packMode={packMode}
           />
         </div>
         <div

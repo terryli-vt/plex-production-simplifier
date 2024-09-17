@@ -19,6 +19,14 @@ const getPackPrinterIP = (): string => {
   return localStorage.getItem("packPrinter") || "10.24.2.141";
 };
 
+export const getPackMode = (): string => {
+  return localStorage.getItem("packMode") || "Rack";
+};
+
+export const getAutoPrint = (): boolean => {
+  return localStorage.getItem("autoPrint") === "true";
+};
+
 // Get the latest workcenter information
 export const getWorkcenterInfo = async (
   workcenterKey: string

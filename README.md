@@ -26,8 +26,9 @@ This application helps to simplify the process of recording production on the Pl
   - Autofocus on the input field
   - Responsive Design for smaller screens (phone and tablet)
 - Bug Fixes
-  - Waterjet preventing load incorrect carpet source
+  - Waterjet: preventing load incorrect carpet source
   - Assembly: check no substrate loaded before production
+  - Assembly: prevent hold parts being assembled
   - Pack station pack list stay updated with workcenter
   - Pack station: prevent hold parts being packed
 
