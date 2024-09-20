@@ -6,7 +6,13 @@ import WorkcenterInfo from "./../components/WorkcenterInfo";
 import PackList from "./../components/PackList";
 
 const Pack: React.FC = () => {
-  const workcenterKey = "74895"; // Pack-Rivian workcenter key
+  // const workcenterKey = "74895"; // Pack-Rivian workcenter key
+  let workcenterKey;
+  if (api.getPackProgram() === "Rivian") {
+    workcenterKey = "74895"; // Pack-Rivian workcenter key
+  } else {
+    workcenterKey = "74916"; // Pack-A2&BT1 workcenter key
+  }
 
   // For workcenterInfo component
   const [infoStatus, setInfoStatus] = useState<string>("Idle");

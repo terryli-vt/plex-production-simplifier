@@ -12,6 +12,7 @@ interface SettingsState {
   waterjetPrinter: string;
   assemblyPrinter: string;
   packPrinter: string;
+  packProgram: string;
   packMode: string;
   autoPrint: boolean;
 }
@@ -29,13 +30,13 @@ const Settings: React.FC = () => {
       { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
       { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
       { key: "Test", value: "10.24.3.239" },
-      { key: "Assembly", value: "10.24.2.141" },
+      { key: "Assembly", value: "10.24.3.6" },
       { key: "Line 3 Packing", value: "10.24.3.112" },
       { key: "Toyota Backup", value: "10.24.3.159" },
     ],
 
     assemblyPrinterOptions: [
-      { key: "Assembly", value: "10.24.2.141" },
+      { key: "Assembly", value: "10.24.3.6" },
       { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
       { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
       { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
@@ -47,7 +48,7 @@ const Settings: React.FC = () => {
 
     packPrinterOptions: [
       { key: "Pack", value: "10.24.0.211" },
-      { key: "Assembly", value: "10.24.2.141" },
+      { key: "Assembly", value: "10.24.3.6" },
       { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
       { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
       { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
@@ -55,6 +56,11 @@ const Settings: React.FC = () => {
       { key: "Waterjet", value: "10.24.1.61" },
       { key: "Line 3 Packing", value: "10.24.3.112" },
       { key: "Toyota Backup", value: "10.24.3.159" },
+    ],
+
+    packProgramOptions: [
+      { key: "Rivian", value: "Rivian" },
+      { key: "BT1", value: "BT1" },
     ],
 
     packModeOptions: [
@@ -90,6 +96,7 @@ const Settings: React.FC = () => {
       "assemblyPrinter"
     ),
     packPrinter: getDefaultValue(options.packPrinterOptions, "packPrinter"),
+    packProgram: getDefaultValue(options.packProgramOptions, "packProgram"),
     packMode: getDefaultValue(options.packModeOptions, "packMode"),
     autoPrint: getBooleanDefaultValue("autoPrint"),
   }));
@@ -204,6 +211,26 @@ const Settings: React.FC = () => {
         </select>
       </div>
       <h1 className="text-lg font-bold mb-2">Pack:</h1>
+      <div className="mb-6">
+        <label
+          htmlFor="packProgram"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Select Pack Program:
+        </label>
+        <select
+          id="packProgram"
+          value={settings.packProgram}
+          onChange={(e) => handleSettingChange("packProgram", e.target.value)}
+          className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        >
+          {options.packProgramOptions.map((option) => (
+            <option key={option.key} value={option.value}>
+              {option.key}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="mb-6">
         <label
           htmlFor="packMode"

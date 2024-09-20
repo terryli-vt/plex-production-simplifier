@@ -12,11 +12,15 @@ const getWaterjetPrinterIP = (): string => {
 };
 
 const getAssemblyPrinterIP = (): string => {
-  return localStorage.getItem("assemblyPrinter") || "10.24.2.141";
+  return localStorage.getItem("assemblyPrinter") || "10.24.3.6";
 };
 
 const getPackPrinterIP = (): string => {
-  return localStorage.getItem("packPrinter") || "10.24.2.141";
+  return localStorage.getItem("packPrinter") || "10.24.0.211";
+};
+
+export const getPackProgram = (): string => {
+  return localStorage.getItem("packProgram") || "Rivian";
 };
 
 export const getPackMode = (): string => {
