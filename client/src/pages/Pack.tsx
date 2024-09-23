@@ -6,13 +6,14 @@ import WorkcenterInfo from "./../components/WorkcenterInfo";
 import PackList from "./../components/PackList";
 
 const Pack: React.FC = () => {
-  // const workcenterKey = "74895"; // Pack-Rivian workcenter key
   let workcenterKey;
   if (api.getPackProgram() === "Rivian") {
     workcenterKey = "74895"; // Pack-Rivian workcenter key
   } else {
     workcenterKey = "74916"; // Pack-A2&BT1 workcenter key
   }
+
+  const packMode = api.getPackMode();
 
   // For workcenterInfo component
   const [infoStatus, setInfoStatus] = useState<string>("Idle");
@@ -21,7 +22,6 @@ const Pack: React.FC = () => {
   } | null>(null);
   const [stdPackQty, setstdPackQty] = useState<number | null>(null);
   const [plexServer, setPlexServer] = useState<string | null>(null);
-  const [packMode, setPackMode] = useState<string | null>(null);
 
   // For handling update event from WorkcenterInfo component
   const handleInfoUpdate = async () => {
@@ -30,9 +30,6 @@ const Pack: React.FC = () => {
     try {
       const info = await api.getWorkcenterInfo(workcenterKey); // fetched info
       setWorkcenterInfo(info);
-
-      const packMode = api.getPackMode();
-      setPackMode(packMode);
 
       if (packMode === "Rack" && info && info["Part Number"]) {
         setstdPackQty(await api.getStdPackQty(info["Part Number"]));

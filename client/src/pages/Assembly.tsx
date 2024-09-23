@@ -60,6 +60,7 @@ const Assembly: React.FC = () => {
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
     try {
+      logMessage("Checking workcenter and container... ⏳");
       let response = await api.getLoadedSerial(
         substratePartNo!,
         parseInt(workcenterKey)
@@ -80,15 +81,15 @@ const Assembly: React.FC = () => {
         throw new Error("Container is inactive.");
       }
 
-      logMessage(response.message); // container exists
+      // logMessage(response.message); // container exists
 
       // Check if the scanned substrate number matches the workcenter setup
-      if (String(response.containerInfo["Part Number"]) != substratePartNo) {
+      if (String(response.containerInfo["Part Number"]) !== substratePartNo) {
         throw new Error(
           `Substrate part number does not match, please check workcenter configuration on Plex. Expected: ${substratePartNo}, Scanned: ${response.containerInfo["Part Number"]}`
         );
       }
-      logMessage("Substrate part number matched ✔️");
+      // logMessage("Substrate part number matched ✔️");
 
       // Check if the container is edgefolded
       if (String(response.containerInfo["Operation"]) !== "Edgefold") {
@@ -98,8 +99,8 @@ const Assembly: React.FC = () => {
       }
 
       response = await api.moveContainer(serialNo, "RIVIAN");
-      logMessage(response.message);
-
+      // logMessage(response.message); // move container success
+      logMessage("Ready for production ✔️");
       logMessage("Recording production, please wait... ⏳");
       response = await api.recordProduction(workcenterKey);
       const newSerialNo = response.newSerialNo;
