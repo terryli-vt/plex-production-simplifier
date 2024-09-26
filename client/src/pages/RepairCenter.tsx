@@ -28,19 +28,32 @@ const RepairCenter: React.FC = () => {
   // ScanInput Component
   // Loading state for ScanInput (Idle, Loading, Ready)
   const [scanStatus, setScanStatus] = useState<string>("Ready");
+  const [disableBtns, setDisableBtns] = useState(false);
 
   const loadContainerInfo = async (serialNo: string) => {
     setScanStatus("Loading"); // set loading state
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
     setInfoStatus("Loading");
+    setDisableBtns(false);
     try {
       const response = await api.checkContainer(serialNo);
+
+      if (response.containerInfo["Quantity"] === 0) {
+        response.containerInfo["Status"] = "Inactive";
+        setDisableBtns(true);
+      }
+
       setContainerInfo(response.containerInfo);
       setSerial(response.serialNo);
       setInfoStatus("Loaded");
-      logMessage(response.message);
-      logMessage(`Container Status: ${response.containerInfo["Status"]}`);
+
+      // logMessage(response.message);
+      if (response.containerInfo["Quantity"] === 0) {
+        logMessage(`This container is inactive ⚠️`, "#FFA500");
+      } else {
+        logMessage(`Container Status: ${response.containerInfo["Status"]}`);
+      }
     } catch (error: any) {
       setInfoStatus("Error");
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
@@ -103,7 +116,9 @@ const RepairCenter: React.FC = () => {
           {/* button group */}
           <div
             className={`flex flex-col my-5 md:flex-row space-y-4 md:space-y-0 md:space-x-4 ${
-              infoStatus === "Loaded" && !isScrapping ? "" : "hidden"
+              infoStatus === "Loaded" && !isScrapping && !disableBtns
+                ? ""
+                : "hidden"
             }`}
           >
             <button

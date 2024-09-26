@@ -60,7 +60,7 @@ const Assembly: React.FC = () => {
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
     try {
-      logMessage("Checking workcenter and container... ⏳");
+      logMessage("Loading, please wait... ⏳");
       let response = await api.getLoadedSerial(
         substratePartNo!,
         parseInt(workcenterKey)
@@ -100,16 +100,16 @@ const Assembly: React.FC = () => {
 
       response = await api.moveContainer(serialNo, "RIVIAN");
       // logMessage(response.message); // move container success
-      logMessage("Ready for production ✔️");
-      logMessage("Recording production, please wait... ⏳");
+      //logMessage("Ready for production ✔️");
+      //logMessage("Recording production, please wait... ⏳");
       response = await api.recordProduction(workcenterKey);
       const newSerialNo = response.newSerialNo;
-      logMessage(response.message);
+      // logMessage(response.message);
 
       await handleInfoUpdate(); // Refresh workcenter info
 
       response = await api.printLabel(newSerialNo, "RIVIAN");
-      logMessage(response.message, "#00CC66");
+      logMessage("Success!", "#00CC66");
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {

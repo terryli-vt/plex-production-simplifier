@@ -57,7 +57,7 @@ const Waterjet: React.FC = () => {
 
     try {
       let response = await api.checkContainer(serialNo);
-      logMessage(response.message);
+      // logMessage(response.message);
 
       if (!BOM!.includes(response.containerInfo["Part Number"])) {
         throw new Error(
@@ -68,7 +68,7 @@ const Waterjet: React.FC = () => {
       }
 
       response = await api.moveContainer(serialNo, "Waterjet-3");
-      logMessage(response.message);
+      // logMessage(response.message);
       logMessage("Source loaded ✔️", "#00CC66");
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
@@ -104,13 +104,15 @@ const Waterjet: React.FC = () => {
     setMessages(() => []); // clear messages
 
     try {
-      logMessage("Recording production, please wait... ⏳");
+      // logMessage("Recording production, please wait... ⏳");
+      logMessage("Loading, please wait... ⏳");
       let response = await api.recordProduction(workcenterKey);
       const newSerialNo = response.newSerialNo;
-      logMessage(response.message);
+      // logMessage(response.message);
 
       response = await api.printLabel(newSerialNo, "Waterjet-3");
-      logMessage(response.message, "#00CC66");
+      // logMessage(response.message, "#00CC66");
+      logMessage("Success!", "#00CC66");
 
       await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
@@ -123,17 +125,18 @@ const Waterjet: React.FC = () => {
     setMessages(() => []); // clear messages
 
     try {
-      logMessage("Recording production, please wait... ⏳");
+      // logMessage("Recording production, please wait... ⏳");
+      logMessage("Loading, please wait... ⏳");
       let response = await api.recordProduction(workcenterKey);
       const newSerialNo = response.newSerialNo;
-      logMessage(response.message);
+      //logMessage(response.message);
 
       response = await api.changeContainerStatus(newSerialNo, "Hold");
-      logMessage(response.message);
+      //logMessage(response.message);
 
       response = await api.printLabel(newSerialNo, "Waterjet-3");
-      logMessage(response.message, "#00CC66");
-
+      //logMessage(response.message, "#00CC66");
+      logMessage("Success!", "#00CC66");
       await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");

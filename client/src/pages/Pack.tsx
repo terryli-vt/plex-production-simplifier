@@ -115,14 +115,15 @@ const Pack: React.FC = () => {
     setScanStatus("Loading"); // disable scan
     try {
       // Record production
-      logMessage("Recording production, please wait... ⏳");
+      logMessage("Loading, please wait... ⏳");
+      // logMessage("Recording production, please wait... ⏳");
       let response = await api.recordProduction(workcenterKey, list.length);
       const newSerialNo = response.newSerialNo;
-      logMessage(response.message);
+      //logMessage(response.message);
 
       // Print label
       response = await api.printLabel(newSerialNo, "Pack-Rivian");
-      logMessage(response.message, "#00CC66");
+      logMessage("Success!", "#00CC66");
 
       await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
@@ -198,7 +199,14 @@ const Pack: React.FC = () => {
       await updateList(workcenterPartNo as string); // Refresh the list
       logMessage(`${serialNo} is packed ✔️`, "#00CC66");
     } catch (error: any) {
-      logMessage(`Error: ${error.message} ❌`, "#FF6666");
+      if (
+        error.message ===
+        `The serial number ${serialNo} is already in the pack list.`
+      ) {
+        logMessage(`Warning: ${error.message} ⚠️`, "#FFA500"); // Orange background for the warning
+      } else {
+        logMessage(`Error: ${error.message} ❌`, "#FF6666"); // Red background for other errors
+      }
     } finally {
       setScanStatus("Ready"); // enable scan
       setIsChangingList(false); // enable list changes

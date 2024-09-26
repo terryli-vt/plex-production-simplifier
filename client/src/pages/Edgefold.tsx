@@ -66,7 +66,7 @@ const Edgefold: React.FC = () => {
       if (response.containerInfo["Quantity"] === 0) {
         throw new Error("Container is inactive.");
       }
-      logMessage(response.message);
+      // logMessage(response.message);
 
       // Check if the scanned part number matches the workcenter setup
       const workcenterPartNo = workcenterInfo!["Part Number"];
@@ -75,7 +75,7 @@ const Edgefold: React.FC = () => {
           `Scanned part number does not match, please check workcenter configuration on Plex. Expected: ${workcenterPartNo}, Scanned: ${response.containerInfo["Part Number"]}`
         );
       }
-      logMessage("Substrate part number matched ✔️");
+      // logMessage("Substrate part number matched ✔️");
 
       // Check if the container is ready for edgefolding
       if (String(response.containerInfo["Operation"]) != "Waterjet") {
@@ -85,14 +85,20 @@ const Edgefold: React.FC = () => {
         throw new Error(`Serial No ${serialNo} is not ready for edgefolding.`);
       }
 
-      logMessage("Recording production, please wait... ⏳");
+      logMessage("Loading, please wait... ⏳");
       response = await api.recordProductionBFB(workcenterKey, serialNo);
-      logMessage(response.message, "#00CC66");
+      // logMessage(response.message, "#00CC66");
+      logMessage("Success!", "#00CC66");
 
       setLastSerial(serialNo); // save the last scanned serial number
       await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
-      logMessage(`Error: ${error.message} ❌`, "#FF6666");
+      // Check for the specific edgefold error
+      if (error.message === `Serial No ${serialNo} was already edgefolded.`) {
+        logMessage(`Warning: ${error.message} ⚠️`, "#FFA500"); // Orange background for the warning
+      } else {
+        logMessage(`Error: ${error.message} ❌`, "#FF6666"); // Red background for other errors
+      }
       setLastSerial(null); // clear the last scanned serial number
     } finally {
       setScanStatus("Ready"); // enable scan
@@ -104,7 +110,7 @@ const Edgefold: React.FC = () => {
 
     try {
       const response = await api.changeContainerStatus(lastSerial, "Hold");
-      logMessage(response.message, "#00CC66");
+      logMessage("Hold Success!", "#00CC66");
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     }
