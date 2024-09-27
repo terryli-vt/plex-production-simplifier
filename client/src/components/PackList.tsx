@@ -48,6 +48,24 @@ const PackList: React.FC<PackListProps> = ({
     }
   }, [list, stdPackQty, onPack, autoPrint, isPacking]);
 
+  const [isUnloadAllModalVisible, setUnloadAllModalVisible] = useState(false);
+
+  // Function to unload all serials in the list
+  const handleUnloadAll = () => {
+    list.forEach((serial) => onUnload(serial));
+  };
+
+  // Function to open the "Unload All" confirmation modal
+  const openUnloadAllModal = () => {
+    setUnloadAllModalVisible(true);
+  };
+
+  // Function to confirm and proceed with unloading all
+  const confirmUnloadAll = () => {
+    setUnloadAllModalVisible(false); // Close modal
+    handleUnloadAll(); // Unload all serials
+  };
+
   // Handle the confirmation dialog for the Pack action
   const handlePackClick = () => {
     if (list.length < stdPackQty) {
@@ -105,6 +123,39 @@ const PackList: React.FC<PackListProps> = ({
         ))}
       </ul>
 
+      {/* Unload All button */}
+      <button
+        onClick={openUnloadAllModal}
+        className="btn btn-error w-full mb-4"
+        disabled={list.length === 0 || isPacking || isChangingList}
+      >
+        Unload All
+      </button>
+
+      {/* Confirmation Modal for Unload All */}
+      {isUnloadAllModalVisible && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Confirm Unload All</h3>
+            <p className="py-4">
+              Are you sure you want to unload all items from the list? This
+              action cannot be undone.
+            </p>
+            <div className="modal-action">
+              <button onClick={confirmUnloadAll} className="btn btn-error">
+                Yes, Unload All
+              </button>
+              <button
+                onClick={() => setUnloadAllModalVisible(false)}
+                className="btn"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Pack button */}
       <button
         onClick={handlePackClick}
@@ -114,7 +165,7 @@ const PackList: React.FC<PackListProps> = ({
         {isPacking ? "Packing..." : "Pack and Print Shipping Label"}
       </button>
 
-      {/* DaisyUI Modal */}
+      {/* DaisyUI Modal for confirm packing*/}
       {isModalVisible && (
         <div className="modal modal-open">
           <div className="modal-box">

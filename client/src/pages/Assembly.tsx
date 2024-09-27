@@ -66,7 +66,16 @@ const Assembly: React.FC = () => {
         parseInt(workcenterKey)
       );
       if (response.length !== 0) {
-        throw new Error("Please unload the current substrate on Plex first.");
+        logMessage(
+          `Found ${response.length} loaded serial(s). Unloading them now... ⏳`
+        );
+
+        // Loop through each serial number and call `moveContainer`
+        for (const loadedSerialNo of response) {
+          await api.moveContainer(loadedSerialNo, "Edgefold");
+          // logMessage(`Unloaded serial number: ${loadedSerialNo} ✔️`);
+        }
+        logMessage("All loaded serials are unloaded ✔️");
       }
 
       response = await api.checkContainer(serialNo);
