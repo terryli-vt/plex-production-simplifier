@@ -13,7 +13,7 @@ const Waterjet: React.FC = () => {
     [key: string]: string | number;
   } | null>(null);
   const [plexServer, setPlexServer] = useState<string | null>(null);
-  const [BOM, setBOM] = useState<string[] | null>(null);
+  const [components, setComponents] = useState<string[] | null>(null);
 
   // For handling update event from WorkcenterInfo component
   const handleInfoUpdate = async () => {
@@ -23,7 +23,7 @@ const Waterjet: React.FC = () => {
       const info = await api.getWorkcenterInfo(workcenterKey); // fetched info
       setWorkcenterInfo(info);
       setPlexServer(api.getPlexServer());
-      setBOM(await api.getBOM(info["Part Number"]));
+      setComponents(await api.getComponentPartNo(info["Part Number"]));
       setInfoStatus("Loaded");
       setScanStatus("Ready"); // scan input is ready
     } catch (error) {
@@ -59,7 +59,7 @@ const Waterjet: React.FC = () => {
       let response = await api.checkContainer(serialNo);
       // logMessage(response.message);
 
-      if (!BOM!.includes(response.containerInfo["Part Number"])) {
+      if (!components!.includes(response.containerInfo["Part Number"])) {
         throw new Error(
           `This container is not part of the BOM for part number ${
             workcenterInfo!["Part Number"]

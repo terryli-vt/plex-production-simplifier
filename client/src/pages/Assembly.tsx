@@ -72,7 +72,7 @@ const Assembly: React.FC = () => {
 
         // Loop through each serial number and call `moveContainer`
         for (const loadedSerialNo of response) {
-          await api.moveContainer(loadedSerialNo, "Edgefold");
+          await api.moveContainer(loadedSerialNo, "Edgefold-1");
           // logMessage(`Unloaded serial number: ${loadedSerialNo} ✔️`);
         }
         logMessage("All loaded serials are unloaded ✔️");
@@ -107,7 +107,7 @@ const Assembly: React.FC = () => {
         );
       }
 
-      response = await api.moveContainer(serialNo, "RIVIAN");
+      response = await api.moveContainer(serialNo, "Assemble-1");
       // logMessage(response.message); // move container success
       //logMessage("Ready for production ✔️");
       //logMessage("Recording production, please wait... ⏳");
@@ -117,10 +117,14 @@ const Assembly: React.FC = () => {
 
       await handleInfoUpdate(); // Refresh workcenter info
 
-      response = await api.printLabel(newSerialNo, "RIVIAN");
+      response = await api.printLabel(newSerialNo, "Assemble-1");
       logMessage("Success!", "#00CC66");
     } catch (error: any) {
-      logMessage(`Error: ${error.message} ❌`, "#FF6666");
+      if (error.message === `Container is inactive.`) {
+        logMessage(`Warning: ${error.message} ⚠️`, "#FFA500"); // Orange background for the warning
+      } else {
+        logMessage(`Error: ${error.message} ❌`, "#FF6666");
+      }
     } finally {
       setScanStatus("Ready"); // enable scan
     }
@@ -128,7 +132,7 @@ const Assembly: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">RIVIAN Assembly Station</h1>
+      <h1 className="text-2xl font-bold mb-4">Assembly Station</h1>
       <div className="flex flex-col lg:flex-row">
         <div className="w-full lg:w-1/3 lg:pr-4 mb-4 lg:mb-0">
           <WorkcenterInfo

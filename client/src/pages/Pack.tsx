@@ -122,7 +122,7 @@ const Pack: React.FC = () => {
       //logMessage(response.message);
 
       // Print label
-      response = await api.printLabel(newSerialNo, "Pack-Rivian");
+      response = await api.printLabel(newSerialNo, "Pack-1");
       logMessage("Success!", "#00CC66");
 
       await handleInfoUpdate(); // Refresh workcenter info

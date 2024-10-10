@@ -9,6 +9,7 @@ import Assembly from "./pages/Assembly";
 import Pack from "./pages/Pack";
 import Settings from "./pages/Settings";
 import RepairCenter from "./pages/RepairCenter";
+import BOM from "./pages/BOM";
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
           <Route path="/pack" element={<Pack />} />
           <Route path="/repair" element={<RepairCenter />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/bom" element={<BOM />} />
         </Routes>
       </div>
     </Router>

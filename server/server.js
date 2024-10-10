@@ -156,17 +156,32 @@ app.post("/get-substrate-part-no", async (req, res) => {
 
     const subComponentsIndex = columns.indexOf("Sub_Components");
     const substratePartNoIndex = columns.indexOf("Component_Part_No");
+    const substrateNameIndex = columns.indexOf("Component_Part_Name");
+    const partNameIndex = columns.indexOf("Name"); // if this part is already a substrate
 
     // Extract the Component_Part_No where Sub_Components > 0
-    const substratePartNo = rows
-      .filter((row) => row[subComponentsIndex] > 0)
-      .map((row) => row[substratePartNoIndex])[0];
+    const targetRow = rows.filter((row) => row[subComponentsIndex] > 0);
 
-    res.json({
-      success: true,
-      message: `Get substrate part number successful✔️`,
-      substratePartNo,
-    });
+    const substratePartNo = targetRow.map(
+      (row) => row[substratePartNoIndex]
+    )[0];
+    const substrateName = targetRow.map((row) => row[substrateNameIndex])[0];
+
+    if (!substratePartNo) {
+      res.json({
+        success: true,
+        message: `This is not a finished good part number`,
+        partName: rows[0][partNameIndex],
+      });
+    } else {
+      res.json({
+        success: true,
+        message: `Get substrate part number successful✔️`,
+        substratePartNo,
+        substrateName,
+        partName: rows[0][partNameIndex],
+      });
+    }
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -560,7 +575,49 @@ app.post("/get-loaded-serial", async (req, res) => {
   }
 });
 
-app.post("/get-bom", async (req, res) => {
+app.post("/get-component-part-no", async (req, res) => {
+  const { plexServer, partNo } = req.body;
+
+  const prefix = plexServer === "Test" ? "test." : "";
+
+  try {
+    const url = `https://${prefix}cloud.plex.com/api/datasources/561/execute?`;
+
+    const data = {
+      inputs: {
+        Part_No: partNo,
+      },
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: process.env.AUTH_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Plex API failed to get component part number`);
+    }
+
+    const result = await response.json();
+    let columns = result.tables[0].columns;
+    let partNoIndex = columns.indexOf("Component_Part_No");
+    let components = result.tables[0].rows.map((row) => row[partNoIndex]);
+
+    res.json({
+      success: true,
+      message: `Get BOM successful✔️`,
+      components,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.post("/get-carpet-part-no", async (req, res) => {
   const { plexServer, partNo } = req.body;
 
   const prefix = plexServer === "Test" ? "test." : "";
@@ -588,14 +645,25 @@ app.post("/get-bom", async (req, res) => {
     }
 
     const result = await response.json();
-    let columns = result.tables[0].columns;
-    let partNoIndex = columns.indexOf("Component_Part_No");
-    let BOM = result.tables[0].rows.map((row) => row[partNoIndex]);
+    // Extract the columns and rows from the API output
+    const columns = result.tables[0].columns;
+    const rows = result.tables[0].rows;
+
+    const unitIndex = columns.indexOf("Child_Unit");
+    const partNoIndex = columns.indexOf("Component_Part_No");
+    const nameIndex = columns.indexOf("Component_Part_Name");
+
+    // Filter the rows to find the one with "yd" in the Unit column
+    const targetRow = rows.find((row) => row[unitIndex] == "yd");
+    // Get the Part_No from the matching row
+    const carpetPartNo = targetRow ? targetRow[partNoIndex] : null;
+    const carpetPartName = targetRow ? targetRow[nameIndex] : null;
 
     res.json({
       success: true,
-      message: `Get BOM successful✔️`,
-      BOM,
+      message: `Get carpet part number successful✔️`,
+      carpetPartNo,
+      carpetPartName,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

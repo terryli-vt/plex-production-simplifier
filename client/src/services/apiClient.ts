@@ -306,9 +306,9 @@ export const printLabel = async (
 
   if (workcenterName === "Waterjet-3") {
     printerIP = getWaterjetPrinterIP();
-  } else if (workcenterName === "RIVIAN") {
+  } else if (workcenterName === "Assemble-1") {
     printerIP = getAssemblyPrinterIP();
-  } else if (workcenterName === "Pack-Rivian") {
+  } else if (workcenterName === "Pack-1") {
     printerIP = getPackPrinterIP();
   }
 
@@ -395,9 +395,9 @@ export const getLoadedSerial = async (
   }
 };
 
-// Check the BOM of a part number
-export const getBOM = async (partNo: string): Promise<any> => {
-  const url = `${serverURL}/get-bom`;
+// Check the component parts of a part number
+export const getComponentPartNo = async (partNo: string): Promise<any> => {
+  const url = `${serverURL}/get-component-part-no`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -415,9 +415,86 @@ export const getBOM = async (partNo: string): Promise<any> => {
 
     const result = await response.json();
     if (!result.success) {
-      throw new Error(result.message || "Failed to get BOM");
+      throw new Error(result.message || "Failed to get component part numbers");
     }
-    return result.BOM;
+    return result.components;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getBOMInfo = async (partNo: string): Promise<any> => {
+  interface BOM {
+    fgPartNo?: string;
+    fgPartName?: string;
+    substratePartNo?: string;
+    substrateName?: string;
+    carpetPartNo?: string;
+    carpetName?: string;
+  }
+
+  const BOM: BOM = {};
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const plexServer = getPlexServer();
+
+  try {
+    let url = `${serverURL}/get-substrate-part-no`;
+    let body = JSON.stringify({ fgPartNo: partNo, plexServer });
+    let response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body,
+    });
+
+    let result = await response.json();
+    if (!result.success) {
+      throw new Error(result.message || "Failed to get component part numbers");
+    }
+    // if this part number is finished good
+    if (result.substratePartNo) {
+      BOM.fgPartNo = partNo;
+      BOM.fgPartName = result.partName;
+      BOM.substratePartNo = result.substratePartNo;
+      BOM.substrateName = result.substrateName;
+    } else {
+      BOM.substratePartNo = partNo;
+      BOM.substrateName = result.partName;
+    }
+
+    url = `${serverURL}/get-carpet-part-no`;
+    body = JSON.stringify({
+      partNo: BOM.substratePartNo || partNo,
+      plexServer,
+    });
+    response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body,
+    });
+
+    result = await response.json();
+    if (!result.success) {
+      throw new Error(result.message || "Failed to get carpet part numbers");
+    }
+    BOM.carpetPartNo = result.carpetPartNo;
+    BOM.carpetName = result.carpetPartName;
+
+    // Rename the properties and return the new object
+    // Each property is conditionally added using the spread operator .... It will only be added if the corresponding BOM property has a truthy value. This way, optional properties are excluded from the returned object if they are undefined or null.
+    return {
+      ...(BOM.fgPartNo && { "Finished Good Part Number": BOM.fgPartNo }),
+      ...(BOM.fgPartName && { "Finished Good Name": BOM.fgPartName }),
+      ...(BOM.substratePartNo && {
+        "Substrate Part Number": BOM.substratePartNo,
+      }),
+      ...(BOM.substrateName && { "Substrate Name": BOM.substrateName }),
+      ...(BOM.carpetPartNo && { "Carpet Part Number": BOM.carpetPartNo }),
+      ...(BOM.carpetName && { "Carpet Name": BOM.carpetName }),
+    };
   } catch (error) {
     throw error;
   }
