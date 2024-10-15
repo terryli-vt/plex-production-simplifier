@@ -109,7 +109,7 @@ const Edgefold: React.FC = () => {
     if (!lastSerial) return;
 
     try {
-      const response = await api.changeContainerStatus(lastSerial, "Hold");
+      await api.changeContainerStatus(lastSerial, "Hold");
       logMessage("Hold Success!", "#00CC66");
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
@@ -118,7 +118,7 @@ const Edgefold: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">RIVIAN Edgefold Station</h1>
+      <h1 className="text-2xl font-bold mb-4">Edgefold Station</h1>
       <div className="flex flex-col lg:flex-row">
         <div className="w-full lg:w-1/3 lg:pr-4 mb-4 lg:mb-0">
           <WorkcenterInfo

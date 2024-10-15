@@ -39,3 +39,11 @@ This application helps to simplify the process of recording production on the Pl
 - User login (operator & admin)
 - Spanish version
 - About Page & Copyright
+
+## Run the app using PM2
+
+1. Build your app using `npm run build`
+2. Install `serve` package globally using `npm install -g serve`
+3. Use PM2 to serve the app `pm2 serve dist 3000 --spa`
+
+- This command uses PM2 to start the serve package, serving the contents of your `dist` directory on port 3000. The `--spa` flag ensures that Single Page Application (SPA) routing works correctly.
