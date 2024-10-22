@@ -7,6 +7,22 @@ export const getPlexServer = (): string => {
   return localStorage.getItem("plexServer") || "Production";
 };
 
+export const getWaterjetWorkcenterKey = (): string => {
+  return localStorage.getItem("waterjetWorkcenter") || "74886";
+};
+
+export const getEdgefoldWorkcenterKey = (): string => {
+  return localStorage.getItem("edgefoldWorkcenter") || "74883";
+};
+
+export const getAssemblyWorkcenterKey = (): string => {
+  return localStorage.getItem("assemblyWorkcenter") || "72323";
+};
+
+export const getPackWorkcenterKey = (): string => {
+  return localStorage.getItem("packWorkcenter") || "74884";
+};
+
 const getWaterjetPrinterIP = (): string => {
   return localStorage.getItem("waterjetPrinter") || "10.24.1.61";
 };
@@ -17,10 +33,6 @@ const getAssemblyPrinterIP = (): string => {
 
 const getPackPrinterIP = (): string => {
   return localStorage.getItem("packPrinter") || "10.24.0.211";
-};
-
-export const getPackProgram = (): string => {
-  return localStorage.getItem("packProgram") || "Rivian";
 };
 
 export const getPackMode = (): string => {

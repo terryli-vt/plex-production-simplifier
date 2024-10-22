@@ -5,7 +5,7 @@ import * as api from "../services/apiClient";
 import WorkcenterInfo from "./../components/WorkcenterInfo";
 
 const Assembly: React.FC = () => {
-  const workcenterKey = "72323"; // RIVIAN workcenter key
+  const workcenterKey = api.getAssemblyWorkcenterKey();
 
   // For workcenterInfo component
   const [infoStatus, setInfoStatus] = useState<string>("Idle");

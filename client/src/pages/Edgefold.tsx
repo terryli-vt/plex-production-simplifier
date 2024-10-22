@@ -5,7 +5,7 @@ import * as api from "../services/apiClient";
 import WorkcenterInfo from "./../components/WorkcenterInfo";
 
 const Edgefold: React.FC = () => {
-  const workcenterKey = "74883"; // Edgefold1 workcenter key
+  const workcenterKey = api.getEdgefoldWorkcenterKey();
 
   // For workcenterInfo component
   const [infoStatus, setInfoStatus] = useState<string>("Idle");

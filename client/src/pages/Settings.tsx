@@ -9,10 +9,13 @@ interface Option {
 // Define the type for the settings object
 interface SettingsState {
   plexServer: string;
+  waterjetWorkcenter: string;
+  edgefoldWorkcenter: string;
+  assemblyWorkcenter: string;
+  packWorkcenter: string;
   waterjetPrinter: string;
   assemblyPrinter: string;
   packPrinter: string;
-  packProgram: string;
   packMode: string;
   autoPrint: boolean;
 }
@@ -24,6 +27,33 @@ const Settings: React.FC = () => {
       { key: "Test", value: "Test" },
     ],
 
+    waterjetWorkcenterOptions: [
+      { key: "Waterjet-1: R1T, A2LL Fullroof", value: "74884" },
+      { key: "Waterjet-2: A2LL Sunroof", value: "74885" },
+      { key: "Waterjet-3: R1S, BT1", value: "74886" },
+    ],
+
+    edgefoldWorkcenterOptions: [
+      { key: "Edgefold-1: Big Edgefold Machine (Rivian)", value: "74883" },
+      { key: "Edgefold-2: Small Edgefold Machine (BT1, A2LL)", value: "74887" },
+    ],
+
+    assemblyWorkcenterOptions: [
+      {
+        key: "Assembly-1: Assembly for RIVIAN R1T/R1S Headliner",
+        value: "72323",
+      },
+      {
+        key: "Assembly-2: Assembly for A2LL, BT1 Sunroof / Hybrid",
+        value: "75077",
+      },
+    ],
+
+    packWorkcenterOptions: [
+      { key: "Pack-1: Pack Line for Rivian", value: "74895" },
+      { key: "Pack-6: Pack line for BT1 Fullroof", value: "75079" },
+    ],
+
     waterjetPrinterOptions: [
       { key: "Waterjet", value: "10.24.1.61" },
       { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
@@ -31,7 +61,6 @@ const Settings: React.FC = () => {
       { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
       { key: "Test", value: "10.24.3.239" },
       { key: "Assembly", value: "10.24.3.6" },
-      { key: "Line 3 Packing", value: "10.24.3.112" },
       { key: "Toyota Backup", value: "10.24.3.159" },
     ],
 
@@ -42,7 +71,6 @@ const Settings: React.FC = () => {
       { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
       { key: "Test", value: "10.24.3.239" },
       { key: "Waterjet", value: "10.24.1.61" },
-      { key: "Line 3 Packing", value: "10.24.3.112" },
       { key: "Toyota Backup", value: "10.24.3.159" },
     ],
 
@@ -54,13 +82,7 @@ const Settings: React.FC = () => {
       { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
       { key: "Test", value: "10.24.3.239" },
       { key: "Waterjet", value: "10.24.1.61" },
-      { key: "Line 3 Packing", value: "10.24.3.112" },
       { key: "Toyota Backup", value: "10.24.3.159" },
-    ],
-
-    packProgramOptions: [
-      { key: "Rivian", value: "Rivian" },
-      { key: "BT1", value: "BT1" },
     ],
 
     packModeOptions: [
@@ -87,6 +109,22 @@ const Settings: React.FC = () => {
   // Initialize state with values from localStorage or default to the first option
   const [settings, setSettings] = useState<SettingsState>(() => ({
     plexServer: getDefaultValue(options.plexServerOptions, "plexServer"),
+    waterjetWorkcenter: getDefaultValue(
+      options.waterjetWorkcenterOptions,
+      "waterjetWorkcenter"
+    ),
+    edgefoldWorkcenter: getDefaultValue(
+      options.edgefoldWorkcenterOptions,
+      "edgefoldWorkcenter"
+    ),
+    assemblyWorkcenter: getDefaultValue(
+      options.assemblyWorkcenterOptions,
+      "assemblyWorkcenter"
+    ),
+    packWorkcenter: getDefaultValue(
+      options.packWorkcenterOptions,
+      "packWorkcenter"
+    ),
     waterjetPrinter: getDefaultValue(
       options.waterjetPrinterOptions,
       "waterjetPrinter"
@@ -96,7 +134,6 @@ const Settings: React.FC = () => {
       "assemblyPrinter"
     ),
     packPrinter: getDefaultValue(options.packPrinterOptions, "packPrinter"),
-    packProgram: getDefaultValue(options.packProgramOptions, "packProgram"),
     packMode: getDefaultValue(options.packModeOptions, "packMode"),
     autoPrint: getBooleanDefaultValue("autoPrint"),
   }));
@@ -139,6 +176,95 @@ const Settings: React.FC = () => {
           className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         >
           {options.plexServerOptions.map((option) => (
+            <option key={option.key} value={option.value}>
+              {option.key}
+            </option>
+          ))}
+        </select>
+      </div>
+      <h1 className="text-lg font-bold mb-2">Workcenters:</h1>
+      <div className="mb-6">
+        <label
+          htmlFor="waterjetWorkcenter"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Select Workcenter for Waterjet:
+        </label>
+        <select
+          id="waterjetWorkcenter"
+          value={settings.waterjetWorkcenter}
+          onChange={(e) =>
+            handleSettingChange("waterjetWorkcenter", e.target.value)
+          }
+          className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        >
+          {options.waterjetWorkcenterOptions.map((option) => (
+            <option key={option.key} value={option.value}>
+              {option.key}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="mb-6">
+        <label
+          htmlFor="edgefoldWorkcenter"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Select Workcenter for Edgefold:
+        </label>
+        <select
+          id="edgefoldWorkcenter"
+          value={settings.edgefoldWorkcenter}
+          onChange={(e) =>
+            handleSettingChange("edgefoldWorkcenter", e.target.value)
+          }
+          className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        >
+          {options.edgefoldWorkcenterOptions.map((option) => (
+            <option key={option.key} value={option.value}>
+              {option.key}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="mb-6">
+        <label
+          htmlFor="assemblyWorkcenter"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Select Workcenter for Assembly:
+        </label>
+        <select
+          id="assemblyWorkcenter"
+          value={settings.assemblyWorkcenter}
+          onChange={(e) =>
+            handleSettingChange("assemblyWorkcenter", e.target.value)
+          }
+          className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        >
+          {options.assemblyWorkcenterOptions.map((option) => (
+            <option key={option.key} value={option.value}>
+              {option.key}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="mb-6">
+        <label
+          htmlFor="packWorkcenter"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Select Workcenter for Pack:
+        </label>
+        <select
+          id="packWorkcenter"
+          value={settings.packWorkcenter}
+          onChange={(e) =>
+            handleSettingChange("packWorkcenter", e.target.value)
+          }
+          className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        >
+          {options.packWorkcenterOptions.map((option) => (
             <option key={option.key} value={option.value}>
               {option.key}
             </option>
@@ -210,27 +336,8 @@ const Settings: React.FC = () => {
           ))}
         </select>
       </div>
+
       <h1 className="text-lg font-bold mb-2">Pack:</h1>
-      <div className="mb-6">
-        <label
-          htmlFor="packProgram"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Select Pack Program:
-        </label>
-        <select
-          id="packProgram"
-          value={settings.packProgram}
-          onChange={(e) => handleSettingChange("packProgram", e.target.value)}
-          className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-        >
-          {options.packProgramOptions.map((option) => (
-            <option key={option.key} value={option.value}>
-              {option.key}
-            </option>
-          ))}
-        </select>
-      </div>
       <div className="mb-6">
         <label
           htmlFor="packMode"

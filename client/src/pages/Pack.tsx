@@ -6,12 +6,8 @@ import WorkcenterInfo from "./../components/WorkcenterInfo";
 import PackList from "./../components/PackList";
 
 const Pack: React.FC = () => {
-  let workcenterKey;
-  if (api.getPackProgram() === "Rivian") {
-    workcenterKey = "74895"; // Pack-Rivian workcenter key
-  } else {
-    workcenterKey = "74916"; // Pack-A2&BT1 workcenter key
-  }
+  let workcenterKey = api.getPackWorkcenterKey();
+  console.log("workcenterKey", workcenterKey);
 
   const packMode = api.getPackMode();
 

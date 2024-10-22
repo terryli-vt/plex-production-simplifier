@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import ScanInput from "../components/ScanInput";
+// import ScanInput from "../components/ScanInput";
 import LogBox from "../components/LogBox";
 import * as api from "../services/apiClient";
 import WorkcenterInfo from "./../components/WorkcenterInfo";
 
 const Waterjet: React.FC = () => {
-  const workcenterKey = "74886"; // Waterjet3 workcenter key
+  const workcenterKey = api.getWaterjetWorkcenterKey();
 
   // For workcenterInfo component
   const [infoStatus, setInfoStatus] = useState<string>("Idle");
@@ -13,19 +13,19 @@ const Waterjet: React.FC = () => {
     [key: string]: string | number;
   } | null>(null);
   const [plexServer, setPlexServer] = useState<string | null>(null);
-  const [components, setComponents] = useState<string[] | null>(null);
+  // const [components, setComponents] = useState<string[] | null>(null);
 
   // For handling update event from WorkcenterInfo component
   const handleInfoUpdate = async () => {
     setInfoStatus("Loading");
-    setScanStatus("Idle"); // scan input is idle
+    //setScanStatus("Idle"); // scan input is idle
     try {
       const info = await api.getWorkcenterInfo(workcenterKey); // fetched info
       setWorkcenterInfo(info);
       setPlexServer(api.getPlexServer());
-      setComponents(await api.getComponentPartNo(info["Part Number"]));
+      // setComponents(await api.getComponentPartNo(info["Part Number"]));
       setInfoStatus("Loaded");
-      setScanStatus("Ready"); // scan input is ready
+      //setScanStatus("Ready"); // scan input is ready
     } catch (error) {
       console.error("Failed to fetch data:", error);
       setInfoStatus("Error");
@@ -47,9 +47,9 @@ const Waterjet: React.FC = () => {
 
   // ScanInput Component
   // Loading state for ScanInput (Idle, Loading, Ready)
-  const [scanStatus, setScanStatus] = useState<string>("Idle");
+  // const [scanStatus, setScanStatus] = useState<string>("Idle");
 
-  // handle the scanned result
+  /* // handle the scanned result
   const handleScan = async (serialNo: string) => {
     setScanStatus("Loading"); // disable scan by setting loading state for scan input
     setBackgroundColor("#ffffff"); // reset background color
@@ -75,7 +75,7 @@ const Waterjet: React.FC = () => {
     } finally {
       setScanStatus("Ready"); // enable scan
     }
-  };
+  }; */
 
   /* buttons */
   const [isOkLoading, setIsOkLoading] = useState(false);
@@ -87,14 +87,14 @@ const Waterjet: React.FC = () => {
     asyncOperation: () => Promise<void>
   ) => {
     setLoadingState(true);
-    setScanStatus("Loading"); // disable scan
+    //setScanStatus("Loading"); // disable scan
     try {
       await asyncOperation();
     } catch (error) {
       console.error("Failed to perform async operation:", error);
     } finally {
       setLoadingState(false);
-      setScanStatus("Ready"); // enable scan
+      //setScanStatus("Ready"); // enable scan
     }
   };
 
@@ -152,7 +152,7 @@ const Waterjet: React.FC = () => {
         {/* WorkcenterInfo */}
         <div className="w-full lg:w-1/3 lg:pr-4 mb-4 lg:mb-0">
           <WorkcenterInfo
-            workcenterName="Waterjet3"
+            workcenterName="Waterjet"
             status={infoStatus}
             plexServer={plexServer}
             workcenterInfo={workcenterInfo}
@@ -166,16 +166,16 @@ const Waterjet: React.FC = () => {
             infoStatus === "Loaded" ? "" : "hidden"
           }`}
         >
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <ScanInput
               onScan={handleScan}
               placeholder="To load source, scan or type serial number..."
               status={scanStatus}
             />
-          </div>
+          </div> */}
 
           {/* Button group - flex-grow makes them responsive */}
-          <div className="flex flex-col my-5 md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+          <div className="flex flex-col mb-5 md:flex-row space-y-4 md:space-y-0 md:space-x-4">
             <button
               className={`btn btn-lg btn-success flex-grow ${
                 isOkLoading || isHoldLoading ? "hidden" : ""
