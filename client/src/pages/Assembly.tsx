@@ -53,12 +53,14 @@ const Assembly: React.FC = () => {
   // ScanInput Component
   // Loading state for ScanInput (Idle, Loading, Ready)
   const [scanStatus, setScanStatus] = useState<string>("Idle");
+  const [lastSerial, setLastSerial] = useState<string | null>(null);
 
   // handle the scanned result
   const handleScan = async (serialNo: string) => {
     setScanStatus("Loading"); // disable scan
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
+
     try {
       logMessage("Loading, please wait... ⏳");
       let response = await api.getLoadedSerial(
@@ -115,6 +117,8 @@ const Assembly: React.FC = () => {
       const newSerialNo = response.newSerialNo;
       // logMessage(response.message);
 
+      setLastSerial(newSerialNo); // save the new serial number (for potential hold)
+
       await handleInfoUpdate(); // Refresh workcenter info
 
       response = await api.printLabel(newSerialNo, "Assemble-1");
@@ -125,8 +129,20 @@ const Assembly: React.FC = () => {
       } else {
         logMessage(`Error: ${error.message} ❌`, "#FF6666");
       }
+      setLastSerial(null); // clear serial number
     } finally {
       setScanStatus("Ready"); // enable scan
+    }
+  };
+
+  const handleHold = async () => {
+    if (!lastSerial) return;
+
+    try {
+      await api.changeContainerStatus(lastSerial, "Hold");
+      logMessage("Hold Success!", "#00CC66");
+    } catch (error: any) {
+      logMessage(`Error: ${error.message} ❌`, "#FF6666");
     }
   };
 
@@ -156,6 +172,17 @@ const Assembly: React.FC = () => {
               status={scanStatus}
             />
           </div>
+          {lastSerial && (
+            <div className="flex flex-col my-5 md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+              <button
+                className={`btn btn-lg btn-warning flex-grow w-full md:w-auto`}
+                onClick={() => handleHold()}
+                disabled={scanStatus !== "Ready"}
+              >
+                Hold Container {lastSerial}
+              </button>
+            </div>
+          )}
           <LogBox messages={messages} backgroundColor={backgroundColor} />
         </div>
       </div>

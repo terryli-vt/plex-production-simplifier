@@ -28,8 +28,8 @@ const Settings: React.FC = () => {
     ],
 
     waterjetWorkcenterOptions: [
-      { key: "Waterjet-1: R1T, A2LL Fullroof", value: "74884" },
-      { key: "Waterjet-2: A2LL Sunroof", value: "74885" },
+      /*       { key: "Waterjet-1: R1T, A2LL Fullroof", value: "74884" },
+      { key: "Waterjet-2: A2LL Sunroof", value: "74885" }, */
       { key: "Waterjet-3: R1S, BT1", value: "74886" },
     ],
 
@@ -65,7 +65,8 @@ const Settings: React.FC = () => {
     ],
 
     assemblyPrinterOptions: [
-      { key: "Assembly", value: "10.24.3.6" },
+      { key: "Assembly-Rivian", value: "10.24.3.6" },
+      { key: "Assembly-A2&BT1", value: "10.24.2.138" },
       { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
       { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
       { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
