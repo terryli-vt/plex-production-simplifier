@@ -54,6 +54,13 @@ const Assembly: React.FC = () => {
   // Loading state for ScanInput (Idle, Loading, Ready)
   const [scanStatus, setScanStatus] = useState<string>("Idle");
   const [lastSerial, setLastSerial] = useState<string | null>(null);
+  let prevLocation = "Edgefold-1";
+  let currLocation = "Assemble-1";
+  // if we're working with BT1
+  if (workcenterKey === "75077") {
+    prevLocation = "Edgefold-2";
+    currLocation = "Assemble-2";
+  }
 
   // handle the scanned result
   const handleScan = async (serialNo: string) => {
@@ -74,7 +81,7 @@ const Assembly: React.FC = () => {
 
         // Loop through each serial number and call `moveContainer`
         for (const loadedSerialNo of response) {
-          await api.moveContainer(loadedSerialNo, "Edgefold-1");
+          await api.moveContainer(loadedSerialNo, prevLocation);
           // logMessage(`Unloaded serial number: ${loadedSerialNo} ✔️`);
         }
         logMessage("All loaded serials are unloaded ✔️");
@@ -103,13 +110,14 @@ const Assembly: React.FC = () => {
       // logMessage("Substrate part number matched ✔️");
 
       // Check if the container is edgefolded
-      if (String(response.containerInfo["Operation"]) !== "Edgefold") {
+      // For BT1 Hybrid, the previous operation is waterjet
+      /* if (String(response.containerInfo["Operation"]) !== "Edgefold") {
         throw new Error(
           `This container is not in edgefold operation. Current operation: ${response.containerInfo["Operation"]}`
         );
-      }
+      } */
 
-      response = await api.moveContainer(serialNo, "Assemble-1");
+      response = await api.moveContainer(serialNo, currLocation);
       // logMessage(response.message); // move container success
       //logMessage("Ready for production ✔️");
       //logMessage("Recording production, please wait... ⏳");
@@ -121,7 +129,7 @@ const Assembly: React.FC = () => {
 
       await handleInfoUpdate(); // Refresh workcenter info
 
-      response = await api.printLabel(newSerialNo, "Assemble-1");
+      response = await api.printLabel(newSerialNo, currLocation);
       logMessage("Success!", "#00CC66");
     } catch (error: any) {
       if (error.message === `Container is inactive.`) {

@@ -50,6 +50,15 @@ const Pack: React.FC = () => {
   const [isPacking, setIsPacking] = useState(false);
   const [isChangingList, setIsChangingList] = useState(false); // for handling list changes (like hold or unload)
 
+  // For RIVIAN
+  let prevLocation = "Assemble-1";
+  let currLocation = "Pack-1";
+  // if we're working with BT1
+  if (workcenterKey !== "74895") {
+    prevLocation = "Assemble-2";
+    currLocation = "Pack-2";
+  }
+
   const updateList = async (partNo: string) => {
     try {
       const loadedSerial = await api.getLoadedSerial(
@@ -73,7 +82,7 @@ const Pack: React.FC = () => {
 
     try {
       // Change serial's location back to assembly station
-      await api.moveContainer(serialNo, "RIVIAN");
+      await api.moveContainer(serialNo, prevLocation);
       logMessage(`Container ${serialNo} is unloaded ✔️`, "#00CC66");
       await updateList(workcenterInfo!["Part Number"] as string); // Refresh the list
     } catch (error: any) {
@@ -93,7 +102,7 @@ const Pack: React.FC = () => {
 
     try {
       // Change serial's location back to assembly station
-      await api.moveContainer(serialNo, "RIVIAN");
+      await api.moveContainer(serialNo, prevLocation);
       await api.changeContainerStatus(serialNo, "Hold");
       logMessage(`Container ${serialNo} is on hold ✔️`, "#00CC66");
       await updateList(workcenterInfo!["Part Number"] as string); // Refresh the list
@@ -191,7 +200,7 @@ const Pack: React.FC = () => {
         );
       }
 
-      response = await api.moveContainer(serialNo, "Pack-Rivian");
+      response = await api.moveContainer(serialNo, currLocation);
       await updateList(workcenterPartNo as string); // Refresh the list
       logMessage(`${serialNo} is packed ✔️`, "#00CC66");
     } catch (error: any) {

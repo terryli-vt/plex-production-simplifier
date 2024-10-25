@@ -27,8 +27,12 @@ const getWaterjetPrinterIP = (): string => {
   return localStorage.getItem("waterjetPrinter") || "10.24.1.61";
 };
 
-const getAssemblyPrinterIP = (): string => {
-  return localStorage.getItem("assemblyPrinter") || "10.24.3.6";
+const getAssemblyRivianPrinterIP = (): string => {
+  return localStorage.getItem("assemblyRivianPrinter") || "10.24.3.6";
+};
+
+const getAssemblyBT1PrinterIP = (): string => {
+  return localStorage.getItem("assemblyBT1Printer") || "10.24.2.138";
 };
 
 const getPackPrinterIP = (): string => {
@@ -319,7 +323,9 @@ export const printLabel = async (
   if (workcenterName === "Waterjet-3") {
     printerIP = getWaterjetPrinterIP();
   } else if (workcenterName === "Assemble-1") {
-    printerIP = getAssemblyPrinterIP();
+    printerIP = getAssemblyRivianPrinterIP();
+  } else if (workcenterName === "Assemble-2") {
+    printerIP = getAssemblyBT1PrinterIP();
   } else if (workcenterName === "Pack-1") {
     printerIP = getPackPrinterIP();
   }
