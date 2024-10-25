@@ -27,14 +27,12 @@ const RepairCenter: React.FC = () => {
   // ScanInput Component
   // Loading state for ScanInput (Idle, Loading, Ready)
   const [inputStatus, setInputStatus] = useState<string>("Ready");
-  const [disableBtns, setDisableBtns] = useState(false);
 
   const loadBOMInfo = async (partNo: string) => {
     setInputStatus("Loading"); // set loading state
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
     setInfoStatus("Loading");
-    setDisableBtns(false);
     try {
       const response = await api.getBOMInfo(partNo);
       console.log("response from BOM component: ", response);
@@ -44,29 +42,6 @@ const RepairCenter: React.FC = () => {
       setInfoStatus("Error");
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     } finally {
-      setInputStatus("Ready"); // enable scan
-    }
-  };
-
-  /* Handle Scrap */
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isScrapping, setIsScrapping] = useState(false);
-
-  // Function to handle scrap confirmation
-  const handleScrap = async () => {
-    setIsScrapping(true);
-    setIsModalOpen(false);
-    setInputStatus("Loading"); // disable scan
-
-    try {
-      //   await api.scrapContainer(serial!);
-      setMessages(() => []); // clear messages
-      setInfoStatus("Idle");
-    } catch (error: any) {
-      logMessage(`Error: ${error.message} ❌`, "#FF6666");
-      console.error("Failed to scrap the container:", error);
-    } finally {
-      setIsScrapping(false);
       setInputStatus("Ready"); // enable scan
     }
   };
