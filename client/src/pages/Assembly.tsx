@@ -96,11 +96,19 @@ const Assembly: React.FC = () => {
 
       // Check if the container is active
       if (response.containerInfo["Quantity"] === 0) {
-        throw new Error("Container is inactive.");
+        logMessage(`Container is inactive. Borrowing container... ⏳`);
+        const borrowedSerial = await api.borrowContainer(
+          substratePartNo!,
+          "20"
+        ); // operationNo = 20
+
+        logMessage(`Borrowed serial: ${borrowedSerial}`);
+
+        // throw new Error("Container is inactive.");
+        serialNo = borrowedSerial; // use the borrowed serial number
       }
-
       // logMessage(response.message); // container exists
-
+      logMessage("Recording production, please wait... ⏳");
       // Check if the scanned substrate number matches the workcenter setup
       if (String(response.containerInfo["Part Number"]) !== substratePartNo) {
         throw new Error(

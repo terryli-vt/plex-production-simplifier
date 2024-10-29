@@ -32,6 +32,7 @@ const Settings: React.FC = () => {
       /*       { key: "Waterjet-1: R1T, A2LL Fullroof", value: "74884" },
       { key: "Waterjet-2: A2LL Sunroof", value: "74885" }, */
       { key: "Waterjet-3: R1S, BT1", value: "74886" },
+      /* { key: "Waterjet-5: U725", value: "75153" }, */
     ],
 
     edgefoldWorkcenterOptions: [

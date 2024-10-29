@@ -517,3 +517,35 @@ export const getBOMInfo = async (partNo: string): Promise<any> => {
     throw error;
   }
 };
+
+// Borrow a container for inactive cases
+export const borrowContainer = async (
+  partNo: string,
+  operationNo: string
+): Promise<any> => {
+  const url = `${serverURL}/get-first-container-by-date`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const plexServer = getPlexServer();
+  const body = JSON.stringify({ partNo, plexServer, operationNo });
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: body,
+    });
+
+    const result = await response.json();
+    console.log("result = ", result);
+    if (!result.success) {
+      throw new Error(result.message || "Failed to borrow container");
+    }
+    return result.serial;
+  } catch (error) {
+    throw error;
+  }
+};

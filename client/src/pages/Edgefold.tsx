@@ -79,7 +79,7 @@ const Edgefold: React.FC = () => {
 
       // Check if the container is ready for edgefolding
       if (String(response.containerInfo["Operation"]) != "Waterjet") {
-        if (String(response.containerInfo["Operation"]) == "Edgefold") {
+        if (String(response.containerInfo["Operation"]) == "Edgefold-BFB") {
           throw new Error(`Serial No ${serialNo} was already edgefolded.`);
         }
         throw new Error(`Serial No ${serialNo} is not ready for edgefolding.`);

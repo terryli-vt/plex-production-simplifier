@@ -670,6 +670,67 @@ app.post("/get-carpet-part-no", async (req, res) => {
   }
 });
 
+app.post("/get-first-container-by-date", async (req, res) => {
+  const { plexServer, partNo, operationNo } = req.body;
+
+  const prefix = plexServer === "Test" ? "test." : "";
+
+  try {
+    const url = `https://${prefix}cloud.plex.com/api/datasources/8566/execute?`;
+
+    const data = {
+      inputs: {
+        Active: 1,
+        Container_Status: "OK",
+        Order_By: "date",
+        Part_No: partNo,
+      },
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: process.env.AUTH_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Plex API failed to get inventory`);
+    }
+
+    const result = await response.json();
+    // Extract the columns and rows from the API output
+    const columns = result.tables[0].columns;
+    const rows = result.tables[0].rows;
+    if (rows.length === 0) {
+      throw new Error(`No available inventory found for part ${partNo}`);
+    }
+
+    const serialIndex = columns.indexOf("Serial_No");
+    const operationNoIndex = columns.indexOf("Operation_No");
+
+    const targetRow = rows.find(
+      (row) => row[operationNoIndex] === parseInt(operationNo)
+    );
+
+    if (!targetRow) {
+      throw new Error(`No available inventory found for part ${partNo}`);
+    }
+
+    const serial = targetRow[serialIndex];
+
+    res.json({
+      success: true,
+      message: `Get inventory successful✔️`,
+      serial,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Proxy server running at http://localhost:${port}`);
