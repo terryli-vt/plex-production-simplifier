@@ -91,7 +91,9 @@ const Assembly: React.FC = () => {
 
       // Check if the container is on hold
       if (response.containerInfo["Status"] === "Hold") {
-        throw new Error("Container is on hold.");
+        // throw new Error("Container is on hold.");
+        logMessage(`Changing container status from Hold to OK... ⏳`);
+        await api.changeContainerStatus(serialNo, "OK");
       }
 
       // Check if the container is active
@@ -119,11 +121,14 @@ const Assembly: React.FC = () => {
 
       // Check if the container is edgefolded
       // For BT1 Hybrid, the previous operation is waterjet
-      /* if (String(response.containerInfo["Operation"]) !== "Edgefold") {
+      if (
+        substratePartNo !== "BT1CC019" &&
+        String(response.containerInfo["Operation"]) !== "Edgefold-BFB"
+      ) {
         throw new Error(
           `This container is not in edgefold operation. Current operation: ${response.containerInfo["Operation"]}`
         );
-      } */
+      }
 
       response = await api.moveContainer(serialNo, currLocation);
       // logMessage(response.message); // move container success

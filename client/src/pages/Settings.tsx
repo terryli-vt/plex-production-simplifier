@@ -66,6 +66,7 @@ const Settings: React.FC = () => {
       { key: "Test", value: "10.24.3.239" },
       { key: "Assembly", value: "10.24.3.6" },
       { key: "Toyota Backup", value: "10.24.3.159" },
+      { key: "Mobile Zebra 1", value: "10.24.1.50" },
     ],
 
     assemblyRivianPrinterOptions: [
