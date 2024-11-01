@@ -540,11 +540,40 @@ export const borrowContainer = async (
     });
 
     const result = await response.json();
-    console.log("result = ", result);
     if (!result.success) {
       throw new Error(result.message || "Failed to borrow container");
     }
     return result.serial;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Check if operator has logged in to the workcenter
+export const checkWorkcenterLogin = async (
+  workcenterKey: string
+): Promise<any> => {
+  const url = `${serverURL}/check-workcenter-login`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const plexServer = getPlexServer();
+  const body = JSON.stringify({ plexServer, workcenterKey });
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: body,
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.message || "Failed to check workcenter login");
+    }
+    return result.operator;
   } catch (error) {
     throw error;
   }

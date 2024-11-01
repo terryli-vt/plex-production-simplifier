@@ -29,9 +29,10 @@ const Settings: React.FC = () => {
     ],
 
     waterjetWorkcenterOptions: [
-      /*       { key: "Waterjet-1: R1T, A2LL Fullroof", value: "74884" },
-      { key: "Waterjet-2: A2LL Sunroof", value: "74885" }, */
+      { key: "Waterjet-1: R1T, A2LL Fullroof", value: "74884" },
+      /* { key: "Waterjet-2: A2LL Sunroof", value: "74885" }, */
       { key: "Waterjet-3: R1S, BT1", value: "74886" },
+      { key: "Waterjet-4", value: "75091" },
       /* { key: "Waterjet-5: U725", value: "75153" }, */
     ],
 
@@ -59,7 +60,8 @@ const Settings: React.FC = () => {
     ],
 
     waterjetPrinterOptions: [
-      { key: "Waterjet", value: "10.24.1.61" },
+      { key: "Waterjet 3 Printer", value: "10.24.1.61" },
+      { key: "Waterjet 4 Printer", value: "10.24.3.74" },
       { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
       { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
       { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },

@@ -106,7 +106,9 @@ const Waterjet: React.FC = () => {
     try {
       // logMessage("Recording production, please wait... ⏳");
       logMessage("Loading, please wait... ⏳");
-      let response = await api.recordProduction(workcenterKey);
+      let response = await api.checkWorkcenterLogin(workcenterKey);
+
+      response = await api.recordProduction(workcenterKey);
       const newSerialNo = response.newSerialNo;
       // logMessage(response.message);
 
@@ -116,7 +118,14 @@ const Waterjet: React.FC = () => {
 
       await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
-      logMessage(`Error: ${error.message} ❌`, "#FF6666");
+      if (error.message === `Container Part Not Valid. Choose New Job.`) {
+        logMessage(
+          `Error: No job being selected. Please select a job on Plex ❌`,
+          "#FF6666"
+        );
+      } else {
+        logMessage(`Error: ${error.message} ❌`, "#FF6666");
+      }
     }
   };
 
@@ -127,7 +136,8 @@ const Waterjet: React.FC = () => {
     try {
       // logMessage("Recording production, please wait... ⏳");
       logMessage("Loading, please wait... ⏳");
-      let response = await api.recordProduction(workcenterKey);
+      let response = await api.checkWorkcenterLogin(workcenterKey);
+      response = await api.recordProduction(workcenterKey);
       const newSerialNo = response.newSerialNo;
       //logMessage(response.message);
 
@@ -139,7 +149,14 @@ const Waterjet: React.FC = () => {
       logMessage("Success!", "#00CC66");
       await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
-      logMessage(`Error: ${error.message} ❌`, "#FF6666");
+      if (error.message === `Container Part Not Valid. Choose New Job.`) {
+        logMessage(
+          `Error: No job being selected. Please select a job on Plex ❌`,
+          "#FF6666"
+        );
+      } else {
+        logMessage(`Error: ${error.message} ❌`, "#FF6666");
+      }
     }
   };
 

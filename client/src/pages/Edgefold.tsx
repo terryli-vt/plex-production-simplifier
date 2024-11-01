@@ -55,7 +55,8 @@ const Edgefold: React.FC = () => {
     setLastSerial(serialNo); // save the last scanned serial number
 
     try {
-      let response = await api.checkContainer(serialNo);
+      let response = await api.checkWorkcenterLogin(workcenterKey);
+      response = await api.checkContainer(serialNo);
 
       // Check if the container is on hold
       if (response.containerInfo["Status"] === "Hold") {
@@ -96,7 +97,14 @@ const Edgefold: React.FC = () => {
       await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
       // Check for the specific edgefold error
-      if (error.message === `Serial No ${serialNo} was already edgefolded.`) {
+      if (error.message === `Container Part Not Valid. Choose New Job.`) {
+        logMessage(
+          `Error: No job being selected. Please select a job on Plex ❌`,
+          "#FF6666"
+        );
+      } else if (
+        error.message === `Serial No ${serialNo} was already edgefolded.`
+      ) {
         logMessage(`Warning: ${error.message} ⚠️`, "#FFA500"); // Orange background for the warning
       } else {
         logMessage(`Error: ${error.message} ❌`, "#FF6666"); // Red background for other errors

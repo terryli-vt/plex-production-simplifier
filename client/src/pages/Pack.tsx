@@ -6,8 +6,7 @@ import WorkcenterInfo from "./../components/WorkcenterInfo";
 import PackList from "./../components/PackList";
 
 const Pack: React.FC = () => {
-  let workcenterKey = api.getPackWorkcenterKey();
-  console.log("workcenterKey", workcenterKey);
+  const workcenterKey = api.getPackWorkcenterKey();
 
   const packMode = api.getPackMode();
 
@@ -121,8 +120,9 @@ const Pack: React.FC = () => {
     try {
       // Record production
       logMessage("Loading, please wait... ⏳");
+      let response = await api.checkWorkcenterLogin(workcenterKey);
       // logMessage("Recording production, please wait... ⏳");
-      let response = await api.recordProduction(workcenterKey, list.length);
+      response = await api.recordProduction(workcenterKey, list.length);
       const newSerialNo = response.newSerialNo;
       //logMessage(response.message);
 

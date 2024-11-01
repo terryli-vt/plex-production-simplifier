@@ -731,6 +731,56 @@ app.post("/get-first-container-by-date", async (req, res) => {
   }
 });
 
+app.post("/check-workcenter-login", async (req, res) => {
+  const { plexServer, workcenterKey } = req.body;
+
+  const prefix = plexServer === "Test" ? "test." : "";
+
+  try {
+    const url = `https://${prefix}cloud.plex.com/api/datasources/16878/execute?`;
+
+    const data = {
+      inputs: {
+        Workcenter_Key: workcenterKey,
+      },
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: process.env.AUTH_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Plex API failed to get workcenter login operator`);
+    }
+
+    const result = await response.json();
+    // Extract the columns and rows from the API output
+    const columns = result.tables[0].columns;
+    const rows = result.tables[0].rows;
+
+    const operatorIndex = columns.indexOf("Logged_Operators");
+
+    const targetRow = rows[0];
+    const operator = targetRow[operatorIndex];
+    if (operator === "") {
+      throw new Error(`Operator has not logged in. Please log in on Plex. `);
+    }
+
+    res.json({
+      success: true,
+      message: `Operator logged in ✔️`,
+      operator,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Proxy server running at http://localhost:${port}`);

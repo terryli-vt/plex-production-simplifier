@@ -70,7 +70,8 @@ const Assembly: React.FC = () => {
 
     try {
       logMessage("Loading, please wait... ⏳");
-      let response = await api.getLoadedSerial(
+      let response = await api.checkWorkcenterLogin(workcenterKey);
+      response = await api.getLoadedSerial(
         substratePartNo!,
         parseInt(workcenterKey)
       );
