@@ -231,7 +231,8 @@ export const moveContainer = async (
 // Record production
 export const recordProduction = async (
   workcenterKey: string,
-  quantity: number = 1
+  quantity: number = 1,
+  containerStatus: string = "OK" // New optional parameter with default value
 ): Promise<any> => {
   const url = `${serverURL}/record-production`;
 
@@ -244,6 +245,7 @@ export const recordProduction = async (
     plexServer,
     workcenterKey,
     quantity,
+    containerStatus,
   });
 
   try {
@@ -320,7 +322,7 @@ export const printLabel = async (
   const plexServer = getPlexServer();
   let printerIP;
 
-  if (workcenterName === "Waterjet-3") {
+  if (workcenterName === "Waterjet") {
     printerIP = getWaterjetPrinterIP();
   } else if (workcenterName === "Assemble-1") {
     printerIP = getAssemblyRivianPrinterIP();

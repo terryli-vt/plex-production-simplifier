@@ -381,7 +381,7 @@ app.post("/move-container", async (req, res) => {
 });
 
 app.post("/record-production", async (req, res) => {
-  const { plexServer, workcenterKey, quantity } = req.body;
+  const { plexServer, workcenterKey, quantity, containerStatus } = req.body;
   const prefix = plexServer === "Test" ? "test." : "";
 
   try {
@@ -392,6 +392,7 @@ app.post("/record-production", async (req, res) => {
         Container_Full_Move_Container: true,
         Quantity: quantity,
         Workcenter_Key: workcenterKey,
+        Container_Status: containerStatus,
       },
     };
 

@@ -62,6 +62,7 @@ const Settings: React.FC = () => {
     waterjetPrinterOptions: [
       { key: "Waterjet 3 Printer", value: "10.24.1.61" },
       { key: "Waterjet 4 Printer", value: "10.24.3.74" },
+      { key: "Waterjet 1 Printer", value: "10.24.3.230" },
       { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
       { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
       { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
@@ -183,7 +184,7 @@ const Settings: React.FC = () => {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-4">Settings</h1>
-      <div className="mb-6">
+      <div className="mb-9">
         <label
           htmlFor="plexServer"
           className="block text-sm font-medium text-gray-700"
@@ -203,6 +204,7 @@ const Settings: React.FC = () => {
           ))}
         </select>
       </div>
+      <hr className="border-t-2 border-dashed border-gray-400 my-4" />
       <h1 className="text-lg font-bold mb-2">Workcenters:</h1>
       <div className="mb-6">
         <label
@@ -270,7 +272,7 @@ const Settings: React.FC = () => {
           ))}
         </select>
       </div>
-      <div className="mb-6">
+      <div className="mb-9">
         <label
           htmlFor="packWorkcenter"
           className="block text-sm font-medium text-gray-700"
@@ -292,6 +294,7 @@ const Settings: React.FC = () => {
           ))}
         </select>
       </div>
+      <hr className="border-t-2 border-dashed border-gray-400 my-4" />
       <h1 className="text-lg font-bold mb-2">Printers:</h1>
       <div className="mb-6">
         <label
@@ -359,7 +362,7 @@ const Settings: React.FC = () => {
           ))}
         </select>
       </div>
-      <div className="mb-6">
+      <div className="mb-9">
         <label
           htmlFor="packPrinter"
           className="block text-sm font-medium text-gray-700"
@@ -379,7 +382,7 @@ const Settings: React.FC = () => {
           ))}
         </select>
       </div>
-
+      <hr className="border-t-2 border-dashed border-gray-400 my-4" />
       <h1 className="text-lg font-bold mb-2">Pack:</h1>
       <div className="mb-6">
         <label

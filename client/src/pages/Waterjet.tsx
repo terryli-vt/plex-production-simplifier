@@ -67,7 +67,7 @@ const Waterjet: React.FC = () => {
         );
       }
 
-      response = await api.moveContainer(serialNo, "Waterjet-3");
+      response = await api.moveContainer(serialNo, "Waterjet");
       // logMessage(response.message);
       logMessage("Source loaded ✔️", "#00CC66");
     } catch (error: any) {
@@ -112,7 +112,7 @@ const Waterjet: React.FC = () => {
       const newSerialNo = response.newSerialNo;
       // logMessage(response.message);
 
-      response = await api.printLabel(newSerialNo, "Waterjet-3");
+      response = await api.printLabel(newSerialNo, "Waterjet");
       // logMessage(response.message, "#00CC66");
       logMessage("Success!", "#00CC66");
 
@@ -137,14 +137,14 @@ const Waterjet: React.FC = () => {
       // logMessage("Recording production, please wait... ⏳");
       logMessage("Loading, please wait... ⏳");
       let response = await api.checkWorkcenterLogin(workcenterKey);
-      response = await api.recordProduction(workcenterKey);
+      response = await api.recordProduction(workcenterKey, 1, "Hold");
       const newSerialNo = response.newSerialNo;
       //logMessage(response.message);
 
-      response = await api.changeContainerStatus(newSerialNo, "Hold");
+      // response = await api.changeContainerStatus(newSerialNo, "Hold");
       //logMessage(response.message);
 
-      response = await api.printLabel(newSerialNo, "Waterjet-3");
+      response = await api.printLabel(newSerialNo, "Waterjet");
       //logMessage(response.message, "#00CC66");
       logMessage("Success!", "#00CC66");
       await handleInfoUpdate(); // Refresh workcenter info
