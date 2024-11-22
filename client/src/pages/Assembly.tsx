@@ -143,7 +143,7 @@ const Assembly: React.FC = () => {
 
       await handleInfoUpdate(); // Refresh workcenter info
 
-      response = await api.printLabel(newSerialNo, currLocation);
+      response = await api.printLabel(newSerialNo, "Assembly");
       logMessage("Success!", "#00CC66");
     } catch (error: any) {
       if (error.message === `Container is inactive.`) {

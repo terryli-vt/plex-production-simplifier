@@ -100,6 +100,12 @@ const Navbar: React.FC = () => {
             Repair Center
           </Link>
           <Link
+            to="/label"
+            className="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium ml-4"
+          >
+            Label
+          </Link>
+          <Link
             to="/settings"
             className="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium ml-4"
           >
@@ -171,6 +177,13 @@ const Navbar: React.FC = () => {
             onClick={() => setIsOpen(false)}
           >
             Repair Center
+          </Link>
+          <Link
+            to="/label"
+            className="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+            onClick={() => setIsOpen(false)}
+          >
+            Label
           </Link>
           <Link
             to="/settings"

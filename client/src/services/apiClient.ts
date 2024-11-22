@@ -27,16 +27,16 @@ const getWaterjetPrinterIP = (): string => {
   return localStorage.getItem("waterjetPrinter") || "10.24.1.61";
 };
 
-const getAssemblyRivianPrinterIP = (): string => {
-  return localStorage.getItem("assemblyRivianPrinter") || "10.24.3.6";
-};
-
-const getAssemblyBT1PrinterIP = (): string => {
-  return localStorage.getItem("assemblyBT1Printer") || "10.24.2.138";
+const getAssemblyPrinterIP = (): string => {
+  return localStorage.getItem("assemblyPrinter") || "10.24.3.6";
 };
 
 const getPackPrinterIP = (): string => {
   return localStorage.getItem("packPrinter") || "10.24.0.211";
+};
+
+const getContainerPrinterIP = (): string => {
+  return localStorage.getItem("containerPrinter") || "10.24.3.239";
 };
 
 export const getPackMode = (): string => {
@@ -311,7 +311,7 @@ export const recordProductionBFB = async (
 // Print label
 export const printLabel = async (
   serialNo: string,
-  workcenterName: string
+  printerType: string
 ): Promise<any> => {
   const url = `${serverURL}/print-label`;
 
@@ -322,14 +322,14 @@ export const printLabel = async (
   const plexServer = getPlexServer();
   let printerIP;
 
-  if (workcenterName === "Waterjet") {
+  if (printerType === "Waterjet") {
     printerIP = getWaterjetPrinterIP();
-  } else if (workcenterName === "Assemble-1") {
-    printerIP = getAssemblyRivianPrinterIP();
-  } else if (workcenterName === "Assemble-2") {
-    printerIP = getAssemblyBT1PrinterIP();
-  } else if (workcenterName === "Pack-1") {
+  } else if (printerType === "Assembly") {
+    printerIP = getAssemblyPrinterIP();
+  } else if (printerType === "Pack") {
     printerIP = getPackPrinterIP();
+  } else if (printerType === "Container") {
+    printerIP = getContainerPrinterIP();
   }
 
   const body = JSON.stringify({

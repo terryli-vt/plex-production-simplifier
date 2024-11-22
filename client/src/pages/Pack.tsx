@@ -126,8 +126,7 @@ const Pack: React.FC = () => {
       const newSerialNo = response.newSerialNo;
       //logMessage(response.message);
 
-      // Print label
-      response = await api.printLabel(newSerialNo, "Pack-1");
+      response = await api.printLabel(newSerialNo, "Pack");
       logMessage("Success!", "#00CC66");
 
       await handleInfoUpdate(); // Refresh workcenter info

@@ -14,9 +14,9 @@ interface SettingsState {
   assemblyWorkcenter: string;
   packWorkcenter: string;
   waterjetPrinter: string;
-  assemblyRivianPrinter: string;
-  assemblyBT1Printer: string;
+  assemblyPrinter: string;
   packPrinter: string;
+  containerPrinter: string;
   packMode: string;
   autoPrint: boolean;
 }
@@ -29,17 +29,18 @@ const Settings: React.FC = () => {
     ],
 
     waterjetWorkcenterOptions: [
-      { key: "Waterjet-1: R1T, A2LL Fullroof", value: "74884" },
+      { key: "Waterjet-1: R1T, A2LL", value: "74884" },
       /* { key: "Waterjet-2: A2LL Sunroof", value: "74885" }, */
       { key: "Waterjet-3: R1S, BT1", value: "74886" },
-      { key: "Waterjet-4", value: "75091" },
+      { key: "Waterjet-4: BT1", value: "75091" },
       /* { key: "Waterjet-5: U725", value: "75153" }, */
     ],
 
     edgefoldWorkcenterOptions: [
-      { key: "Edgefold-1: Rivian Edgefold", value: "74883" },
+      { key: "Edgefold-1: R1S Edgefold", value: "74883" },
       /* { key: "Edgefold-2: Small Edgefold Machine (BT1, A2LL)", value: "74887" }, */
       { key: "Edgefold-3: BT1 Edgefold", value: "75141" },
+      { key: "Edgefold-4: R1T Edgefold", value: "75207" },
     ],
 
     assemblyWorkcenterOptions: [
@@ -55,52 +56,59 @@ const Settings: React.FC = () => {
 
     packWorkcenterOptions: [
       { key: "Pack-1: Pack for Rivian", value: "74895" },
-      { key: "Pack-2: Pack for BT1 Sunroof / Hybrid", value: "74916" },
-      { key: "Pack-6: Pack for BT1 Fullroof", value: "75079" },
+      { key: "Pack-2: Pack for A2LL, BT1 Sunroof / Hybrid", value: "74916" },
+      { key: "Pack-4: Pack for BT1 Fullroof", value: "75079" },
     ],
 
     waterjetPrinterOptions: [
+      { key: "Waterjet 1 Printer", value: "10.24.3.230" },
       { key: "Waterjet 3 Printer", value: "10.24.1.61" },
       { key: "Waterjet 4 Printer", value: "10.24.3.74" },
-      { key: "Waterjet 1 Printer", value: "10.24.3.230" },
-      { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
+      { key: "Test", value: "10.24.3.239" },
+      // { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
+      /* { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
       { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
       { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
-      { key: "Test", value: "10.24.3.239" },
-      { key: "Assembly", value: "10.24.3.6" },
       { key: "Toyota Backup", value: "10.24.3.159" },
-      { key: "Mobile Zebra 1", value: "10.24.1.50" },
+      { key: "Mobile Zebra 1", value: "10.24.1.50" }, */
     ],
 
-    assemblyRivianPrinterOptions: [
-      { key: "Assembly-Rivian", value: "10.24.3.6" },
-      { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
+    assemblyPrinterOptions: [
+      { key: "Assembly - Rivian", value: "10.24.3.6" },
+      { key: "Assembly - A2&BT1", value: "10.24.2.138" },
+      { key: "Test", value: "10.24.3.239" },
+      // { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
+      /* { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
       { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
       { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
-      { key: "Test", value: "10.24.3.239" },
-      { key: "Waterjet", value: "10.24.1.61" },
-      { key: "Toyota Backup", value: "10.24.3.159" },
-    ],
-
-    assemblyBT1PrinterOptions: [
-      { key: "Assembly-A2&BT1", value: "10.24.2.138" },
-      { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
-      { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
-      { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
-      { key: "Test", value: "10.24.3.239" },
-      { key: "Waterjet", value: "10.24.1.61" },
-      { key: "Toyota Backup", value: "10.24.3.159" },
+      { key: "Waterjet 3 Printer", value: "10.24.1.61" },
+      { key: "Toyota Backup", value: "10.24.3.159" }, */
     ],
 
     packPrinterOptions: [
-      { key: "Pack", value: "10.24.0.211" },
-      { key: "Assembly", value: "10.24.3.6" },
+      { key: "Pack - Rivian", value: "10.24.2.40" },
+      { key: "Pack - Other Programs (Big Printer)", value: "10.24.0.211" },
+      { key: "Test", value: "10.24.3.239" },
+      // { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
+      /* { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
+      { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
+      { key: "Toyota Backup", value: "10.24.3.159" }, */
+    ],
+
+    containerPrinterOptions: [
+      { key: "Test", value: "10.24.3.239" },
+      { key: "Waterjet 1 Printer", value: "10.24.3.230" },
+      { key: "Waterjet 3 Printer", value: "10.24.1.61" },
+      { key: "Waterjet 4 Printer", value: "10.24.3.74" },
+      { key: "Assembly - Rivian", value: "10.24.3.6" },
+      { key: "Assembly - A2&BT1", value: "10.24.2.138" },
+      { key: "Pack - Rivian", value: "10.24.2.40" },
+      { key: "Pack - Other Programs (Big Printer)", value: "10.24.0.211" },
       { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
       { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
       { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
-      { key: "Test", value: "10.24.3.239" },
-      { key: "Waterjet", value: "10.24.1.61" },
       { key: "Toyota Backup", value: "10.24.3.159" },
+      { key: "Mobile Zebra 1", value: "10.24.1.50" },
     ],
 
     packModeOptions: [
@@ -147,15 +155,15 @@ const Settings: React.FC = () => {
       options.waterjetPrinterOptions,
       "waterjetPrinter"
     ),
-    assemblyRivianPrinter: getDefaultValue(
-      options.assemblyRivianPrinterOptions,
-      "assemblyRivianPrinter"
-    ),
-    assemblyBT1Printer: getDefaultValue(
-      options.assemblyBT1PrinterOptions,
-      "assemblyBT1Printer"
+    assemblyPrinter: getDefaultValue(
+      options.assemblyPrinterOptions,
+      "assemblyPrinter"
     ),
     packPrinter: getDefaultValue(options.packPrinterOptions, "packPrinter"),
+    containerPrinter: getDefaultValue(
+      options.containerPrinterOptions,
+      "containerPrinter"
+    ),
     packMode: getDefaultValue(options.packModeOptions, "packMode"),
     autoPrint: getBooleanDefaultValue("autoPrint"),
   }));
@@ -301,7 +309,7 @@ const Settings: React.FC = () => {
           htmlFor="waterjetPrinter"
           className="block text-sm font-medium text-gray-700"
         >
-          Select Printer for RIVIAN Waterjet Line:
+          Select Printer for Waterjet Line:
         </label>
         <select
           id="waterjetPrinter"
@@ -320,20 +328,20 @@ const Settings: React.FC = () => {
       </div>
       <div className="mb-6">
         <label
-          htmlFor="assemblyRivianPrinter"
+          htmlFor="assemblyPrinter"
           className="block text-sm font-medium text-gray-700"
         >
-          Select Printer for RIVIAN Assembly Line:
+          Select Printer for Assembly Line:
         </label>
         <select
-          id="assemblyRivianPrinter"
-          value={settings.assemblyRivianPrinter}
+          id="assemblyPrinter"
+          value={settings.assemblyPrinter}
           onChange={(e) =>
-            handleSettingChange("assemblyRivianPrinter", e.target.value)
+            handleSettingChange("assemblyPrinter", e.target.value)
           }
           className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         >
-          {options.assemblyRivianPrinterOptions.map((option) => (
+          {options.assemblyPrinterOptions.map((option) => (
             <option key={option.key} value={option.value}>
               {option.key}
             </option>
@@ -342,32 +350,10 @@ const Settings: React.FC = () => {
       </div>
       <div className="mb-6">
         <label
-          htmlFor="assemblyBT1Printer"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Select Printer for BT1 Assembly Line:
-        </label>
-        <select
-          id="assemblyBT1Printer"
-          value={settings.assemblyBT1Printer}
-          onChange={(e) =>
-            handleSettingChange("assemblyBT1Printer", e.target.value)
-          }
-          className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-        >
-          {options.assemblyBT1PrinterOptions.map((option) => (
-            <option key={option.key} value={option.value}>
-              {option.key}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mb-9">
-        <label
           htmlFor="packPrinter"
           className="block text-sm font-medium text-gray-700"
         >
-          Select Printer for RIVIAN Pack Line:
+          Select Printer for Pack Line:
         </label>
         <select
           id="packPrinter"
@@ -376,6 +362,28 @@ const Settings: React.FC = () => {
           className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         >
           {options.packPrinterOptions.map((option) => (
+            <option key={option.key} value={option.value}>
+              {option.key}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="mb-9">
+        <label
+          htmlFor="containerPrinter"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Select Printer for Container Printing Page:
+        </label>
+        <select
+          id="containerPrinter"
+          value={settings.containerPrinter}
+          onChange={(e) =>
+            handleSettingChange("containerPrinter", e.target.value)
+          }
+          className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        >
+          {options.containerPrinterOptions.map((option) => (
             <option key={option.key} value={option.value}>
               {option.key}
             </option>
