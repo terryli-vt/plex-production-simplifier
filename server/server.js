@@ -303,7 +303,7 @@ app.post("/change-container-status", async (req, res) => {
 });
 
 app.post("/scrap-container", async (req, res) => {
-  const { serialNo, plexServer } = req.body;
+  const { serialNo, scrapReason, plexServer } = req.body;
 
   const prefix = plexServer === "Test" ? "test." : "";
 
@@ -312,7 +312,7 @@ app.post("/scrap-container", async (req, res) => {
     const data = {
       inputs: {
         Serial_No: serialNo,
-        Scrap_Reason: "Bad Substrate",
+        Scrap_Reason: scrapReason,
         Scrap_Quantity: 1,
       },
     };

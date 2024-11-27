@@ -74,23 +74,41 @@ const RepairCenter: React.FC = () => {
   /* Handle Scrap */
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isScrapping, setIsScrapping] = useState(false);
+  const [scrapReason, setScrapReason] = useState<string>("");
 
+  // Define a list of scrap reasons
+  const scrapReasons = [
+    "Bad Edgefolding",
+    "Bad Molding",
+    "Carpet Waste",
+    "Supplier Issue",
+    "Surface Damage",
+    "Surface Stain",
+    "Trim Line Off",
+    "Unrepairable Wrinkle",
+  ];
   // Function to handle scrap confirmation
   const handleScrap = async () => {
+    if (!scrapReason) return; // Ensure reason is selected
     setIsScrapping(true);
     setIsModalOpen(false);
     setScanStatus("Loading"); // disable scan
 
     try {
-      await api.scrapContainer(serial!);
+      await api.scrapContainer(serial!, scrapReason);
       setMessages(() => []); // clear messages
       setInfoStatus("Idle");
+      logMessage(
+        `${serial} scrapped successfully with reason: ${scrapReason}`,
+        "#00CC66"
+      );
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
       console.error("Failed to scrap the container:", error);
     } finally {
       setIsScrapping(false);
       setScanStatus("Ready"); // enable scan
+      setScrapReason(""); // Reset scrap reason
     }
   };
 
@@ -152,13 +170,45 @@ const RepairCenter: React.FC = () => {
               <div className="modal modal-open">
                 <div className="modal-box">
                   <h3 className="font-bold text-lg">Are you sure?</h3>
-                  <p className="py-4">
+                  {/* Dropdown menu for scrap reasons */}
+                  <div className="my-2">
+                    <label
+                      htmlFor="scrapReason"
+                      className="block font-semibold mb-2"
+                    >
+                      Select Scrap Reason:
+                    </label>
+                    <select
+                      id="scrapReason"
+                      className="select select-bordered w-full"
+                      value={scrapReason}
+                      onChange={(e) => setScrapReason(e.target.value)}
+                    >
+                      <option value="" disabled>
+                        -- Choose a reason --
+                      </option>
+                      {scrapReasons.map((reason) => (
+                        <option key={reason} value={reason}>
+                          {reason}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Confirm Message */}
+                  <p className="py-2">
                     Do you really want to scrap this container? This action
                     cannot be undone.
                   </p>
+
+                  {/* Action Buttons */}
                   <div className="modal-action">
                     {/* Confirm Button */}
-                    <button className="btn btn-error" onClick={handleScrap}>
+                    <button
+                      className="btn btn-error"
+                      onClick={handleScrap}
+                      disabled={!scrapReason}
+                    >
                       Yes, Scrap it
                     </button>
 

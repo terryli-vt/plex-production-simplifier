@@ -166,7 +166,10 @@ export const changeContainerStatus = async (
 };
 
 // Scrap container
-export const scrapContainer = async (serialNo: string): Promise<any> => {
+export const scrapContainer = async (
+  serialNo: string,
+  scrapReason: string
+): Promise<any> => {
   const url = `${serverURL}/scrap-container`;
 
   const headers = {
@@ -174,7 +177,7 @@ export const scrapContainer = async (serialNo: string): Promise<any> => {
   };
 
   const plexServer = getPlexServer();
-  const body = JSON.stringify({ serialNo, plexServer });
+  const body = JSON.stringify({ serialNo, scrapReason, plexServer });
 
   try {
     const response = await fetch(url, {
