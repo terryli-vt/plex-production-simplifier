@@ -87,6 +87,8 @@ const Settings: React.FC = () => {
 
     packPrinterOptions: [
       { key: "Pack - Rivian", value: "10.24.2.40" },
+      { key: "Pack - A2&BT1", value: "10.24.3.221" },
+      { key: "Pack - BT1 Fullroof", value: "10.24.3.150" },
       { key: "Pack - Other Programs (Big Printer)", value: "10.24.0.211" },
       { key: "Test", value: "10.24.3.239" },
       // { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
@@ -103,6 +105,8 @@ const Settings: React.FC = () => {
       { key: "Assembly - Rivian", value: "10.24.3.6" },
       { key: "Assembly - A2&BT1", value: "10.24.2.138" },
       { key: "Pack - Rivian", value: "10.24.2.40" },
+      { key: "Pack - A2&BT1", value: "10.24.3.221" },
+      { key: "Pack - BT1 Fullroof", value: "10.24.3.150" },
       { key: "Pack - Other Programs (Big Printer)", value: "10.24.0.211" },
       { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
       { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },

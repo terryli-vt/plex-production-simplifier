@@ -52,10 +52,15 @@ const Pack: React.FC = () => {
   // For RIVIAN
   let prevLocation = "Assemble-1";
   let currLocation = "Pack-1";
-  // if we're working with BT1
-  if (workcenterKey !== "74895") {
+  // if we're working with BT1 Sunroof
+  if (workcenterKey === "74916") {
     prevLocation = "Assemble-2";
     currLocation = "Pack-2";
+  }
+  // if we're working with BT1 Fullroof
+  if (workcenterKey === "75079") {
+    prevLocation = "Waterjet-4";
+    currLocation = "Pack-4";
   }
 
   const updateList = async (partNo: string) => {
@@ -192,10 +197,23 @@ const Pack: React.FC = () => {
         );
       }
 
-      // Check if the container is in Assembly operation
-      if (String(response.containerInfo["Operation"]) !== "Assembly") {
+      // Check if the container is in Assembly operation (for anything other than BT1 Fullroof)
+      if (
+        String(response.containerInfo["Operation"]) !== "Assembly" &&
+        workcenterKey !== "75079"
+      ) {
         throw new Error(
           `This container is not in Assembly operation. Current operation: ${response.containerInfo["Operation"]}`
+        );
+      }
+
+      // For BT1 Fullroof
+      if (
+        String(response.containerInfo["Operation"]) !== "Waterjet" &&
+        workcenterKey === "75079"
+      ) {
+        throw new Error(
+          `This container is not in Waterjet operation. Current operation: ${response.containerInfo["Operation"]}`
         );
       }
 
