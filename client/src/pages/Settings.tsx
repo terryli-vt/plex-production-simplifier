@@ -22,6 +22,7 @@ interface SettingsState {
 }
 
 const Settings: React.FC = () => {
+  // A central repository for all dropdown options
   const options = {
     plexServerOptions: [
       { key: "Production", value: "Production" },
@@ -33,13 +34,13 @@ const Settings: React.FC = () => {
       /* { key: "Waterjet-2: A2LL Sunroof", value: "74885" }, */
       { key: "Waterjet-3: R1S, BT1", value: "74886" },
       { key: "Waterjet-4: BT1", value: "75091" },
-      /* { key: "Waterjet-5: U725", value: "75153" }, */
+      /* { key: "Waterjet-5: ", value: "75153" }, */
     ],
 
     edgefoldWorkcenterOptions: [
       { key: "Edgefold-1: R1S Edgefold", value: "74883" },
-      /* { key: "Edgefold-2: Small Edgefold Machine (BT1, A2LL)", value: "74887" }, */
-      { key: "Edgefold-3: BT1 Edgefold", value: "75141" },
+      /* { key: "Edgefold-2: Small Edgefold Machine", value: "74887" }, */
+      { key: "Edgefold-3: A2LL, BT1 Edgefold", value: "75141" },
       { key: "Edgefold-4: R1T Edgefold", value: "75207" },
     ],
 
@@ -121,12 +122,14 @@ const Settings: React.FC = () => {
     ],
   };
 
+  // Retrieves a boolean setting from localStorage or defaults to true
   const getBooleanDefaultValue = (storageKey: string): boolean => {
     const storedValue = localStorage.getItem(storageKey);
     return storedValue ? storedValue === "true" : true;
   };
 
   // Function to get the default value for a dropdown
+  // If a value exists in localStorage, it uses that; otherwise, it falls back to the first option.
   const getDefaultValue = (options: Option[], storageKey: string): string => {
     const storedValue = localStorage.getItem(storageKey);
     if (storedValue && options.some((option) => option.value === storedValue)) {
@@ -137,6 +140,7 @@ const Settings: React.FC = () => {
 
   // Centralized state for all dropdowns
   // Initialize state with values from localStorage or default to the first option
+  // Uses the SettingsState interface for type safety.
   const [settings, setSettings] = useState<SettingsState>(() => ({
     plexServer: getDefaultValue(options.plexServerOptions, "plexServer"),
     waterjetWorkcenter: getDefaultValue(
@@ -172,7 +176,8 @@ const Settings: React.FC = () => {
     autoPrint: getBooleanDefaultValue("autoPrint"),
   }));
 
-  // Generic effect for saving changes
+  // Automatically saves any changes to settings back to localStorage
+  // It runs whenever 'settings' changes
   useEffect(() => {
     Object.keys(settings).forEach((key) => {
       const value = settings[key as keyof SettingsState];
@@ -183,6 +188,7 @@ const Settings: React.FC = () => {
     });
   }, [settings]);
 
+  // When user changes the settings, update the state
   const handleSettingChange = (
     key: keyof SettingsState,
     value: string | boolean

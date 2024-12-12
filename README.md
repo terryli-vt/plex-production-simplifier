@@ -1,14 +1,28 @@
 # plex-production-simplifier
 
-This application helps to simplify the process of recording production on the Plex ERP (an alternative of Mach 2 application)
+# Introduction
 
-## Features
+Plex Simplifier helps to simplify the process of recording production data on the Plex ERP.
+
+The goal is to find a better alternative of Mach 2 application. Plex Simplifier works better than Mach 2 because:
+
+- It is highly customizable. It can be easily modified to fit the needs of the user regarding to the manufacturing process.
+- It is more user-friendly.
+  - Clean and simple UI, easy to use.
+  - Responsive design for smaller screens (works perfect on phones and tablets).
+  - Handles scanning with ease (QR Code, Barcode, etc), and the users don't need to worry about parsing the scanned results.
+- It provides useful tools that are not included in Mach 2
+  - Repair Center: Change container's status, scrap containers
+  - Container Label Printer: Print container label with ease given a serial number
+  - Ability to hold bad parts during the manufacturing process
+  - Check BOM of any part number
+
+# Features
 
 - Waterjet workcenter
   - Record production (good and hold parts)
-  - Load source
 - Edgefold workcenter
-  - Record bin-for-bin production
+  - Record bin-for-bin production, and hold parts if needed
 - Assembly workcenter
   - Record production through scanning
   - Prevent part being recorded if it's not in Edgefold operation
@@ -18,23 +32,15 @@ This application helps to simplify the process of recording production on the Pl
 - Repair center
   - Change container's status
   - Scrap containers
+- Container Label Printer
+  - Print container label given a serial number through user-specified printer (can be set in the settings page)
 - Setting
   - Toggle between Test and Production Plex Server
-  - Change printer settings
-  - Autoprint Setting for pack
-- Other features
-  - Real-time Update of the workcenter information
-  - Hold status on edgefold and pack
-  - Autofocus on the input field
-  - Responsive Design for smaller screens (phone and tablet)
-- Bug Fixes
-  - Waterjet: preventing load incorrect carpet source
-  - Assembly: check no substrate loaded before production
-  - Assembly: prevent hold parts being assembled
-  - Pack station pack list stay updated with workcenter
-  - Pack station: prevent hold parts being packed
+  - Change workcenters for each step, based on different manufacturing programs
+  - Change printer used for printing part and shipping labels
+  - Enable/Disable Autoprint feature for pack
 
-## TODO
+# Planned Features
 
 - User login (operator & admin)
 - Spanish version

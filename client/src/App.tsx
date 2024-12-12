@@ -11,6 +11,7 @@ import Settings from "./pages/Settings";
 import RepairCenter from "./pages/RepairCenter";
 import Label from "./pages/Label";
 import BOM from "./pages/BOM";
+import About from "./pages/About";
 
 const App: React.FC = () => {
   return (
@@ -27,6 +28,7 @@ const App: React.FC = () => {
           <Route path="/settings" element={<Settings />} />
           <Route path="/label" element={<Label />} />
           <Route path="/bom" element={<BOM />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </div>
     </Router>
