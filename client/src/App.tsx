@@ -12,6 +12,7 @@ import RepairCenter from "./pages/RepairCenter";
 import Label from "./pages/Label";
 import BOM from "./pages/BOM";
 import About from "./pages/About";
+import NotFound from "./pages/NotFound";
 
 const App: React.FC = () => {
   return (
@@ -29,6 +30,7 @@ const App: React.FC = () => {
           <Route path="/label" element={<Label />} />
           <Route path="/bom" element={<BOM />} />
           <Route path="/about" element={<About />} />
+          <Route path="*" element={<NotFound />} /> {/* Catch-all route */}
         </Routes>
       </div>
     </Router>

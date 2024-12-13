@@ -72,7 +72,14 @@ const Home: React.FC = () => {
             href="mailto:Tianyu.Li@daimayus.com"
           >
             Tianyu.Li@daimayus.com
-          </a>
+          </a>{" "}
+          |{" "}
+          <Link
+            to="/about"
+            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+          >
+            About Page
+          </Link>
         </p>
       </div>
     </div>
