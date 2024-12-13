@@ -38,10 +38,10 @@ const Settings: React.FC = () => {
     ],
 
     edgefoldWorkcenterOptions: [
-      { key: "Edgefold-1: R1S Edgefold", value: "74883" },
-      /* { key: "Edgefold-2: Small Edgefold Machine", value: "74887" }, */
-      { key: "Edgefold-3: A2LL, BT1 Edgefold", value: "75141" },
-      { key: "Edgefold-4: R1T Edgefold", value: "75207" },
+      { key: "Edgefold-1: R1S", value: "74883" },
+      { key: "Edgefold-2: U725", value: "74887" },
+      { key: "Edgefold-3: A2LL, BT1", value: "75141" },
+      { key: "Edgefold-4: R1T", value: "75207" },
     ],
 
     assemblyWorkcenterOptions: [
@@ -53,11 +53,16 @@ const Settings: React.FC = () => {
         key: "Assemble-2: Assembly for A2LL, BT1 Sunroof / Hybrid",
         value: "75077",
       },
+      {
+        key: "Assemble-3: Assembly for U725",
+        value: "72543",
+      },
     ],
 
     packWorkcenterOptions: [
       { key: "Pack-1: Pack for Rivian", value: "74895" },
       { key: "Pack-2: Pack for A2LL, BT1 Sunroof / Hybrid", value: "74916" },
+      { key: "Pack-3: Pack for U725", value: "75078" },
       { key: "Pack-4: Pack for BT1 Fullroof", value: "75079" },
     ],
 
