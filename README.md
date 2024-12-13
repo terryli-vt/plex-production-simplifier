@@ -1,6 +1,6 @@
-# plex-production-simplifier
+# Plex Simplifier
 
-# Introduction
+## Introduction
 
 Plex Simplifier helps to simplify the process of recording production data on the Plex ERP.
 
@@ -17,7 +17,7 @@ The goal is to find a better alternative of Mach 2 application. Plex Simplifier 
   - Ability to hold bad parts during the manufacturing process
   - Check BOM of any part number
 
-# Features
+## Features
 
 - Waterjet workcenter
   - Record production (good and hold parts)
@@ -40,16 +40,39 @@ The goal is to find a better alternative of Mach 2 application. Plex Simplifier 
   - Change printer used for printing part and shipping labels
   - Enable/Disable Autoprint feature for pack
 
-# Planned Features
+## Planned Features
 
 - User login (operator & admin)
 - Spanish version
-- About Page & Copyright
 
-## Run the app using PM2
+## How to Run this App
+
+### Development - Backend
+
+1. In the server directory, set environment variable `AUTH_KEY` and put into `.env`
+2. Select the port you would like the server to use. I use `8000`
+3. Run `npm install` and `nodemon server.js`
+
+### Development - Frontend
+
+1. Run `npm install`, you may need to install DaisyUI separately
+2. In `apiClient.ts`, double check the `serverURL`
+3. `npm run dev`
+
+### Production - Backend
+
+1. You can choose to run using PM2 or Forever for running the server in the background.
+
+- Using forever: `forever start server.js`
+
+### Production - Frontend
 
 1. Build your app using `npm run build`
 2. Install `serve` package globally using `npm install -g serve`
 3. Use PM2 to serve the app `pm2 serve dist 3000 --spa`
 
 - This command uses PM2 to start the serve package, serving the contents of your `dist` directory on port 3000. The `--spa` flag ensures that Single Page Application (SPA) routing works correctly.
+
+## Other Resources
+
+- Frontend Setup Guide: [Project Setup](https://medium.com/@pushpendrapal_/how-to-setup-react-typescript-and-tailwind-css-with-vite-in-a-project-8d9b0b51d1bd)
