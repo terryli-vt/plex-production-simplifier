@@ -53,7 +53,8 @@ const Assembly: React.FC = () => {
   // ScanInput Component
   // Loading state for ScanInput (Idle, Loading, Ready)
   const [scanStatus, setScanStatus] = useState<string>("Idle");
-  const [lastScannedSub, setlastScannedSub] = useState<string | null>(null); // serial number of the last scanned substrate, to avoid duplicate scan
+  // const [lastScannedSub, setlastScannedSub] = useState<string | null>(null); // serial number of the last scanned substrate, to avoid duplicate scan
+
   const [lastSerial, setLastSerial] = useState<string | null>(null); // finished good serial after recording production
   let prevLocation = "Edgefold-1";
   let currLocation = "Assemble-1";
@@ -68,14 +69,20 @@ const Assembly: React.FC = () => {
     setScanStatus("Loading"); // disable scan
     setBackgroundColor("#ffffff"); // reset background color
     setMessages(() => []); // clear messages
-    setlastScannedSub(serialNo); // store the last scanned serial number, to prevent duplicate scan in the future
+    // setlastScannedSub(serialNo); // store the last scanned serial number, to prevent duplicate scan in the future
+
     try {
       logMessage("Loading, please wait... ⏳");
 
       // check duplicate scan
-      if (lastScannedSub === serialNo) {
+      console.log(
+        "last scanned sub = ",
+        localStorage.getItem("lastScannedSub")
+      );
+      if (localStorage.getItem("lastScannedSub") === serialNo) {
         throw new Error(`Duplicate scan. You have scanned this part before.`);
       }
+      localStorage.setItem("lastScannedSub", serialNo);
 
       let response = await api.checkWorkcenterLogin(workcenterKey);
       response = await api.getLoadedSerial(
@@ -156,7 +163,7 @@ const Assembly: React.FC = () => {
       if (
         error.message !== `Duplicate scan. You have scanned this part before.`
       ) {
-        setlastScannedSub(null);
+        localStorage.removeItem("lastScannedSub");
       }
 
       if (error.message === `Container is inactive.`) {
