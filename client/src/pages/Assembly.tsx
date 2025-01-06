@@ -60,8 +60,13 @@ const Assembly: React.FC = () => {
   let currLocation = "Assemble-1";
   // if we're working with BT1
   if (workcenterKey === "75077") {
-    prevLocation = "Edgefold-2";
+    prevLocation = "Edgefold-3";
     currLocation = "Assemble-2";
+  }
+  // if we're working with U725
+  if (workcenterKey === "72543") {
+    prevLocation = "Edgefold-2";
+    currLocation = "Assemble-3";
   }
 
   // handle the scanned result
