@@ -11,8 +11,8 @@ const {
 } = require("./modules/partInfo");
 
 const app = express();
-const port = 3300;
-// const port = 8000;
+// const port = 3300;
+const port = 8000;
 
 // Middleware to parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));

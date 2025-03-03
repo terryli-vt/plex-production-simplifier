@@ -31,7 +31,7 @@ const Settings: React.FC = () => {
 
     waterjetWorkcenterOptions: [
       { key: "Waterjet-1: R1T, A2LL", value: "74884" },
-      /* { key: "Waterjet-2: A2LL Sunroof", value: "74885" }, */
+      { key: "Waterjet-2: A2LL Sunroof", value: "74885" },
       { key: "Waterjet-3: R1S, BT1", value: "74886" },
       { key: "Waterjet-4: BT1", value: "75091" },
       /* { key: "Waterjet-5: ", value: "75153" }, */
@@ -67,62 +67,38 @@ const Settings: React.FC = () => {
     ],
 
     waterjetPrinterOptions: [
-      { key: "Waterjet 1 Printer", value: "10.24.3.230" },
+      { key: "Waterjet 1 Printer", value: "10.24.2.48" },
       { key: "Waterjet 3 Printer", value: "10.24.1.61" },
-      { key: "Waterjet 4 Printer", value: "10.24.3.74" },
-      { key: "Test", value: "10.24.3.239" },
-      // { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
-      /* { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
-      { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
-      { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
-      { key: "Toyota Backup", value: "10.24.3.159" },
-      { key: "Mobile Zebra 1", value: "10.24.1.50" }, */
+      { key: "Waterjet 4 Printer", value: "10.24.2.40" },
+      { key: "Test", value: "10.24.2.7" },
     ],
 
     assemblyPrinterOptions: [
-      { key: "Assembly - Rivian", value: "10.24.3.6" },
-      { key: "Assembly - A2&BT1", value: "10.24.2.138" },
-      { key: "Assembly - U725", value: "10.24.3.111" },
-      { key: "Test", value: "10.24.3.239" },
-      // { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
-      /* { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
-      { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
-      { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
-      { key: "Waterjet 3 Printer", value: "10.24.1.61" },
-      { key: "Toyota Backup", value: "10.24.3.159" }, */
+      { key: "Assembly - Rivian", value: "10.24.2.63" },
+      { key: "Assembly - A2&BT1", value: "10.24.2.45" },
+      { key: "Test", value: "10.24.2.7" },
     ],
 
     packPrinterOptions: [
-      { key: "Pack - Rivian", value: "10.24.2.40" },
-      { key: "Pack - A2&BT1", value: "10.24.3.221" },
-      { key: "Pack - BT1 Fullroof", value: "10.24.3.150" },
-      { key: "Pack - U725", value: "10.24.2.182" },
-      { key: "Pack - Other Programs (Big Printer)", value: "10.24.0.211" },
-      { key: "Test", value: "10.24.3.239" },
-      // { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
-      /* { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
-      { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
-      { key: "Toyota Backup", value: "10.24.3.159" }, */
+      { key: "Pack - Rivian", value: "10.24.2.47" },
+      { key: "Pack - A2&BT1", value: "10.24.2.46" },
+      { key: "Pack - BT1 Fullroof", value: "10.24.2.44" },
+      { key: "Test", value: "10.24.2.7" },
     ],
 
     containerPrinterOptions: [
-      { key: "Test", value: "10.24.3.239" },
-      { key: "Waterjet 1 Printer", value: "10.24.3.230" },
+      { key: "Waterjet 1 Printer", value: "10.24.2.48" },
       { key: "Waterjet 3 Printer", value: "10.24.1.61" },
-      { key: "Waterjet 4 Printer", value: "10.24.3.74" },
-      { key: "Assembly - Rivian", value: "10.24.3.6" },
-      { key: "Assembly - A2&BT1", value: "10.24.2.138" },
+      { key: "Waterjet 4 Printer", value: "10.24.2.40" },
+      { key: "Assembly - Rivian", value: "10.24.2.63" },
+      { key: "Assembly - A2&BT1", value: "10.24.2.45" },
       { key: "Assembly - U725", value: "10.24.3.111" },
-      { key: "Pack - Rivian", value: "10.24.2.40" },
-      { key: "Pack - A2&BT1", value: "10.24.3.221" },
-      { key: "Pack - BT1 Fullroof", value: "10.24.3.150" },
+      { key: "Pack - Rivian", value: "10.24.2.47" },
+      { key: "Pack - A2&BT1", value: "10.24.2.46" },
+      { key: "Pack - BT1 Fullroof", value: "10.24.2.44" },
       { key: "Pack - U725", value: "10.24.2.182" },
       { key: "Pack - Other Programs (Big Printer)", value: "10.24.0.211" },
-      { key: "Zebra S4 Backup (1st floor)", value: "10.24.2.134" },
-      { key: "Zebra S5 (1st floor)", value: "10.24.2.1" },
-      { key: "Zebra S6 (2nd floor)", value: "10.24.3.19" },
-      { key: "Toyota Backup", value: "10.24.3.159" },
-      { key: "Mobile Zebra 1", value: "10.24.1.50" },
+      { key: "Test", value: "10.24.2.7" },
     ],
 
     packModeOptions: [
