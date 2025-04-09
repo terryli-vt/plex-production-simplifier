@@ -38,10 +38,11 @@ const Settings: React.FC = () => {
     ],
 
     edgefoldWorkcenterOptions: [
-      { key: "Edgefold-1: R1S", value: "74883" },
-      { key: "Edgefold-2: U725", value: "74887" },
-      { key: "Edgefold-3: A2LL, BT1", value: "75141" },
-      { key: "Edgefold-4: R1T", value: "75207" },
+      { key: "Edgefold-R1S", value: "74883" },
+      { key: "Edgefold-R1T", value: "75207" },
+      { key: "Edgefold-A2LL", value: "75141" },
+      { key: "Edgefold-BT1", value: "75462" },
+      { key: "Edgefold-U725", value: "74887" },
     ],
 
     assemblyWorkcenterOptions: [
@@ -68,6 +69,7 @@ const Settings: React.FC = () => {
 
     waterjetPrinterOptions: [
       { key: "Waterjet 1 Printer", value: "10.24.2.48" },
+      { key: "Waterjet 2 Printer", value: "10.24.2.128" },
       { key: "Waterjet 3 Printer", value: "10.24.1.61" },
       { key: "Waterjet 4 Printer", value: "10.24.2.40" },
       { key: "Test", value: "10.24.2.7" },
@@ -88,15 +90,16 @@ const Settings: React.FC = () => {
 
     containerPrinterOptions: [
       { key: "Waterjet 1 Printer", value: "10.24.2.48" },
+      { key: "Waterjet 2 Printer", value: "10.24.2.128" },
       { key: "Waterjet 3 Printer", value: "10.24.1.61" },
       { key: "Waterjet 4 Printer", value: "10.24.2.40" },
       { key: "Assembly - Rivian", value: "10.24.2.63" },
       { key: "Assembly - A2&BT1", value: "10.24.2.45" },
-      { key: "Assembly - U725", value: "10.24.3.111" },
+      { key: "Assembly - U725", value: "10.24.3.222" },
       { key: "Pack - Rivian", value: "10.24.2.47" },
       { key: "Pack - A2&BT1", value: "10.24.2.46" },
       { key: "Pack - BT1 Fullroof", value: "10.24.2.44" },
-      { key: "Pack - U725", value: "10.24.2.182" },
+      { key: "Pack - U725", value: "10.24.2.39" },
       { key: "Pack - Other Programs (Big Printer)", value: "10.24.0.211" },
       { key: "Test", value: "10.24.2.7" },
     ],

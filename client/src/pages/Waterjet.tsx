@@ -123,6 +123,15 @@ const Waterjet: React.FC = () => {
           `Error: No job being selected. Please select a job on Plex ❌`,
           "#FF6666"
         );
+      } else if (error.message === `Workcenter has insufficient source`) {
+        logMessage(
+          `Error: Workcenter has insufficient source, or Workcenter Status doesn't allow production ❌`,
+          "#FF6666"
+        );
+        logMessage(
+          `Check Source Inventory or Workcenter Status on Plex. `,
+          "#FF6666"
+        );
       } else {
         logMessage(`Error: ${error.message} ❌`, "#FF6666");
       }
@@ -152,6 +161,15 @@ const Waterjet: React.FC = () => {
       if (error.message === `Container Part Not Valid. Choose New Job.`) {
         logMessage(
           `Error: No job being selected. Please select a job on Plex ❌`,
+          "#FF6666"
+        );
+      } else if (error.message === `Workcenter has insufficient source`) {
+        logMessage(
+          `Error: Workcenter has insufficient source, or Workcenter Status doesn't allow production ❌`,
+          "#FF6666"
+        );
+        logMessage(
+          `Check Source Inventory or Workcenter Status on Plex. `,
           "#FF6666"
         );
       } else {

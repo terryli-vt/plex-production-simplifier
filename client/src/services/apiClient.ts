@@ -1,5 +1,6 @@
 // const serverURL = "http://localhost:3300";
-const serverURL = "http://10.24.2.181:8000";
+const serverURL = "http://localhost:8000";
+// const serverURL = "http://10.24.2.181:8000";
 // const serverURL = "http://10.24.1.20:8000";
 
 // Retrieve from local storage (or use default values)

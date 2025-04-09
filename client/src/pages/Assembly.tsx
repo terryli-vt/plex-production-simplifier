@@ -173,6 +173,15 @@ const Assembly: React.FC = () => {
 
       if (error.message === `Container is inactive.`) {
         logMessage(`Warning: ${error.message} ⚠️`, "#FFA500"); // Orange background for the warning
+      } else if (error.message === `Workcenter has insufficient source`) {
+        logMessage(
+          `Error: Workcenter has insufficient source, or Workcenter Status doesn't allow production ❌`,
+          "#FF6666"
+        );
+        logMessage(
+          `Check Source Inventory or Workcenter Status on Plex. `,
+          "#FF6666"
+        );
       } else {
         logMessage(`Error: ${error.message} ❌`, "#FF6666");
       }
