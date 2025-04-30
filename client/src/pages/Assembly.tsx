@@ -182,6 +182,16 @@ const Assembly: React.FC = () => {
           `Check Source Inventory or Workcenter Status on Plex. `,
           "#FF6666"
         );
+      } else if (error.message.startsWith("Failed to send ZPL code")) {
+        const printerIP = error.message.match(/\b\d{1,3}(\.\d{1,3}){3}\b/)[0];
+        logMessage(
+          `Failed to connect to the printer (target IP = ${printerIP}) ❌`,
+          "#FF6666"
+        );
+        logMessage(
+          "Try restart the printer, wait 1 minute and try again.",
+          "#FF6666"
+        );
       } else {
         logMessage(`Error: ${error.message} ❌`, "#FF6666");
       }
