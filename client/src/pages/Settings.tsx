@@ -73,12 +73,14 @@ const Settings: React.FC = () => {
       { key: "Waterjet 3 Printer", value: "10.24.1.61" },
       { key: "Waterjet 4 Printer", value: "10.24.2.40" },
       { key: "Test", value: "10.24.2.7" },
+      //{ key: "Invalid Printer IP", value: "10.24.2.111" },
     ],
 
     assemblyPrinterOptions: [
       { key: "Assembly - Rivian", value: "10.24.2.63" },
       { key: "Assembly - A2&BT1", value: "10.24.2.45" },
       { key: "Test", value: "10.24.2.7" },
+      //{ key: "Invalid Printer IP", value: "10.24.2.111" },
     ],
 
     packPrinterOptions: [
@@ -86,6 +88,7 @@ const Settings: React.FC = () => {
       { key: "Pack - A2&BT1", value: "10.24.2.46" },
       { key: "Pack - BT1 Fullroof", value: "10.24.2.44" },
       { key: "Test", value: "10.24.2.7" },
+      //{ key: "Invalid Printer IP", value: "10.24.2.111" },
     ],
 
     containerPrinterOptions: [

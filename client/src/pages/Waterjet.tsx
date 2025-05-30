@@ -108,6 +108,9 @@ const Waterjet: React.FC = () => {
       logMessage("Loading, please wait... ⏳");
       let response = await api.checkWorkcenterLogin(workcenterKey);
 
+      // make sure the printer is online
+      response = await api.pingPrinter("Waterjet");
+
       response = await api.recordProduction(workcenterKey);
       const newSerialNo = response.newSerialNo;
       // logMessage(response.message);
@@ -132,12 +135,8 @@ const Waterjet: React.FC = () => {
           `Check Source Inventory or Workcenter Status on Plex. `,
           "#FF6666"
         );
-      } else if (error.message.startsWith("Failed to send ZPL code")) {
-        const printerIP = error.message.match(/\b\d{1,3}(\.\d{1,3}){3}\b/)[0];
-        logMessage(
-          `Failed to connect to the printer (target IP = ${printerIP}) ❌`,
-          "#FF6666"
-        );
+      } else if (error.message.startsWith("Failed to connect to the printer")) {
+        logMessage(`Error: ${error.message} ❌`, "#FF6666");
         logMessage(
           "Try restart the printer, wait 1 minute and try again.",
           "#FF6666"
@@ -156,6 +155,10 @@ const Waterjet: React.FC = () => {
       // logMessage("Recording production, please wait... ⏳");
       logMessage("Loading, please wait... ⏳");
       let response = await api.checkWorkcenterLogin(workcenterKey);
+
+      // make sure the printer is online
+      response = await api.pingPrinter("Waterjet");
+
       response = await api.recordProduction(workcenterKey, 1, "Hold");
       const newSerialNo = response.newSerialNo;
       //logMessage(response.message);
@@ -182,12 +185,8 @@ const Waterjet: React.FC = () => {
           `Check Source Inventory or Workcenter Status on Plex. `,
           "#FF6666"
         );
-      } else if (error.message.startsWith("Failed to send ZPL code")) {
-        const printerIP = error.message.match(/\b\d{1,3}(\.\d{1,3}){3}\b/)[0];
-        logMessage(
-          `Failed to connect to the printer (target IP = ${printerIP}) ❌`,
-          "#FF6666"
-        );
+      } else if (error.message.startsWith("Failed to connect to the printer")) {
+        logMessage(`Error: ${error.message} ❌`, "#FF6666");
         logMessage(
           "Try restart the printer, wait 1 minute and try again.",
           "#FF6666"

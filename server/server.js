@@ -3,7 +3,11 @@ const bodyParser = require("body-parser"); // Needed to parse form-urlencoded da
 var cors = require("cors");
 require("dotenv").config();
 const getZplCode = require("./modules/getZpl");
-const sendZplToPrinter = require("./modules/printZpl");
+// const sendZplToPrinter = require("./modules/printZpl");
+// const pingPrinter = require("./modules/printZpl");
+
+const { sendZplToPrinter, pingPrinter } = require("./modules/printZpl");
+
 const {
   getPartKey,
   getOperationKey,
@@ -467,7 +471,7 @@ app.post("/record-production-bfb", async (req, res) => {
 });
 
 app.post("/print-label", async (req, res) => {
-  const { serialNo, plexServer } = req.body;
+  const { serialNo, plexServer, printerIP } = req.body;
   const prefix = plexServer === "Test" ? "test." : "";
   try {
     // Step 1: Get ZPL code
@@ -480,13 +484,32 @@ app.post("/print-label", async (req, res) => {
     };
 
     const zplcode = await getZplCode(url, post_data);
+
     // Step 2: Send ZPL code to the printer
-    await sendZplToPrinter(zplcode, req.body.printerIP);
+    await sendZplToPrinter(zplcode, printerIP);
 
     res.json({ success: true, message: "Print label successfully ✔️" });
   } catch (error) {
     console.error("An error message:", error.message);
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: `Failed to connect to the printer (target IP = ${req.body.printerIP})`,
+    });
+  }
+});
+
+// test printer connection
+app.post("/test-printer-connection", async (req, res) => {
+  try {
+    // Send empty string to the printer, to test connection
+    await pingPrinter(req.body.printerIP);
+    res.json({ success: true, message: "Printer is connected ✔️" });
+  } catch (error) {
+    console.error("An error message:", error.message);
+    res.status(500).json({
+      success: false,
+      message: `Failed to connect to the printer (target IP = ${req.body.printerIP})`,
+    });
   }
 });
 

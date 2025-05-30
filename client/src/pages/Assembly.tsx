@@ -80,16 +80,20 @@ const Assembly: React.FC = () => {
       logMessage("Loading, please wait... ⏳");
 
       // check duplicate scan
-      console.log(
+      /* console.log(
         "last scanned sub = ",
         localStorage.getItem("lastScannedSub")
-      );
+      ); */
       if (localStorage.getItem("lastScannedSub") === serialNo) {
         throw new Error(`Duplicate scan. You have scanned this part before.`);
       }
       localStorage.setItem("lastScannedSub", serialNo);
 
       let response = await api.checkWorkcenterLogin(workcenterKey);
+
+      // make sure the printer is online
+      response = await api.pingPrinter("Assembly");
+
       response = await api.getLoadedSerial(
         substratePartNo!,
         parseInt(workcenterKey)
@@ -182,12 +186,8 @@ const Assembly: React.FC = () => {
           `Check Source Inventory or Workcenter Status on Plex. `,
           "#FF6666"
         );
-      } else if (error.message.startsWith("Failed to send ZPL code")) {
-        const printerIP = error.message.match(/\b\d{1,3}(\.\d{1,3}){3}\b/)[0];
-        logMessage(
-          `Failed to connect to the printer (target IP = ${printerIP}) ❌`,
-          "#FF6666"
-        );
+      } else if (error.message.startsWith("Failed to connect to the printer")) {
+        logMessage(`Error: ${error.message} ❌`, "#FF6666");
         logMessage(
           "Try restart the printer, wait 1 minute and try again.",
           "#FF6666"

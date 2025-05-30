@@ -69,7 +69,7 @@ const Pack: React.FC = () => {
         partNo,
         parseInt(workcenterKey)
       );
-      console.log("Loaded serials:", loadedSerial);
+      // console.log("Loaded serials:", loadedSerial);
       setList(loadedSerial);
     } catch (error) {
       console.error("Failed to fetch loaded serials:", error);
@@ -126,6 +126,10 @@ const Pack: React.FC = () => {
       // Record production
       logMessage("Loading, please wait... ⏳");
       let response = await api.checkWorkcenterLogin(workcenterKey);
+
+      // make sure the printer is online
+      response = await api.pingPrinter("Pack");
+
       // logMessage("Recording production, please wait... ⏳");
       response = await api.recordProduction(workcenterKey, list.length);
       const newSerialNo = response.newSerialNo;
@@ -136,14 +140,10 @@ const Pack: React.FC = () => {
 
       await handleInfoUpdate(); // Refresh workcenter info
     } catch (error: any) {
-      if (error.message.startsWith("Failed to send ZPL code")) {
-        const printerIP = error.message.match(/\b\d{1,3}(\.\d{1,3}){3}\b/)[0];
+      if (error.message.startsWith("Failed to connect to the printer")) {
+        logMessage(`Error: ${error.message} ❌`, "#FF6666");
         logMessage(
-          `Failed to connect to the printer (target IP = ${printerIP}) ❌`,
-          "#FF6666"
-        );
-        logMessage(
-          "Try restart the printer, wait 1 minute and re-print the label in Plex.",
+          "Try restart the printer, wait 1 minute and try again.",
           "#FF6666"
         );
       } else {

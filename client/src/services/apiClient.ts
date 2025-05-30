@@ -360,6 +360,49 @@ export const printLabel = async (
   }
 };
 
+// Test Printer Connection (ping the printer)
+export const pingPrinter = async (printerType: string): Promise<any> => {
+  // console.log("Pinging printer...");
+  const url = `${serverURL}/test-printer-connection`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  let printerIP;
+
+  if (printerType === "Waterjet") {
+    printerIP = getWaterjetPrinterIP();
+  } else if (printerType === "Assembly") {
+    printerIP = getAssemblyPrinterIP();
+  } else if (printerType === "Pack") {
+    printerIP = getPackPrinterIP();
+  } else if (printerType === "Container") {
+    printerIP = getContainerPrinterIP();
+  }
+
+  const body = JSON.stringify({
+    printerIP,
+  });
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: body,
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.message || "Failed to print label");
+    }
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Get standard pack quantity
 export const getStdPackQty = async (partNo: string): Promise<any> => {
   const url = `${serverURL}/get-std-pack-qty`;
