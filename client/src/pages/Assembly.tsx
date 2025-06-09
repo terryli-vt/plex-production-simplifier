@@ -122,6 +122,7 @@ const Assembly: React.FC = () => {
 
       // Check if the container is active
       if (response.containerInfo["Quantity"] === 0) {
+        /*
         logMessage(`Container is inactive. Borrowing container... ⏳`);
         const borrowedSerial = await api.borrowContainer(
           substratePartNo!,
@@ -130,8 +131,9 @@ const Assembly: React.FC = () => {
 
         logMessage(`Borrowed serial: ${borrowedSerial}`);
 
-        // throw new Error("Container is inactive.");
         serialNo = borrowedSerial; // use the borrowed serial number
+        */
+        throw new Error("Container is inactive.");
       }
       // logMessage(response.message); // container exists
       logMessage("Recording production, please wait... ⏳");
