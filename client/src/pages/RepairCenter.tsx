@@ -11,6 +11,7 @@ const RepairCenter: React.FC = () => {
   } | null>(null);
   const [serial, setSerial] = useState<string | null>(null);
   const [infoStatus, setInfoStatus] = useState<string>("Idle");
+  const [currLocation, setCurrLocation] = useState<string>("");
 
   // LogBox Component
   // managing the message & background color
@@ -38,6 +39,8 @@ const RepairCenter: React.FC = () => {
     setDisableBtns(false);
     try {
       const response = await api.checkContainer(serialNo);
+      let currLocation = response.containerInfo["Location"];
+      setCurrLocation(currLocation as string);
 
       if (response.containerInfo["Quantity"] === 0) {
         response.containerInfo["Status"] = "Inactive";
@@ -64,8 +67,9 @@ const RepairCenter: React.FC = () => {
 
   const changeContainerStatus = async (serialNo: string, newStatus: string) => {
     try {
-      const response = await api.changeContainerStatus(serialNo, newStatus);
+      let response = await api.changeContainerStatus(serialNo, newStatus);
       logMessage(response.message);
+      response = await api.moveContainer(serialNo, currLocation); // to make sure this container is loaded in the current location
     } catch (error: any) {
       logMessage(`Error: ${error.message} ❌`, "#FF6666");
     }
@@ -86,7 +90,14 @@ const RepairCenter: React.FC = () => {
     "Surface Stain",
     "Trim Line Off",
     "Unrepairable Wrinkle",
+    "A-surface Damage (scratch, hole) by handling",
+    "Board Damage (crease, crack) by handling",
+    "Delamination (board and carpet form)",
+    "Plastic pieces fell off / lack of glue",
+    "Board and carpet misaligned",
+    "Board Back scrim burnt",
   ];
+
   // Function to handle scrap confirmation
   const handleScrap = async () => {
     if (!scrapReason) return; // Ensure reason is selected
